@@ -44,6 +44,7 @@
             margin: 0 auto;
         }
         
+        /* ====== الهيدر ثابت مع الاسم والصورة ====== */
         .chat-header {
             position: sticky;
             top: 0;
@@ -56,7 +57,7 @@
             justify-content: space-between;
             border-bottom: 1px solid rgba(212, 160, 140, 0.10);
             flex-shrink: 0;
-            min-height: 60px;
+            min-height: 65px;
             width: 100%;
         }
         .header-left {
@@ -86,9 +87,12 @@
             background: rgba(212, 160, 140, 0.08);
             color: #D4A08C;
         }
+        
+        /* ====== منع اختفاء الاسم والصورة ====== */
         .chat-user-info {
             flex: 1;
             min-width: 0;
+            flex-shrink: 0;
         }
         .chat-user-info .name {
             font-size: 16px;
@@ -97,6 +101,7 @@
             display: flex;
             align-items: center;
             gap: 6px;
+            white-space: nowrap;
         }
         .chat-user-info .name .custom-name {
             color: #D4A08C;
@@ -107,6 +112,7 @@
             font-size: 12px;
             color: #B8A090;
             font-weight: 300;
+            white-space: nowrap;
         }
         .chat-user-info .status .online {
             color: #6FCF97;
@@ -114,6 +120,7 @@
         .chat-user-info .status .offline {
             color: #BDBDBD;
         }
+        
         .header-actions {
             display: flex;
             gap: 6px;
@@ -575,7 +582,7 @@
             flex: 1;
             align-items: center;
         }
-        .edit-input-container .edit-row input {
+        .edit-input-container .edit-row input[type="search"] {
             flex: 1;
             padding: 12px 16px;
             border: 1.5px solid rgba(212, 160, 140, 0.10);
@@ -587,11 +594,26 @@
             transition: 0.25s;
             width: 100%;
             min-width: 0;
+            autocomplete: off;
+            inputmode: text;
+            autocorrect: off;
+            autocapitalize: none;
+            spellcheck: false;
+            data-form-type: other;
+            data-lpignore: true;
+            data-1p-ignore: true;
         }
-        .edit-input-container .edit-row input:focus {
+        .edit-input-container .edit-row input[type="search"]:focus {
             border-color: #D4A08C;
             background: #FFFFFF;
             box-shadow: 0 0 0 4px rgba(212, 160, 140, 0.06);
+        }
+        .edit-input-container .edit-row input[type="search"]::-webkit-search-decoration,
+        .edit-input-container .edit-row input[type="search"]::-webkit-search-cancel-button,
+        .edit-input-container .edit-row input[type="search"]::-webkit-search-results-button,
+        .edit-input-container .edit-row input[type="search"]::-webkit-search-results-decoration {
+            display: none;
+            -webkit-appearance: none;
         }
         .edit-input-container .edit-row button {
             background: linear-gradient(135deg, #D4A08C, #C4907C);
@@ -650,6 +672,14 @@
             font-family: 'Cairo', sans-serif;
             min-width: 60px;
             width: 100%;
+            autocomplete: off;
+            inputmode: text;
+            autocorrect: off;
+            autocapitalize: none;
+            spellcheck: false;
+            data-form-type: other;
+            data-lpignore: true;
+            data-1p-ignore: true;
         }
         .input-area input[type="search"]:focus {
             border-color: #D4A08C;
@@ -797,7 +827,7 @@
         .modal-box .input-group form {
             width: 100%;
         }
-        .modal-box .input-group input {
+        .modal-box .input-group input[type="search"] {
             width: 100%;
             padding: 14px 18px;
             background: rgba(245, 230, 211, 0.2);
@@ -807,11 +837,26 @@
             font-size: 15px;
             outline: none;
             transition: 0.25s;
+            autocomplete: off;
+            inputmode: text;
+            autocorrect: off;
+            autocapitalize: none;
+            spellcheck: false;
+            data-form-type: other;
+            data-lpignore: true;
+            data-1p-ignore: true;
         }
-        .modal-box .input-group input:focus {
+        .modal-box .input-group input[type="search"]:focus {
             border-color: #D4A08C;
             background: #FFFFFF;
             box-shadow: 0 0 0 4px rgba(212, 160, 140, 0.06);
+        }
+        .modal-box .input-group input[type="search"]::-webkit-search-decoration,
+        .modal-box .input-group input[type="search"]::-webkit-search-cancel-button,
+        .modal-box .input-group input[type="search"]::-webkit-search-results-button,
+        .modal-box .input-group input[type="search"]::-webkit-search-results-decoration {
+            display: none;
+            -webkit-appearance: none;
         }
         .modal-actions {
             display: flex;
@@ -1003,7 +1048,7 @@
         }
         
         @media (max-width: 480px) {
-            .chat-header { padding: 10px 12px; }
+            .chat-header { padding: 10px 12px; min-height: 58px; }
             .chat-user-info .name { font-size: 15px; }
             .messages-area { padding: 12px 8px; }
             .message-bubble { padding: 8px 12px; font-size: 14px; }
@@ -1037,6 +1082,7 @@
 
 <div class="chat-container" id="chatApp">
     
+    <!-- ====== HEADER ثابت مع الاسم والصورة ====== -->
     <header class="chat-header">
         <div class="header-left">
             <button class="back-btn" onclick="goBack()" title="رجوع">
@@ -1059,6 +1105,7 @@
         </div>
     </header>
     
+    <!-- ====== منطقة الرسائل ====== -->
     <div class="messages-area" id="messagesArea">
         <div class="empty-chat">
             <i class="fas fa-feather-alt"></i>
@@ -1067,12 +1114,14 @@
         </div>
     </div>
     
+    <!-- ====== معاينة الرد ====== -->
     <div class="reply-preview" id="replyPreview">
         <button class="reply-close" onclick="cancelReply()"><i class="fas fa-times"></i></button>
         <div class="reply-label">الرد على:</div>
         <div class="reply-text" id="replyPreviewText"></div>
     </div>
     
+    <!-- ====== منطقة الإدخال ====== -->
     <div class="input-area">
         <div class="input-row">
             <button class="action-btn" onclick="document.getElementById('fileInput').click()" title="إرفاق ملف">
@@ -1086,7 +1135,7 @@
             
             <span class="recording-timer" id="recordingTimer">00:00</span>
             
-            <!-- ✅ الحل السحري لمنع الأيقونات -->
+            <!-- حقل الإدخال مع منع الأيقونات -->
             <form autocomplete="off" onsubmit="return false;" style="display:flex;flex:1;gap:8px;align-items:center;min-width:0;">
                 <input type="search" 
                        id="messageInput" 
@@ -1111,6 +1160,7 @@
     </div>
 </div>
 
+<!-- ====== نافذة التفاعلات ====== -->
 <div class="reaction-popup" id="reactionPopup">
     <button class="close-reactions" onclick="closeReactionPopup()">
         <i class="fas fa-times"></i>
@@ -1134,6 +1184,7 @@
     <button class="reaction-option" onclick="addReaction('😉')">😉</button>
 </div>
 
+<!-- ====== نافذة خيارات الرسالة ====== -->
 <div class="message-actions-overlay" id="messageActionsOverlay" onclick="if(event.target===this)closeMessageActions()">
     <div class="message-actions-box">
         <h3>خيارات الرسالة</h3>
@@ -1154,6 +1205,7 @@
     </div>
 </div>
 
+<!-- ====== نافذة تعديل الرسالة ====== -->
 <div class="edit-input-container" id="editInputContainer">
     <div class="edit-header">
         <span><i class="fas fa-pen" style="margin-left:6px;"></i> تعديل الرسالة</span>
@@ -1181,6 +1233,7 @@
     </div>
 </div>
 
+<!-- ====== نافذة تغيير اسم الشخص ====== -->
 <div class="modal-overlay" id="chatSettingsModal">
     <div class="modal-box">
         <h2><i class="fas fa-user-edit"></i> تغيير اسم الشخص</h2>
@@ -2390,10 +2443,9 @@
     });
     
     console.log('📱 رسائلنا — الدردشة النهائية ✅');
-    console.log('🔒 تم منع ظهور أيقونات (المفتاح - الموقع - بطاقة الدفع) نهائياً');
-    console.log('📌 الهيدر ثابت لا يتحرك');
+    console.log('🔒 تم منع أيقونات (المفتاح - الموقع - بطاقة الدفع)');
+    console.log('📌 الاسم والصورة ثابتين مع الكيبورد');
     console.log('⚡️ إرسال فوري بدون إعادة رسم');
-    console.log('✅ تم استخدام type="search" و form autocomplete="off"');
 </script>
 
 </body>
