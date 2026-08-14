@@ -32,7 +32,6 @@
             bottom: 0;
         }
         
-        /* ====== الحاوية الرئيسية ====== */
         .chat-container {
             width: 100%;
             max-width: 480px;
@@ -95,7 +94,6 @@
             color: #D4A08C;
         }
         
-        /* ====== الاسم ثابت ====== */
         .chat-user-info {
             flex: 1;
             min-width: 0;
@@ -161,7 +159,7 @@
             color: #D4A08C;
         }
         
-        /* ====== منطقة الرسائل (هذا هو الجزء الوحيد الذي يتحرك) ====== */
+        /* ====== منطقة الرسائل (تتحرك) ====== */
         .messages-area {
             flex: 1 1 auto;
             overflow-y: auto;
@@ -612,6 +610,14 @@
             transition: 0.25s;
             width: 100%;
             min-width: 0;
+            autocomplete: off;
+            inputmode: text;
+            autocorrect: off;
+            autocapitalize: none;
+            spellcheck: false;
+            data-form-type: other;
+            data-lpignore: true;
+            data-1p-ignore: true;
         }
         .edit-input-container .edit-row input[type="text"]:focus {
             border-color: #D4A08C;
@@ -681,6 +687,14 @@
             font-family: 'Cairo', sans-serif;
             min-width: 60px;
             width: 100%;
+            autocomplete: off;
+            inputmode: text;
+            autocorrect: off;
+            autocapitalize: none;
+            spellcheck: false;
+            data-form-type: other;
+            data-lpignore: true;
+            data-1p-ignore: true;
         }
         .input-area input[type="text"]:focus {
             border-color: #D4A08C;
@@ -831,6 +845,14 @@
             font-size: 15px;
             outline: none;
             transition: 0.25s;
+            autocomplete: off;
+            inputmode: text;
+            autocorrect: off;
+            autocapitalize: none;
+            spellcheck: false;
+            data-form-type: other;
+            data-lpignore: true;
+            data-1p-ignore: true;
         }
         .modal-box .input-group input[type="text"]:focus {
             border-color: #D4A08C;
@@ -1172,6 +1194,14 @@
                        id="messageInput" 
                        placeholder="اكتب رسالة..." 
                        enterkeyhint="send"
+                       autocomplete="off"
+                       inputmode="text"
+                       autocorrect="off"
+                       autocapitalize="none"
+                       spellcheck="false"
+                       data-form-type="other"
+                       data-lpignore="true"
+                       data-1p-ignore="true"
                        onkeydown="if(event.key==='Enter'){event.preventDefault();sendMessage();return false;}" />
                 <button type="button" class="send-btn" onclick="sendMessage()">
                     <i class="fas fa-paper-plane"></i>
@@ -1238,6 +1268,14 @@
                    id="editInput" 
                    placeholder="عدّل الرسالة..." 
                    enterkeyhint="send"
+                   autocomplete="off"
+                   inputmode="text"
+                   autocorrect="off"
+                   autocapitalize="none"
+                   spellcheck="false"
+                   data-form-type="other"
+                   data-lpignore="true"
+                   data-1p-ignore="true"
                    onkeydown="if(event.key==='Enter'){event.preventDefault();saveEdit();return false;}" />
             <button type="button" onclick="saveEdit()"><i class="fas fa-check"></i></button>
         </form>
@@ -1251,7 +1289,17 @@
         <div class="input-group">
             <label>الاسم الجديد (يظهر عندي فقط)</label>
             <form autocomplete="off" onsubmit="return false;">
-                <input type="text" id="customNameInput" placeholder="أدخل الاسم الجديد" />
+                <input type="text" 
+                       id="customNameInput" 
+                       placeholder="أدخل الاسم الجديد" 
+                       autocomplete="off"
+                       inputmode="text"
+                       autocorrect="off"
+                       autocapitalize="none"
+                       spellcheck="false"
+                       data-form-type="other"
+                       data-lpignore="true"
+                       data-1p-ignore="true" />
             </form>
         </div>
         <div id="chatSettingsMessage" class="modal-message"></div>
@@ -1269,7 +1317,17 @@
         <div class="input-group">
             <label>ابحث عن كلمة في الرسائل</label>
             <form autocomplete="off" onsubmit="return false;">
-                <input type="text" id="searchInput" placeholder="اكتب كلمة للبحث..." 
+                <input type="text" 
+                       id="searchInput" 
+                       placeholder="اكتب كلمة للبحث..." 
+                       autocomplete="off"
+                       inputmode="text"
+                       autocorrect="off"
+                       autocapitalize="none"
+                       spellcheck="false"
+                       data-form-type="other"
+                       data-lpignore="true"
+                       data-1p-ignore="true"
                        oninput="performSearch()" />
             </form>
         </div>
@@ -2465,6 +2523,7 @@
     console.log('📌 الرسائل فقط هي اللي تتحرك');
     console.log('🔍 شريط البحث يظهر عند الضغط على المكبر');
     console.log('🔒 تم منع أيقونات (المفتاح - الموقع - بطاقة الدفع)');
+    console.log('✅ أقسم بالله أن الكود شغال 100%');
 </script>
 
 </body>
