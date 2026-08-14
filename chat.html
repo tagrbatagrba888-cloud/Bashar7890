@@ -50,12 +50,15 @@
             margin: 0 auto;
         }
         
-        /* ====== الهيدر ثابت في الأعلى ====== */
+        /* ====== الهيدر ثابت تماماً في الأعلى ====== */
         .chat-header {
-            flex-shrink: 0;
-            flex-grow: 0;
-            position: relative;
-            z-index: 100;
+            position: fixed;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100%;
+            max-width: 480px;
+            z-index: 1000;
             background: rgba(255, 252, 248, 0.98);
             backdrop-filter: blur(12px);
             padding: 10px 16px;
@@ -64,7 +67,6 @@
             justify-content: space-between;
             border-bottom: 1px solid rgba(212, 160, 140, 0.10);
             min-height: 65px;
-            width: 100%;
             box-shadow: 0 1px 8px rgba(0,0,0,0.04);
         }
         .header-left {
@@ -161,9 +163,15 @@
             color: #D4A08C;
         }
         
-        /* ====== منطقة الرسائل (هذا هو الجزء الوحيد الذي يتحرك) ====== */
+        /* ====== منطقة الرسائل (بين الهيدر والفوتر) ====== */
         .messages-area {
-            flex: 1 1 auto;
+            position: fixed;
+            top: 65px;
+            bottom: 80px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100%;
+            max-width: 480px;
             overflow-y: auto;
             padding: 12px 12px 8px;
             display: flex;
@@ -171,8 +179,7 @@
             gap: 4px;
             scroll-behavior: smooth;
             -webkit-overflow-scrolling: touch;
-            min-height: 0;
-            position: relative;
+            background: transparent;
         }
         .messages-area::-webkit-scrollbar {
             width: 4px;
@@ -555,7 +562,7 @@
         .edit-input-container {
             display: none;
             position: fixed;
-            bottom: 80px;
+            bottom: 100px;
             left: 50%;
             transform: translateX(-50%);
             background: #FFFFFF;
@@ -637,11 +644,15 @@
             transform: scale(1.05);
         }
         
-        /* ====== شريط الكتابة ثابت في الأسفل ====== */
+        /* ====== شريط الكتابة ثابت تماماً في الأسفل ====== */
         .input-area {
-            flex-shrink: 0;
-            flex-grow: 0;
-            position: relative;
+            position: fixed;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100%;
+            max-width: 480px;
+            z-index: 1000;
             background: rgba(255, 252, 248, 0.95);
             backdrop-filter: blur(12px);
             border-top: 1px solid rgba(212, 160, 140, 0.08);
@@ -650,8 +661,7 @@
             gap: 8px;
             align-items: center;
             flex-wrap: wrap;
-            width: 100%;
-            z-index: 50;
+            min-height: 75px;
         }
         .input-area .input-row {
             display: flex;
@@ -780,7 +790,7 @@
             bottom: 0;
             background: rgba(61, 44, 32, 0.4);
             backdrop-filter: blur(8px);
-            z-index: 999;
+            z-index: 9999;
             justify-content: center;
             align-items: center;
             padding: 20px;
@@ -933,10 +943,10 @@
         
         .toast-container {
             position: fixed;
-            top: 20px;
+            top: 80px;
             left: 50%;
             transform: translateX(-50%);
-            z-index: 9999;
+            z-index: 99999;
             width: 90%;
             max-width: 420px;
             display: flex;
@@ -1003,7 +1013,7 @@
             bottom: 0;
             background: rgba(61, 44, 32, 0.4);
             backdrop-filter: blur(8px);
-            z-index: 9999;
+            z-index: 99999;
             justify-content: center;
             align-items: center;
             padding: 20px;
@@ -1076,21 +1086,26 @@
         }
         
         @media (max-width: 480px) {
-            .chat-header { padding: 10px 12px; min-height: 58px; }
+            .chat-header { min-height: 58px; }
             .chat-user-info .name { font-size: 15px; }
-            .messages-area { padding: 12px 8px; }
+            .messages-area { 
+                top: 58px;
+                bottom: 75px;
+                padding: 12px 8px; 
+            }
             .message-bubble { padding: 8px 12px; font-size: 14px; }
-            .input-area { padding: 8px 12px 12px; gap: 4px; }
+            .input-area { padding: 8px 12px 12px; gap: 4px; min-height: 70px; }
             .input-area input[type="text"] { padding: 10px 14px; font-size: 14px; }
             .input-area .action-btn { width: 38px; height: 38px; font-size: 18px; }
             .input-area .send-btn { width: 38px; height: 38px; font-size: 16px; }
-            .reaction-popup { padding: 8px 12px; bottom: 80px; }
+            .reaction-popup { padding: 8px 12px; bottom: 100px; }
             .reaction-popup .reaction-option { font-size: 24px; }
-            .edit-input-container { bottom: 70px; padding: 12px 16px; }
+            .edit-input-container { bottom: 100px; padding: 12px 16px; }
             .reply-preview { padding: 6px 10px; }
             .message-media { max-width: 150px; max-height: 150px; }
             .message-audio { width: 150px; }
             .search-modal .modal-box { padding: 24px 18px 20px; }
+            .toast-container { top: 70px; }
         }
     </style>
 </head>
@@ -1111,7 +1126,7 @@
 
 <div class="chat-container" id="chatApp">
     
-    <!-- ====== الهيدر ثابت ====== -->
+    <!-- ====== الهيدر ثابت تماماً في الأعلى ====== -->
     <header class="chat-header">
         <div class="header-left">
             <button class="back-btn" onclick="goBack()" title="رجوع">
@@ -1137,7 +1152,7 @@
         </div>
     </header>
     
-    <!-- ====== منطقة الرسائل (تتحرك) ====== -->
+    <!-- ====== منطقة الرسائل (بين الهيدر والفوتر) ====== -->
     <div class="messages-area" id="messagesArea">
         <div class="empty-chat">
             <i class="fas fa-feather-alt"></i>
@@ -1147,13 +1162,13 @@
     </div>
     
     <!-- ====== معاينة الرد ====== -->
-    <div class="reply-preview" id="replyPreview">
-        <button class="reply-close" onclick="cancelReply()"><i class="fas fa-times"></i></button>
-        <div class="reply-label">الرد على:</div>
-        <div class="reply-text" id="replyPreviewText"></div>
+    <div class="reply-preview" id="replyPreview" style="position:fixed;bottom:85px;left:50%;transform:translateX(-50%);width:90%;max-width:420px;z-index:999;background:rgba(255,252,248,0.95);backdrop-filter:blur(12px);border:1px solid rgba(212,160,140,0.10);border-radius:16px;padding:10px 14px;display:none;box-shadow:0 8px 30px rgba(61,44,32,0.10);">
+        <button class="reply-close" onclick="cancelReply()" style="float:left;background:none;border:none;color:#B8A090;cursor:pointer;font-size:16px;"><i class="fas fa-times"></i></button>
+        <div class="reply-label" style="font-size:11px;color:#D4A08C;font-weight:600;">الرد على:</div>
+        <div class="reply-text" id="replyPreviewText" style="font-size:13px;color:#B8A090;font-weight:300;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;"></div>
     </div>
     
-    <!-- ====== شريط الكتابة ثابت في الأسفل ====== -->
+    <!-- ====== شريط الكتابة ثابت تماماً في الأسفل ====== -->
     <div class="input-area">
         <div class="input-row">
             <button class="action-btn" onclick="document.getElementById('fileInput').click()" title="إرفاق ملف">
@@ -2263,7 +2278,7 @@
         };
         const preview = document.getElementById('replyPreview');
         document.getElementById('replyPreviewText').textContent = replyingTo.text;
-        preview.classList.add('active');
+        preview.style.display = 'block';
         closeMessageActions();
         const input = document.getElementById('messageInput');
         input.focus();
@@ -2271,7 +2286,7 @@
     
     function cancelReply() {
         replyingTo = null;
-        document.getElementById('replyPreview').classList.remove('active');
+        document.getElementById('replyPreview').style.display = 'none';
     }
     
     async function markMessagesAsRead() {
@@ -2460,8 +2475,8 @@
     });
     
     console.log('📱 رسائلنا — الدردشة النهائية ✅');
-    console.log('📌 الهيدر ثابت في الأعلى');
-    console.log('📌 شريط الكتابة ثابت في الأسفل');
+    console.log('📌 الهيدر ثابت تماماً في الأعلى');
+    console.log('📌 شريط الكتابة ثابت تماماً في الأسفل');
     console.log('📌 الرسائل فقط هي اللي تتحرك');
     console.log('🔍 شريط البحث يظهر عند الضغط على المكبر');
     console.log('🔒 تم منع أيقونات (المفتاح - الموقع - بطاقة الدفع)');
