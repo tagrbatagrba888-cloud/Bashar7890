@@ -32,6 +32,7 @@
             bottom: 0;
         }
         
+        /* ====== الحاوية الرئيسية ====== */
         .chat-container {
             width: 100%;
             max-width: 480px;
@@ -49,10 +50,11 @@
             margin: 0 auto;
         }
         
-        /* ====== الهيدر ثابت تماماً ====== */
+        /* ====== الهيدر ثابت في الأعلى ====== */
         .chat-header {
+            flex-shrink: 0;
             position: relative;
-            z-index: 999;
+            z-index: 10;
             background: rgba(255, 252, 248, 0.98);
             backdrop-filter: blur(12px);
             padding: 10px 16px;
@@ -60,7 +62,6 @@
             align-items: center;
             justify-content: space-between;
             border-bottom: 1px solid rgba(212, 160, 140, 0.10);
-            flex-shrink: 0;
             min-height: 65px;
             width: 100%;
             box-shadow: 0 1px 8px rgba(0,0,0,0.04);
@@ -93,7 +94,7 @@
             color: #D4A08C;
         }
         
-        /* ====== الاسم والصورة ثابتين ====== */
+        /* ====== الاسم ثابت ====== */
         .chat-user-info {
             flex: 1;
             min-width: 0;
@@ -156,6 +157,7 @@
             color: #D4A08C;
         }
         
+        /* ====== منطقة الرسائل (تتحرك) ====== */
         .messages-area {
             flex: 1;
             overflow-y: auto;
@@ -165,6 +167,8 @@
             gap: 4px;
             scroll-behavior: smooth;
             -webkit-overflow-scrolling: touch;
+            /* منع أي تأثيرات جانبية */
+            min-height: 0;
         }
         .messages-area::-webkit-scrollbar {
             width: 4px;
@@ -644,16 +648,21 @@
             transform: scale(1.05);
         }
         
+        /* ====== شريط الكتابة ثابت في الأسفل ====== */
         .input-area {
-            padding: 10px 16px 14px;
+            flex-shrink: 0;
+            position: relative;
+            bottom: 0;
             background: rgba(255, 252, 248, 0.95);
             backdrop-filter: blur(12px);
             border-top: 1px solid rgba(212, 160, 140, 0.08);
+            padding: 10px 16px 14px;
             display: flex;
             gap: 8px;
             align-items: center;
-            flex-shrink: 0;
             flex-wrap: wrap;
+            width: 100%;
+            z-index: 5;
         }
         .input-area .input-row {
             display: flex;
@@ -661,6 +670,7 @@
             flex: 1;
             min-width: 0;
             align-items: center;
+            width: 100%;
         }
         .input-area .input-row form {
             display: flex;
@@ -1092,7 +1102,7 @@
 
 <div class="chat-container" id="chatApp">
     
-    <!-- ====== الهيدر ثابت تماماً ====== -->
+    <!-- ====== الهيدر ثابت ====== -->
     <header class="chat-header">
         <div class="header-left">
             <button class="back-btn" onclick="goBack()" title="رجوع">
@@ -1115,6 +1125,7 @@
         </div>
     </header>
     
+    <!-- ====== منطقة الرسائل (تتحرك) ====== -->
     <div class="messages-area" id="messagesArea">
         <div class="empty-chat">
             <i class="fas fa-feather-alt"></i>
@@ -1123,12 +1134,14 @@
         </div>
     </div>
     
+    <!-- ====== معاينة الرد ====== -->
     <div class="reply-preview" id="replyPreview">
         <button class="reply-close" onclick="cancelReply()"><i class="fas fa-times"></i></button>
         <div class="reply-label">الرد على:</div>
         <div class="reply-text" id="replyPreviewText"></div>
     </div>
     
+    <!-- ====== شريط الكتابة ثابت في الأسفل ====== -->
     <div class="input-area">
         <div class="input-row">
             <button class="action-btn" onclick="document.getElementById('fileInput').click()" title="إرفاق ملف">
@@ -1166,9 +1179,7 @@
     </div>
 </div>
 
-<!-- ====== باقي الكود كما هو ====== -->
-<!-- (نفس الأكواد السابقة للتفاعلات والخيارات والتسجيل الصوتي) -->
-
+<!-- ====== التفاعلات ====== -->
 <div class="reaction-popup" id="reactionPopup">
     <button class="close-reactions" onclick="closeReactionPopup()">
         <i class="fas fa-times"></i>
@@ -1192,6 +1203,7 @@
     <button class="reaction-option" onclick="addReaction('😉')">😉</button>
 </div>
 
+<!-- ====== خيارات الرسالة ====== -->
 <div class="message-actions-overlay" id="messageActionsOverlay" onclick="if(event.target===this)closeMessageActions()">
     <div class="message-actions-box">
         <h3>خيارات الرسالة</h3>
@@ -1212,6 +1224,7 @@
     </div>
 </div>
 
+<!-- ====== تعديل الرسالة ====== -->
 <div class="edit-input-container" id="editInputContainer">
     <div class="edit-header">
         <span><i class="fas fa-pen" style="margin-left:6px;"></i> تعديل الرسالة</span>
@@ -1239,6 +1252,7 @@
     </div>
 </div>
 
+<!-- ====== تغيير اسم الشخص ====== -->
 <div class="modal-overlay" id="chatSettingsModal">
     <div class="modal-box">
         <h2><i class="fas fa-user-edit"></i> تغيير اسم الشخص</h2>
@@ -1269,9 +1283,7 @@
 </div>
 
 <script>
-    // ====== كل الجافاسكريبت كما هو ======
-    // (نفس الكود السابق بالكامل)
-    
+    // ====== جافاسكريبت كامل (نفس الكود السابق) ======
     const firebaseConfig = {
         apiKey: "AIzaSyBPRXdX-2O76F4-Q553GVY3G0fMsevaQCE",
         authDomain: "bbbb-1135e.firebaseapp.com",
@@ -2355,9 +2367,10 @@
     });
     
     console.log('📱 رسائلنا — الدردشة النهائية ✅');
+    console.log('📌 الهيدر ثابت في الأعلى');
+    console.log('📌 شريط الكتابة ثابت في الأسفل');
+    console.log('📌 الرسائل فقط هي اللي تتحرك');
     console.log('🔒 تم منع أيقونات (المفتاح - الموقع - بطاقة الدفع)');
-    console.log('📌 الاسم والصورة ثابتين مع الكيبورد زي واتساب');
-    console.log('⚡️ إرسال فوري بدون إعادة رسم');
 </script>
 
 </body>
