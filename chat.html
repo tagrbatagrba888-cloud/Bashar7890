@@ -13,6 +13,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;800&display=swap" rel="stylesheet" />
     
     <style>
+        /* ===== RESET ===== */
         * {
             margin: 0;
             padding: 0;
@@ -48,24 +49,29 @@
             margin: 0 auto;
         }
         
-        /* ====== الهيدر - الإطار العلوي الثابت ====== */
+        /* ====== الهيدر - FIXED نهائي ====== */
         .chat-header {
-            flex-shrink: 0;
-            position: sticky;
+            position: fixed;
             top: 0;
-            z-index: 100;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100%;
+            max-width: 480px;
+            z-index: 9999;
             background: rgba(255, 252, 248, 0.98);
             backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
             padding: 10px 16px;
             display: flex;
             align-items: center;
             justify-content: space-between;
             border-bottom: 1px solid rgba(212, 160, 140, 0.10);
             min-height: 70px;
-            box-shadow: 0 1px 8px rgba(0,0,0,0.04);
-            transform: translateZ(0);
+            box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+            transform: translateX(-50%) translateZ(0);
             backface-visibility: hidden;
             -webkit-backface-visibility: hidden;
+            will-change: transform;
         }
         
         .header-left {
@@ -162,6 +168,38 @@
             color: #D4A08C;
         }
         
+        /* ====== مساحة للهيدر ====== */
+        .header-spacer {
+            height: 70px;
+            flex-shrink: 0;
+        }
+        
+        /* ====== منطقة الرسائل - اللي تتحرك ====== */
+        .messages-area {
+            flex: 1;
+            overflow-y: auto;
+            overflow-x: hidden;
+            padding: 12px 12px 8px;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            scroll-behavior: smooth;
+            -webkit-overflow-scrolling: touch;
+            min-height: 0;
+            padding-top: 0;
+        }
+        
+        .messages-area::-webkit-scrollbar {
+            width: 4px;
+        }
+        .messages-area::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .messages-area::-webkit-scrollbar-thumb {
+            background: rgba(212, 160, 140, 0.3);
+            border-radius: 10px;
+        }
+        
         /* ====== معاينة الرد ====== */
         .reply-preview {
             display: none;
@@ -197,31 +235,6 @@
             color: #B8A090;
             cursor: pointer;
             font-size: 16px;
-        }
-        
-        /* ====== منطقة الرسائل - اللي تتحرك ====== */
-        .messages-area {
-            flex: 1;
-            overflow-y: auto;
-            overflow-x: hidden;
-            padding: 12px 12px 8px;
-            display: flex;
-            flex-direction: column;
-            gap: 4px;
-            scroll-behavior: smooth;
-            -webkit-overflow-scrolling: touch;
-            min-height: 0;
-        }
-        
-        .messages-area::-webkit-scrollbar {
-            width: 4px;
-        }
-        .messages-area::-webkit-scrollbar-track {
-            background: transparent;
-        }
-        .messages-area::-webkit-scrollbar-thumb {
-            background: rgba(212, 160, 140, 0.3);
-            border-radius: 10px;
         }
         
         .message-wrapper {
@@ -655,11 +668,17 @@
             transform: scale(1.05);
         }
         
-        /* ====== شريط الكتابة - الإطار السفلي الثابت ====== */
+        /* ====== شريط الكتابة - FIXED في الأسفل ====== */
         .input-area {
-            flex-shrink: 0;
+            position: fixed;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100%;
+            max-width: 480px;
             background: rgba(255, 252, 248, 0.95);
             backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
             border-top: 1px solid rgba(212, 160, 140, 0.08);
             padding: 10px 16px 14px;
             padding-bottom: calc(14px + env(safe-area-inset-bottom));
@@ -667,7 +686,7 @@
             gap: 8px;
             align-items: center;
             flex-wrap: wrap;
-            z-index: 50;
+            z-index: 100;
             min-height: 65px;
         }
         .input-area .input-row {
@@ -1075,6 +1094,7 @@
         
         @media (max-width: 480px) {
             .chat-header { padding: 10px 12px; min-height: 60px; }
+            .header-spacer { height: 60px; }
             .chat-user-info .name { font-size: 15px; }
             .messages-area { padding: 12px 8px; }
             .message-bubble { padding: 8px 12px; font-size: 14px; }
@@ -1108,7 +1128,7 @@
 
 <div class="chat-container" id="chatApp">
     
-    <!-- ====== الهيدر - الإطار العلوي الثابت ====== -->
+    <!-- ====== الهيدر - FIXED نهائي ====== -->
     <header class="chat-header" id="chatHeader">
         <div class="header-left">
             <button class="back-btn" onclick="goBack()" title="رجوع">
@@ -1131,6 +1151,9 @@
         </div>
     </header>
     
+    <!-- ====== مساحة للهيدر ====== -->
+    <div class="header-spacer"></div>
+    
     <!-- ====== منطقة الرسائل - اللي تتحرك ====== -->
     <div class="messages-area" id="messagesArea">
         <div class="empty-chat">
@@ -1146,42 +1169,42 @@
         <div class="reply-label">الرد على:</div>
         <div class="reply-text" id="replyPreviewText"></div>
     </div>
-    
-    <!-- ====== شريط الكتابة - الإطار السفلي الثابت ====== -->
-    <div class="input-area" id="inputArea">
-        <div class="input-row">
-            <button class="action-btn" onclick="document.getElementById('fileInput').click()" title="إرفاق ملف">
-                <i class="fas fa-paperclip"></i>
+</div>
+
+<!-- ====== شريط الكتابة - FIXED في الأسفل ====== -->
+<div class="input-area" id="inputArea">
+    <div class="input-row">
+        <button class="action-btn" onclick="document.getElementById('fileInput').click()" title="إرفاق ملف">
+            <i class="fas fa-paperclip"></i>
+        </button>
+        <input type="file" id="fileInput" class="file-input" accept="image/*,video/*,audio/*,.pdf,.doc,.docx,.txt" multiple onchange="handleFileUpload(event)" />
+        
+        <button class="action-btn" id="recordBtn" onclick="toggleRecording()" title="تسجيل صوتي">
+            <i class="fas fa-microphone"></i>
+        </button>
+        
+        <span class="recording-timer" id="recordingTimer">00:00</span>
+        
+        <form autocomplete="off" onsubmit="return false;" style="display:flex;flex:1;gap:8px;align-items:center;min-width:0;">
+            <input type="search" 
+                   id="messageInput" 
+                   name="search"
+                   role="searchbox"
+                   placeholder="اكتب رسالة..." 
+                   enterkeyhint="send"
+                   autocomplete="off"
+                   inputmode="text"
+                   autocorrect="off"
+                   autocapitalize="none"
+                   spellcheck="false"
+                   data-form-type="other"
+                   data-lpignore="true"
+                   data-1p-ignore="true"
+                   onkeydown="if(event.key==='Enter'){event.preventDefault();sendMessage();return false;}" />
+            <button type="button" class="send-btn" onclick="sendMessage()">
+                <i class="fas fa-paper-plane"></i>
             </button>
-            <input type="file" id="fileInput" class="file-input" accept="image/*,video/*,audio/*,.pdf,.doc,.docx,.txt" multiple onchange="handleFileUpload(event)" />
-            
-            <button class="action-btn" id="recordBtn" onclick="toggleRecording()" title="تسجيل صوتي">
-                <i class="fas fa-microphone"></i>
-            </button>
-            
-            <span class="recording-timer" id="recordingTimer">00:00</span>
-            
-            <form autocomplete="off" onsubmit="return false;" style="display:flex;flex:1;gap:8px;align-items:center;min-width:0;">
-                <input type="search" 
-                       id="messageInput" 
-                       name="search"
-                       role="searchbox"
-                       placeholder="اكتب رسالة..." 
-                       enterkeyhint="send"
-                       autocomplete="off"
-                       inputmode="text"
-                       autocorrect="off"
-                       autocapitalize="none"
-                       spellcheck="false"
-                       data-form-type="other"
-                       data-lpignore="true"
-                       data-1p-ignore="true"
-                       onkeydown="if(event.key==='Enter'){event.preventDefault();sendMessage();return false;}" />
-                <button type="button" class="send-btn" onclick="sendMessage()">
-                    <i class="fas fa-paper-plane"></i>
-                </button>
-            </form>
-        </div>
+        </form>
     </div>
 </div>
 
@@ -2417,10 +2440,10 @@
     });
     
     console.log('📱 رسائلنا — الدردشة النهائية ✅');
-    console.log('📌 الهيدر ثابت في الأعلى (مثل الكود الثاني)');
-    console.log('📌 شريط الكتابة ثابت في الأسفل');
+    console.log('📌 الهيدر ثابت في الأعلى باستخدام position: fixed');
+    console.log('📌 شريط الكتابة ثابت في الأسفل باستخدام position: fixed');
     console.log('📌 الرسائل بس اللي تتحرك');
-    console.log('🔒 تم منع أيقونات (المفتاح - الموقع - بطاقة الدفع)');
+    console.log('📌 التحديثات فورية للتفاعلات والحذف');
 </script>
 
 </body>
