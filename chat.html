@@ -164,6 +164,10 @@
             background: rgba(212, 160, 140, 0.08);
             color: #D4A08C;
         }
+        .header-actions button.active-search {
+            background: rgba(212, 160, 140, 0.12);
+            color: #D4A08C;
+        }
         
         /* ====== منطقة الرسائل ====== */
         .messages-area {
@@ -604,7 +608,7 @@
             flex: 1;
             align-items: center;
         }
-        .edit-input-container .edit-row input[type="search"] {
+        .edit-input-container .edit-row input[type="text"] {
             flex: 1;
             padding: 12px 16px;
             border: 1.5px solid rgba(212, 160, 140, 0.10);
@@ -616,26 +620,11 @@
             transition: 0.25s;
             width: 100%;
             min-width: 0;
-            autocomplete: off;
-            inputmode: text;
-            autocorrect: off;
-            autocapitalize: none;
-            spellcheck: false;
-            data-form-type: other;
-            data-lpignore: true;
-            data-1p-ignore: true;
         }
-        .edit-input-container .edit-row input[type="search"]:focus {
+        .edit-input-container .edit-row input[type="text"]:focus {
             border-color: #D4A08C;
             background: #FFFFFF;
             box-shadow: 0 0 0 4px rgba(212, 160, 140, 0.06);
-        }
-        .edit-input-container .edit-row input[type="search"]::-webkit-search-decoration,
-        .edit-input-container .edit-row input[type="search"]::-webkit-search-cancel-button,
-        .edit-input-container .edit-row input[type="search"]::-webkit-search-results-button,
-        .edit-input-container .edit-row input[type="search"]::-webkit-search-results-decoration {
-            display: none;
-            -webkit-appearance: none;
         }
         .edit-input-container .edit-row button {
             background: linear-gradient(135deg, #D4A08C, #C4907C);
@@ -691,7 +680,7 @@
             align-items: center;
             min-width: 0;
         }
-        .input-area input[type="search"] {
+        .input-area input[type="text"] {
             flex: 1;
             padding: 12px 18px;
             background: rgba(245, 230, 211, 0.2);
@@ -704,30 +693,15 @@
             font-family: 'Cairo', sans-serif;
             min-width: 60px;
             width: 100%;
-            autocomplete: off;
-            inputmode: text;
-            autocorrect: off;
-            autocapitalize: none;
-            spellcheck: false;
-            data-form-type: other;
-            data-lpignore: true;
-            data-1p-ignore: true;
         }
-        .input-area input[type="search"]:focus {
+        .input-area input[type="text"]:focus {
             border-color: #D4A08C;
             background: #FFFFFF;
             box-shadow: 0 0 0 4px rgba(212, 160, 140, 0.06);
         }
-        .input-area input[type="search"]::placeholder {
+        .input-area input[type="text"]::placeholder {
             color: #C4B0A0;
             font-weight: 300;
-        }
-        .input-area input[type="search"]::-webkit-search-decoration,
-        .input-area input[type="search"]::-webkit-search-cancel-button,
-        .input-area input[type="search"]::-webkit-search-results-button,
-        .input-area input[type="search"]::-webkit-search-results-decoration {
-            display: none;
-            -webkit-appearance: none;
         }
         .input-area .action-btn {
             background: none;
@@ -859,7 +833,7 @@
         .modal-box .input-group form {
             width: 100%;
         }
-        .modal-box .input-group input[type="search"] {
+        .modal-box .input-group input[type="text"] {
             width: 100%;
             padding: 14px 18px;
             background: rgba(245, 230, 211, 0.2);
@@ -869,26 +843,11 @@
             font-size: 15px;
             outline: none;
             transition: 0.25s;
-            autocomplete: off;
-            inputmode: text;
-            autocorrect: off;
-            autocapitalize: none;
-            spellcheck: false;
-            data-form-type: other;
-            data-lpignore: true;
-            data-1p-ignore: true;
         }
-        .modal-box .input-group input[type="search"]:focus {
+        .modal-box .input-group input[type="text"]:focus {
             border-color: #D4A08C;
             background: #FFFFFF;
             box-shadow: 0 0 0 4px rgba(212, 160, 140, 0.06);
-        }
-        .modal-box .input-group input[type="search"]::-webkit-search-decoration,
-        .modal-box .input-group input[type="search"]::-webkit-search-cancel-button,
-        .modal-box .input-group input[type="search"]::-webkit-search-results-button,
-        .modal-box .input-group input[type="search"]::-webkit-search-results-decoration {
-            display: none;
-            -webkit-appearance: none;
         }
         .modal-actions {
             display: flex;
@@ -933,6 +892,55 @@
             display: block;
             background: rgba(111, 207, 151, 0.08);
             color: #6FAF8A;
+        }
+        
+        /* ====== نافذة البحث ====== */
+        .search-modal .modal-box {
+            max-width: 420px;
+        }
+        .search-modal .modal-box .search-results {
+            max-height: 300px;
+            overflow-y: auto;
+            margin-top: 12px;
+            border-radius: 16px;
+            background: rgba(245, 230, 211, 0.10);
+        }
+        .search-modal .modal-box .search-results .search-item {
+            padding: 12px 16px;
+            border-bottom: 1px solid rgba(212, 160, 140, 0.06);
+            cursor: pointer;
+            transition: 0.15s;
+            border-radius: 8px;
+        }
+        .search-modal .modal-box .search-results .search-item:hover {
+            background: rgba(212, 160, 140, 0.06);
+        }
+        .search-modal .modal-box .search-results .search-item .search-sender {
+            font-size: 12px;
+            color: #D4A08C;
+            font-weight: 600;
+        }
+        .search-modal .modal-box .search-results .search-item .search-text {
+            font-size: 14px;
+            color: #3D2C20;
+            margin-top: 2px;
+        }
+        .search-modal .modal-box .search-results .search-item .search-time {
+            font-size: 11px;
+            color: #B8A090;
+            margin-top: 2px;
+        }
+        .search-modal .modal-box .search-results .no-results {
+            padding: 20px;
+            text-align: center;
+            color: #B8A090;
+            font-size: 14px;
+        }
+        .search-modal .modal-box .search-results .no-results i {
+            font-size: 32px;
+            display: block;
+            margin-bottom: 8px;
+            opacity: 0.3;
         }
         
         .toast-container {
@@ -1085,7 +1093,7 @@
             .messages-area { padding: 12px 8px; }
             .message-bubble { padding: 8px 12px; font-size: 14px; }
             .input-area { padding: 8px 12px 12px; gap: 4px; }
-            .input-area input[type="search"] { padding: 10px 14px; font-size: 14px; }
+            .input-area input[type="text"] { padding: 10px 14px; font-size: 14px; }
             .input-area .action-btn { width: 38px; height: 38px; font-size: 18px; }
             .input-area .send-btn { width: 38px; height: 38px; font-size: 16px; }
             .reaction-popup { padding: 8px 12px; bottom: 80px; }
@@ -1094,6 +1102,7 @@
             .reply-preview { padding: 6px 10px; }
             .message-media { max-width: 150px; max-height: 150px; }
             .message-audio { width: 150px; }
+            .search-modal .modal-box { padding: 24px 18px 20px; }
         }
     </style>
 </head>
@@ -1131,6 +1140,9 @@
             </div>
         </div>
         <div class="header-actions">
+            <button class="search-btn" onclick="openSearchModal()" title="بحث في الدردشة">
+                <i class="fas fa-search"></i>
+            </button>
             <button class="settings-chat-btn" onclick="openChatSettings()" title="تغيير اسم الشخص">
                 <i class="fas fa-pen"></i>
             </button>
@@ -1168,20 +1180,10 @@
             <span class="recording-timer" id="recordingTimer">00:00</span>
             
             <form autocomplete="off" onsubmit="return false;" style="display:flex;flex:1;gap:8px;align-items:center;min-width:0;">
-                <input type="search" 
+                <input type="text" 
                        id="messageInput" 
-                       name="search"
-                       role="searchbox"
                        placeholder="اكتب رسالة..." 
                        enterkeyhint="send"
-                       autocomplete="off"
-                       inputmode="text"
-                       autocorrect="off"
-                       autocapitalize="none"
-                       spellcheck="false"
-                       data-form-type="other"
-                       data-lpignore="true"
-                       data-1p-ignore="true"
                        onkeydown="if(event.key==='Enter'){event.preventDefault();sendMessage();return false;}" />
                 <button type="button" class="send-btn" onclick="sendMessage()">
                     <i class="fas fa-paper-plane"></i>
@@ -1244,20 +1246,10 @@
     </div>
     <div class="edit-row">
         <form autocomplete="off" onsubmit="return false;" style="display:flex;flex:1;gap:10px;align-items:center;">
-            <input type="search" 
+            <input type="text" 
                    id="editInput" 
-                   name="search"
-                   role="searchbox"
                    placeholder="عدّل الرسالة..." 
                    enterkeyhint="send"
-                   autocomplete="off"
-                   inputmode="text"
-                   autocorrect="off"
-                   autocapitalize="none"
-                   spellcheck="false"
-                   data-form-type="other"
-                   data-lpignore="true"
-                   data-1p-ignore="true"
                    onkeydown="if(event.key==='Enter'){event.preventDefault();saveEdit();return false;}" />
             <button type="button" onclick="saveEdit()"><i class="fas fa-check"></i></button>
         </form>
@@ -1271,25 +1263,36 @@
         <div class="input-group">
             <label>الاسم الجديد (يظهر عندي فقط)</label>
             <form autocomplete="off" onsubmit="return false;">
-                <input type="search" 
-                       id="customNameInput" 
-                       name="search"
-                       role="searchbox"
-                       placeholder="أدخل الاسم الجديد" 
-                       autocomplete="off"
-                       inputmode="text"
-                       autocorrect="off"
-                       autocapitalize="none"
-                       spellcheck="false"
-                       data-form-type="other"
-                       data-lpignore="true"
-                       data-1p-ignore="true" />
+                <input type="text" id="customNameInput" placeholder="أدخل الاسم الجديد" />
             </form>
         </div>
         <div id="chatSettingsMessage" class="modal-message"></div>
         <div class="modal-actions">
             <button class="btn-cancel" onclick="closeChatSettings()">إلغاء</button>
             <button class="btn-save" onclick="saveChatSettings()">حفظ</button>
+        </div>
+    </div>
+</div>
+
+<!-- ====== البحث في الدردشة ====== -->
+<div class="modal-overlay search-modal" id="searchModal">
+    <div class="modal-box">
+        <h2><i class="fas fa-search"></i> بحث في الدردشة</h2>
+        <div class="input-group">
+            <label>ابحث عن كلمة في الرسائل</label>
+            <form autocomplete="off" onsubmit="return false;">
+                <input type="text" id="searchInput" placeholder="اكتب كلمة للبحث..." 
+                       oninput="performSearch()" />
+            </form>
+        </div>
+        <div class="search-results" id="searchResults">
+            <div class="no-results">
+                <i class="fas fa-search"></i>
+                اكتب كلمة للبحث
+            </div>
+        </div>
+        <div class="modal-actions">
+            <button class="btn-cancel" onclick="closeSearchModal()" style="flex:0 0 auto;padding:14px 32px;">إغلاق</button>
         </div>
     </div>
 </div>
@@ -1483,6 +1486,99 @@
         setTimeout(() => {
             closeChatSettings();
         }, 1000);
+    }
+    
+    // ====== دوال البحث ======
+    function openSearchModal() {
+        document.getElementById('searchModal').classList.add('active');
+        document.getElementById('searchInput').value = '';
+        document.getElementById('searchResults').innerHTML = `
+            <div class="no-results">
+                <i class="fas fa-search"></i>
+                اكتب كلمة للبحث
+            </div>
+        `;
+        setTimeout(() => {
+            document.getElementById('searchInput').focus();
+        }, 100);
+    }
+    
+    function closeSearchModal() {
+        document.getElementById('searchModal').classList.remove('active');
+    }
+    
+    function performSearch() {
+        const query = document.getElementById('searchInput').value.trim().toLowerCase();
+        const resultsContainer = document.getElementById('searchResults');
+        
+        if (!query) {
+            resultsContainer.innerHTML = `
+                <div class="no-results">
+                    <i class="fas fa-search"></i>
+                    اكتب كلمة للبحث
+                </div>
+            `;
+            return;
+        }
+        
+        // بحث في الرسائل (غير المحذوفة)
+        const visibleMessages = allMessages.filter(m => !m.isDeleted);
+        const results = visibleMessages.filter(msg => {
+            const text = msg.text || '';
+            return text.toLowerCase().includes(query);
+        });
+        
+        if (results.length === 0) {
+            resultsContainer.innerHTML = `
+                <div class="no-results">
+                    <i class="fas fa-sad-tear"></i>
+                    لا توجد نتائج لـ "${query}"
+                </div>
+            `;
+            return;
+        }
+        
+        let html = '';
+        results.forEach(msg => {
+            const isSent = msg.senderId === currentUser.id;
+            const senderName = isSent ? 'أنت' : chatUser.username;
+            const time = formatTime(msg.timestamp);
+            const text = msg.text || 'ملف';
+            
+            html += `
+                <div class="search-item" onclick="scrollToMessage('${msg.id}')">
+                    <div class="search-sender">${senderName}</div>
+                    <div class="search-text">${escapeHtml(text)}</div>
+                    <div class="search-time">${time}</div>
+                </div>
+            `;
+        });
+        
+        resultsContainer.innerHTML = html;
+    }
+    
+    function scrollToMessage(messageId) {
+        const msg = allMessages.find(m => m.id === messageId);
+        if (!msg) return;
+        
+        closeSearchModal();
+        
+        // نذهب إلى الرسالة
+        const container = document.getElementById('messagesArea');
+        const element = document.getElementById('msg-' + messageId);
+        
+        if (element) {
+            element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            element.style.transition = 'background 0.5s';
+            element.style.background = 'rgba(212, 160, 140, 0.15)';
+            setTimeout(() => {
+                element.style.background = 'transparent';
+            }, 2000);
+            showToast('🔍 تم البحث', 'تم العثور على الرسالة', '🔍', 1500);
+        } else {
+            // إذا لم تكن موجودة، نعيد تحميل الرسائل
+            showToast('⚠️ تنبيه', 'الرسالة غير موجودة حالياً', '⚠️', 2000);
+        }
     }
     
     function loadMessagesOnce() {
@@ -2382,6 +2478,7 @@
     console.log('📌 الهيدر ثابت في الأعلى');
     console.log('📌 شريط الكتابة ثابت في الأسفل');
     console.log('📌 الرسائل فقط هي اللي تتحرك');
+    console.log('🔍 شريط البحث يظهر عند الضغط على المكبر');
     console.log('🔒 تم منع أيقونات (المفتاح - الموقع - بطاقة الدفع)');
 </script>
 
