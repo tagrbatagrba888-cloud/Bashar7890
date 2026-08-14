@@ -5,18 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
     <title>رسائلنا - الدردشة</title>
     
-    <!-- ربط Firebase -->
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-storage-compat.js"></script>
     
-    <!-- أيقونات Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
-    
-    <!-- خط أنيق -->
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;800&display=swap" rel="stylesheet" />
     
     <style>
-        /* ====== RESET & BASE ====== */
         * {
             margin: 0;
             padding: 0;
@@ -35,7 +31,6 @@
             height: 100vh;
         }
         
-        /* ====== MAIN CONTAINER ====== */
         .chat-container {
             width: 100%;
             max-width: 480px;
@@ -52,8 +47,10 @@
             overflow: hidden;
         }
         
-        /* ====== HEADER ====== */
         .chat-header {
+            position: sticky;
+            top: 0;
+            z-index: 10;
             background: rgba(255, 252, 248, 0.95);
             backdrop-filter: blur(12px);
             padding: 12px 16px;
@@ -62,7 +59,6 @@
             justify-content: space-between;
             border-bottom: 1px solid rgba(212, 160, 140, 0.10);
             flex-shrink: 0;
-            z-index: 10;
         }
         .header-left {
             display: flex;
@@ -143,9 +139,7 @@
             background: rgba(212, 160, 140, 0.08);
             color: #D4A08C;
         }
-        .header-actions .settings-chat-btn:hover { color: #D4A08C; }
         
-        /* ====== MESSAGES AREA ====== */
         .messages-area {
             flex: 1;
             overflow-y: auto;
@@ -166,7 +160,6 @@
             border-radius: 10px;
         }
         
-        /* ====== MESSAGE BUBBLE ====== */
         .message-wrapper {
             display: flex;
             flex-direction: column;
@@ -218,6 +211,27 @@
             opacity: 0.6;
             margin-right: 4px;
         }
+        .message-text .sending-label {
+            font-size: 10px;
+            opacity: 0.5;
+            margin-right: 4px;
+            color: #FFD700;
+        }
+        .message-text .deleted-label {
+            font-size: 12px;
+            opacity: 0.5;
+            font-style: italic;
+        }
+        .message-text .file-name {
+            font-size: 13px;
+            font-weight: 500;
+            display: block;
+            margin-bottom: 4px;
+        }
+        .message-text .file-size {
+            font-size: 11px;
+            opacity: 0.6;
+        }
         .message-time {
             font-size: 10px;
             opacity: 0.6;
@@ -234,7 +248,20 @@
             color: #B8A090;
         }
         
-        /* ====== STATUS LABELS ====== */
+        .message-media {
+            max-width: 200px;
+            max-height: 200px;
+            border-radius: 12px;
+            margin-bottom: 4px;
+            cursor: pointer;
+        }
+        .message-audio {
+            width: 200px;
+            height: 40px;
+            border-radius: 12px;
+            margin-bottom: 4px;
+        }
+        
         .status-label {
             font-size: 11px;
             font-weight: 500;
@@ -258,8 +285,15 @@
         .status-label.unread {
             color: #B8A090 !important;
         }
+        .status-label.sending {
+            color: #FFD700 !important;
+            background: rgba(255,215,0,0.08) !important;
+        }
+        .status-label.failed {
+            color: #FF6B6B !important;
+            background: rgba(255,107,107,0.08) !important;
+        }
         
-        /* ====== REPLY INDICATOR ====== */
         .reply-preview {
             display: none;
             background: rgba(212, 160, 140, 0.06);
@@ -296,7 +330,6 @@
             font-size: 16px;
         }
         
-        /* ====== REPLY TO MESSAGE (in bubble) ====== */
         .reply-to {
             background: rgba(255,255,255,0.08);
             padding: 6px 10px;
@@ -319,7 +352,6 @@
             font-weight: 300;
         }
         
-        /* ====== MESSAGE REACTIONS ====== */
         .message-reactions {
             display: flex;
             gap: 2px;
@@ -352,7 +384,6 @@
             border-color: rgba(255,255,255,0.3);
         }
         
-        /* ====== REACTION POPUP ====== */
         .reaction-popup {
             display: none;
             position: fixed;
@@ -404,7 +435,6 @@
             color: #3D2C20;
         }
         
-        /* ====== MESSAGE ACTIONS OVERLAY ====== */
         .message-actions-overlay {
             display: none;
             position: fixed;
@@ -497,7 +527,6 @@
             background: rgba(212, 160, 140, 0.10);
         }
         
-        /* ====== EDIT INPUT ====== */
         .edit-input-container {
             display: none;
             position: fixed;
@@ -550,6 +579,11 @@
             color: #3D2C20;
             background: rgba(245, 230, 211, 0.2);
             transition: 0.25s;
+            autocomplete: off;
+            inputmode: text;
+            autocorrect: off;
+            autocapitalize: none;
+            spellcheck: false;
         }
         .edit-input-container .edit-row input:focus {
             border-color: #D4A08C;
@@ -575,18 +609,24 @@
             transform: scale(1.05);
         }
         
-        /* ====== INPUT AREA ====== */
         .input-area {
             padding: 10px 16px 14px;
             background: rgba(255, 252, 248, 0.95);
             backdrop-filter: blur(12px);
             border-top: 1px solid rgba(212, 160, 140, 0.08);
             display: flex;
-            gap: 10px;
+            gap: 8px;
             align-items: center;
             flex-shrink: 0;
+            flex-wrap: wrap;
         }
-        .input-area input {
+        .input-area .input-row {
+            display: flex;
+            gap: 8px;
+            flex: 1;
+            min-width: 0;
+        }
+        .input-area input[type="text"] {
             flex: 1;
             padding: 12px 18px;
             background: rgba(245, 230, 211, 0.2);
@@ -597,24 +637,58 @@
             outline: none;
             transition: 0.25s;
             font-family: 'Cairo', sans-serif;
+            autocomplete: off;
+            inputmode: text;
+            autocorrect: off;
+            autocapitalize: none;
+            spellcheck: false;
+            min-width: 60px;
         }
-        .input-area input:focus {
+        .input-area input[type="text"]:focus {
             border-color: #D4A08C;
             background: #FFFFFF;
             box-shadow: 0 0 0 4px rgba(212, 160, 140, 0.06);
         }
-        .input-area input::placeholder {
+        .input-area input[type="text"]::placeholder {
             color: #C4B0A0;
             font-weight: 300;
+        }
+        .input-area .action-btn {
+            background: none;
+            border: none;
+            color: #D4A08C;
+            font-size: 22px;
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 50%;
+            transition: 0.2s;
+            width: 44px;
+            height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+        .input-area .action-btn:hover {
+            background: rgba(212, 160, 140, 0.08);
+        }
+        .input-area .action-btn.recording {
+            color: #FF6B6B;
+            animation: pulse 1s infinite;
+        }
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+            100% { transform: scale(1); }
         }
         .input-area .send-btn {
             background: linear-gradient(135deg, #D4A08C, #C4907C);
             border: none;
             color: #FFFFFF;
-            width: 48px;
-            height: 48px;
+            width: 44px;
+            height: 44px;
             border-radius: 50%;
-            font-size: 20px;
+            font-size: 18px;
             cursor: pointer;
             transition: 0.25s;
             display: flex;
@@ -629,8 +703,10 @@
         .input-area .send-btn:active {
             transform: scale(0.95);
         }
+        .input-area .file-input {
+            display: none;
+        }
         
-        /* ====== EMPTY STATE ====== */
         .empty-chat {
             display: flex;
             flex-direction: column;
@@ -657,7 +733,6 @@
             margin-top: 8px;
         }
         
-        /* ====== SETTINGS MODAL ====== */
         .modal-overlay {
             display: none;
             position: fixed;
@@ -715,6 +790,11 @@
             font-size: 15px;
             outline: none;
             transition: 0.25s;
+            autocomplete: off;
+            inputmode: text;
+            autocorrect: off;
+            autocapitalize: none;
+            spellcheck: false;
         }
         .modal-box .input-group input:focus {
             border-color: #D4A08C;
@@ -766,7 +846,6 @@
             color: #6FAF8A;
         }
         
-        /* ====== TOAST ====== */
         .toast-container {
             position: fixed;
             top: 20px;
@@ -830,30 +909,122 @@
             padding: 4px;
         }
         
-        /* ====== RESPONSIVE ====== */
+        .confirm-dialog {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(61, 44, 32, 0.4);
+            backdrop-filter: blur(8px);
+            z-index: 9999;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        .confirm-dialog.active {
+            display: flex;
+            animation: fadeIn 0.25s ease;
+        }
+        .confirm-box {
+            background: #FFFFFF;
+            border-radius: 32px;
+            padding: 32px 24px 28px;
+            max-width: 380px;
+            width: 100%;
+            box-shadow: 0 30px 60px rgba(61, 44, 32, 0.15);
+        }
+        .confirm-box h3 {
+            color: #3D2C20;
+            font-size: 20px;
+            margin-bottom: 8px;
+            text-align: center;
+        }
+        .confirm-box p {
+            color: #B8A090;
+            font-size: 14px;
+            text-align: center;
+            margin-bottom: 20px;
+            line-height: 1.5;
+        }
+        .confirm-box .confirm-actions {
+            display: flex;
+            gap: 12px;
+        }
+        .confirm-box .confirm-actions button {
+            flex: 1;
+            padding: 14px;
+            border: none;
+            border-radius: 40px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.25s;
+        }
+        .confirm-box .confirm-actions .btn-confirm {
+            background: linear-gradient(135deg, #D4A08C, #C4907C);
+            color: #FFFFFF;
+        }
+        .confirm-box .confirm-actions .btn-confirm:hover {
+            transform: scale(1.02);
+        }
+        .confirm-box .confirm-actions .btn-cancel {
+            background: rgba(212, 160, 140, 0.06);
+            color: #B8A090;
+        }
+        .confirm-box .confirm-actions .btn-cancel:hover {
+            background: rgba(212, 160, 140, 0.10);
+        }
+        
+        .recording-timer {
+            font-size: 14px;
+            color: #FF6B6B;
+            font-weight: 600;
+            padding: 4px 12px;
+            background: rgba(255,107,107,0.08);
+            border-radius: 20px;
+            display: none;
+        }
+        .recording-timer.active {
+            display: inline-block;
+        }
+        
         @media (max-width: 480px) {
             .chat-header { padding: 10px 12px; }
             .chat-user-info .name { font-size: 15px; }
             .messages-area { padding: 12px 8px; }
             .message-bubble { padding: 8px 12px; font-size: 14px; }
-            .input-area { padding: 8px 12px 12px; }
-            .input-area input { padding: 10px 14px; font-size: 14px; }
-            .input-area .send-btn { width: 42px; height: 42px; font-size: 17px; }
+            .input-area { padding: 8px 12px 12px; gap: 4px; }
+            .input-area input[type="text"] { padding: 10px 14px; font-size: 14px; }
+            .input-area .action-btn { width: 38px; height: 38px; font-size: 18px; }
+            .input-area .send-btn { width: 38px; height: 38px; font-size: 16px; }
             .reaction-popup { padding: 8px 12px; bottom: 80px; }
             .reaction-popup .reaction-option { font-size: 24px; }
             .edit-input-container { bottom: 70px; padding: 12px 16px; }
             .reply-preview { padding: 6px 10px; }
+            .message-media { max-width: 150px; max-height: 150px; }
+            .message-audio { width: 150px; }
         }
     </style>
 </head>
 <body>
 
-<!-- ====== TOAST ====== -->
 <div class="toast-container" id="toastContainer"></div>
+
+<div class="confirm-dialog" id="confirmDialog">
+    <div class="confirm-box">
+        <h3 id="confirmTitle">تأكيد</h3>
+        <p id="confirmMessage">هل أنت متأكد؟</p>
+        <div class="confirm-actions">
+            <button class="btn-cancel" onclick="closeConfirm()">إلغاء</button>
+            <button class="btn-confirm" id="confirmBtn" onclick="confirmAction()">تأكيد</button>
+        </div>
+    </div>
+</div>
 
 <div class="chat-container" id="chatApp">
     
-    <!-- ====== HEADER ====== -->
     <header class="chat-header">
         <div class="header-left">
             <button class="back-btn" onclick="goBack()" title="رجوع">
@@ -876,7 +1047,6 @@
         </div>
     </header>
     
-    <!-- ====== MESSAGES AREA ====== -->
     <div class="messages-area" id="messagesArea">
         <div class="empty-chat">
             <i class="fas fa-feather-alt"></i>
@@ -885,25 +1055,41 @@
         </div>
     </div>
     
-    <!-- ====== REPLY PREVIEW ====== -->
     <div class="reply-preview" id="replyPreview">
         <button class="reply-close" onclick="cancelReply()"><i class="fas fa-times"></i></button>
         <div class="reply-label">الرد على:</div>
         <div class="reply-text" id="replyPreviewText"></div>
     </div>
     
-    <!-- ====== INPUT AREA ====== -->
     <div class="input-area">
-        <input type="text" id="messageInput" placeholder="اكتب رسالة..." 
-               enterkeyhint="send"
-               onkeydown="if(event.key==='Enter'){event.preventDefault();sendMessage();}" />
-        <button class="send-btn" onclick="sendMessage()">
-            <i class="fas fa-paper-plane"></i>
-        </button>
+        <div class="input-row">
+            <button class="action-btn" onclick="document.getElementById('fileInput').click()" title="إرفاق ملف">
+                <i class="fas fa-paperclip"></i>
+            </button>
+            <input type="file" id="fileInput" class="file-input" accept="image/*,video/*,audio/*,.pdf,.doc,.docx,.txt" multiple onchange="handleFileUpload(event)" />
+            
+            <button class="action-btn" id="recordBtn" onclick="toggleRecording()" title="تسجيل صوتي">
+                <i class="fas fa-microphone"></i>
+            </button>
+            
+            <span class="recording-timer" id="recordingTimer">00:00</span>
+            
+            <input type="text" id="messageInput" placeholder="اكتب رسالة..." 
+                   enterkeyhint="send"
+                   autocomplete="off"
+                   inputmode="text"
+                   autocorrect="off"
+                   autocapitalize="none"
+                   spellcheck="false"
+                   onkeydown="if(event.key==='Enter'){event.preventDefault();sendMessage();return false;}" />
+            
+            <button class="send-btn" onclick="sendMessage()">
+                <i class="fas fa-paper-plane"></i>
+            </button>
+        </div>
     </div>
 </div>
 
-<!-- ====== REACTION POPUP ====== -->
 <div class="reaction-popup" id="reactionPopup">
     <button class="close-reactions" onclick="closeReactionPopup()">
         <i class="fas fa-times"></i>
@@ -927,14 +1113,16 @@
     <button class="reaction-option" onclick="addReaction('😉')">😉</button>
 </div>
 
-<!-- ====== MESSAGE ACTIONS OVERLAY ====== -->
 <div class="message-actions-overlay" id="messageActionsOverlay" onclick="if(event.target===this)closeMessageActions()">
     <div class="message-actions-box">
         <h3>خيارات الرسالة</h3>
         <button class="action-btn" onclick="replyToMessage()">
             <i class="fas fa-reply"></i> رد على الرسالة
         </button>
-        <button class="action-btn" onclick="editMessage()">
+        <button class="action-btn" onclick="copyMessage()">
+            <i class="fas fa-copy"></i> نسخ الرسالة
+        </button>
+        <button class="action-btn" onclick="editMessage()" id="editActionBtn">
             <i class="fas fa-pen"></i> تعديل الرسالة
         </button>
         <button class="action-btn danger" onclick="deleteMessage()">
@@ -945,7 +1133,6 @@
     </div>
 </div>
 
-<!-- ====== EDIT INPUT ====== -->
 <div class="edit-input-container" id="editInputContainer">
     <div class="edit-header">
         <span><i class="fas fa-pen" style="margin-left:6px;"></i> تعديل الرسالة</span>
@@ -954,18 +1141,27 @@
     <div class="edit-row">
         <input type="text" id="editInput" placeholder="عدّل الرسالة..." 
                enterkeyhint="send"
-               onkeydown="if(event.key==='Enter'){event.preventDefault();saveEdit();}" />
+               autocomplete="off"
+               inputmode="text"
+               autocorrect="off"
+               autocapitalize="none"
+               spellcheck="false"
+               onkeydown="if(event.key==='Enter'){event.preventDefault();saveEdit();return false;}" />
         <button onclick="saveEdit()"><i class="fas fa-check"></i></button>
     </div>
 </div>
 
-<!-- ====== SETTINGS MODAL ====== -->
 <div class="modal-overlay" id="chatSettingsModal">
     <div class="modal-box">
         <h2><i class="fas fa-user-edit"></i> تغيير اسم الشخص</h2>
         <div class="input-group">
             <label>الاسم الجديد (يظهر عندي فقط)</label>
-            <input type="text" id="customNameInput" placeholder="أدخل الاسم الجديد" />
+            <input type="text" id="customNameInput" placeholder="أدخل الاسم الجديد" 
+                   autocomplete="off"
+                   inputmode="text"
+                   autocorrect="off"
+                   autocapitalize="none"
+                   spellcheck="false" />
         </div>
         <div id="chatSettingsMessage" class="modal-message"></div>
         <div class="modal-actions">
@@ -991,6 +1187,7 @@
     
     firebase.initializeApp(firebaseConfig);
     const db = firebase.firestore();
+    const storage = firebase.storage();
     
     // ============================================================
     //  🧠  المتغيرات العامة
@@ -1006,8 +1203,20 @@
     let touchTimer = null;
     let touchMessageId = null;
     let replyingTo = null;
+    let isSending = false;
+    let pendingMessages = {};
     let isFirstLoad = true;
-    let scrollTimeout = null;
+    let messageElements = {};
+    let confirmCallback = null;
+    let processedMessageIds = new Set();
+    let isLoaded = false;
+    
+    // تسجيل صوتي
+    let mediaRecorder = null;
+    let audioChunks = [];
+    let isRecording = false;
+    let recordingTimer = null;
+    let recordingSeconds = 0;
     
     // ============================================================
     //  🍞  Toast
@@ -1026,6 +1235,28 @@
         `;
         container.appendChild(toast);
         setTimeout(() => { toast.classList.add('hide'); setTimeout(() => toast.remove(), 300); }, duration);
+    }
+    
+    // ============================================================
+    //  ✅  Confirmation Dialog
+    // ============================================================
+    function showConfirm(title, message, callback) {
+        document.getElementById('confirmTitle').textContent = title;
+        document.getElementById('confirmMessage').textContent = message;
+        document.getElementById('confirmDialog').classList.add('active');
+        confirmCallback = callback;
+    }
+    
+    function closeConfirm() {
+        document.getElementById('confirmDialog').classList.remove('active');
+        confirmCallback = null;
+    }
+    
+    function confirmAction() {
+        if (confirmCallback) {
+            confirmCallback();
+        }
+        closeConfirm();
     }
     
     // ============================================================
@@ -1062,14 +1293,13 @@
             updateCustomNameBadge();
             
             loadUserStatus();
-            loadMessages();
+            loadMessagesOnce();
             
-            // تركيز تلقائي على حقل الإدخال
             setTimeout(() => {
                 const input = document.getElementById('messageInput');
                 input.focus();
-                // وضع المؤشر في نهاية النص
                 input.setSelectionRange(input.value.length, input.value.length);
+                scrollToBottom();
             }, 500);
             
         } catch (e) {
@@ -1154,13 +1384,10 @@
     }
     
     // ============================================================
-    //  📨  تحميل الرسائل (ثابتة مثل واتساب)
+    //  📨  تحميل الرسائل (مرة واحدة فقط)
     // ============================================================
-    function loadMessages() {
-        if (unsubscribeMessages) {
-            unsubscribeMessages();
-            unsubscribeMessages = null;
-        }
+    function loadMessagesOnce() {
+        if (isLoaded) return;
         
         // محاولة تحميل من الكاش أولاً
         try {
@@ -1172,22 +1399,20 @@
                         ...m,
                         timestamp: m.timestamp ? new Date(m.timestamp) : new Date()
                     }));
-                    renderMessages(allMessages);
-                    // التمرير للأسفل فوراً
+                    renderAllMessages(allMessages);
                     setTimeout(() => scrollToBottom(), 100);
                     console.log('📦 تم التحميل من الكاش:', allMessages.length, 'رسالة');
                 }
             }
         } catch (e) {}
         
-        // الاستماع للتحديثات
-        unsubscribeMessages = db.collection('messages')
+        // تحميل من Firebase مرة واحدة
+        db.collection('messages')
             .where('chatId', '==', chatId)
             .orderBy('timestamp', 'asc')
-            .onSnapshot((snapshot) => {
-                const oldCount = allMessages.length;
+            .get()
+            .then((snapshot) => {
                 const newMessages = [];
-                
                 snapshot.forEach((doc) => {
                     const data = doc.data();
                     newMessages.push({
@@ -1200,22 +1425,103 @@
                         reactions: data.reactions || {},
                         isEdited: data.isEdited || false,
                         isDeleted: data.isDeleted || false,
-                        replyTo: data.replyTo || null
+                        replyTo: data.replyTo || null,
+                        file: data.file || null,
+                        fileType: data.fileType || null,
+                        fileName: data.fileName || null,
+                        fileSize: data.fileSize || null,
+                        audioUrl: data.audioUrl || null,
+                        imageUrl: data.imageUrl || null,
+                        videoUrl: data.videoUrl || null
                     });
                 });
                 
-                const hasChanged = JSON.stringify(newMessages) !== JSON.stringify(allMessages);
+                // دمج مع الرسائل المؤقتة
+                const tempMessages = Object.values(pendingMessages);
+                const combinedMessages = [...newMessages, ...tempMessages];
+                combinedMessages.sort((a, b) => a.timestamp.getTime() - b.timestamp.getTime());
                 
-                if (hasChanged) {
-                    allMessages = newMessages;
+                if (combinedMessages.length > 0) {
+                    allMessages = combinedMessages;
+                    try {
+                        localStorage.setItem('cachedMessages_' + chatId, JSON.stringify(allMessages));
+                    } catch (e) {}
+                    
+                    renderAllMessages(allMessages);
+                    setTimeout(() => scrollToBottom(), 100);
+                }
+                
+                isLoaded = true;
+                isFirstLoad = false;
+                
+                // بدء الاستماع للتحديثات بعد التحميل الأول
+                startRealtimeListener();
+                
+            })
+            .catch((error) => {
+                console.error('❌ خطأ في تحميل الرسائل:', error);
+                showToast('⚠️ خطأ', 'فشل تحميل الرسائل', '⚠️', 3000);
+            });
+    }
+    
+    // ============================================================
+    //  📡  الاستماع للتحديثات
+    // ============================================================
+    function startRealtimeListener() {
+        if (unsubscribeMessages) {
+            unsubscribeMessages();
+            unsubscribeMessages = null;
+        }
+        
+        unsubscribeMessages = db.collection('messages')
+            .where('chatId', '==', chatId)
+            .orderBy('timestamp', 'asc')
+            .onSnapshot((snapshot) => {
+                const newMessages = [];
+                const tempIds = Object.keys(pendingMessages);
+                
+                snapshot.forEach((doc) => {
+                    const data = doc.data();
+                    if (tempIds.includes(doc.id)) return;
+                    if (processedMessageIds.has(doc.id)) return;
+                    
+                    newMessages.push({
+                        id: doc.id,
+                        senderId: data.senderId || '',
+                        receiverId: data.receiverId || '',
+                        text: data.text || '',
+                        timestamp: data.timestamp ? data.timestamp.toDate() : new Date(),
+                        status: data.status || 'sent',
+                        reactions: data.reactions || {},
+                        isEdited: data.isEdited || false,
+                        isDeleted: data.isDeleted || false,
+                        replyTo: data.replyTo || null,
+                        file: data.file || null,
+                        fileType: data.fileType || null,
+                        fileName: data.fileName || null,
+                        fileSize: data.fileSize || null,
+                        audioUrl: data.audioUrl || null,
+                        imageUrl: data.imageUrl || null,
+                        videoUrl: data.videoUrl || null
+                    });
+                });
+                
+                if (newMessages.length > 0) {
+                    newMessages.forEach(msg => {
+                        processedMessageIds.add(msg.id);
+                    });
+                    
+                    allMessages = [...allMessages, ...newMessages];
+                    allMessages.sort((a, b) => a.timestamp.getTime() - b.timestamp.getTime());
                     
                     try {
                         localStorage.setItem('cachedMessages_' + chatId, JSON.stringify(allMessages));
                     } catch (e) {}
                     
-                    renderMessages(allMessages);
+                    if (!isSending) {
+                        addNewMessages(newMessages);
+                    }
                     
-                    // دائماً نتمرير للأسفل عند أي تغيير
                     setTimeout(() => scrollToBottom(), 150);
                 }
                 
@@ -1225,15 +1531,16 @@
                 }, 500);
                 
             }, (error) => {
-                console.error('❌ خطأ في تحميل الرسائل:', error);
+                console.error('❌ خطأ في الاستماع:', error);
             });
     }
     
     // ============================================================
-    //  🎨  عرض الرسائل
+    //  🎨  عرض كل الرسائل
     // ============================================================
-    function renderMessages(messages) {
+    function renderAllMessages(messages) {
         const container = document.getElementById('messagesArea');
+        messageElements = {};
         
         const visibleMessages = messages.filter(m => !m.isDeleted);
         
@@ -1250,111 +1557,492 @@
         
         let html = '';
         visibleMessages.forEach((msg) => {
-            const isSent = msg.senderId === currentUser.id;
-            const reactions = msg.reactions || {};
-            const reactionKeys = Object.keys(reactions);
-            const isEdited = msg.isEdited || false;
-            const isRead = msg.status === 'read';
-            
-            let statusText = '';
-            if (isSent) {
-                if (isRead) {
-                    statusText = '<span class="status-label read">✓✓ قرأ</span>';
-                } else if (msg.status === 'delivered') {
-                    statusText = '<span class="status-label">✓✓ وصلت</span>';
-                } else {
-                    statusText = '<span class="status-label">✓ مرسلة</span>';
-                }
-            } else {
-                if (isRead) {
-                    statusText = '<span class="status-label read">✓✓ مقروءة</span>';
-                } else {
-                    statusText = '<span class="status-label unread">✓ لم يقرأ</span>';
-                }
-            }
-            
-            let replyHtml = '';
-            if (msg.replyTo) {
-                const repliedMsg = allMessages.find(m => m.id === msg.replyTo.id);
-                if (repliedMsg && !repliedMsg.isDeleted) {
-                    const isReplyFromMe = repliedMsg.senderId === currentUser.id;
-                    replyHtml = `
-                        <div class="reply-to">
-                            <div class="reply-sender">${isReplyFromMe ? 'أنت' : chatUser.username}</div>
-                            <div class="reply-text">${escapeHtml(repliedMsg.text)}</div>
-                        </div>
-                    `;
-                }
-            }
-            
-            let reactionsHtml = '';
-            if (reactionKeys.length > 0) {
-                reactionsHtml = '<div class="message-reactions">';
-                reactionKeys.forEach(key => {
-                    const isActive = reactions[key] === currentUser.id;
-                    reactionsHtml += `<span class="reaction-emoji ${isActive ? 'active' : ''}" 
-                                      onclick="toggleReaction('${msg.id}', '${key}')">${key}</span>`;
-                });
-                reactionsHtml += '</div>';
-            }
-            
-            const editedLabel = isEdited ? '<span class="edited-label">(تم التعديل)</span>' : '';
-            
-            html += `
-                <div class="message-wrapper ${isSent ? 'sent' : 'received'}" 
-                     id="msg-${msg.id}"
-                     oncontextmenu="event.preventDefault(); openMessageActions('${msg.id}')"
-                     ontouchstart="handleTouchStart(event, '${msg.id}')"
-                     ontouchend="handleTouchEnd(event)">
-                    <div class="message-bubble">
-                        ${replyHtml}
-                        <div class="message-text">
-                            ${escapeHtml(msg.text)}
-                            ${editedLabel}
-                        </div>
-                        <div class="message-time">
-                            ${formatTime(msg.timestamp)}
-                            ${statusText}
-                        </div>
-                        ${reactionsHtml}
-                    </div>
-                </div>
-            `;
+            html += createMessageHTML(msg);
         });
         
         container.innerHTML = html;
         
-        // التمرير للأسفل بعد الرسم
+        document.querySelectorAll('.message-wrapper').forEach(el => {
+            const id = el.id.replace('msg-', '');
+            messageElements[id] = el;
+        });
+        
         setTimeout(() => scrollToBottom(), 50);
     }
     
     // ============================================================
-    //  📜  التمرير للأسفل (ثابت دائماً)
+    //  📝  إنشاء HTML لرسالة واحدة
+    // ============================================================
+    function createMessageHTML(msg) {
+        const isSent = msg.senderId === currentUser.id;
+        const reactions = msg.reactions || {};
+        const reactionKeys = Object.keys(reactions);
+        const isEdited = msg.isEdited || false;
+        const isRead = msg.status === 'read';
+        const isSendingMsg = msg.status === 'sending';
+        const isFailed = msg.status === 'failed';
+        const isDeleted = msg.isDeleted || false;
+        
+        let statusText = '';
+        if (isSent) {
+            if (isSendingMsg) {
+                statusText = '<span class="status-label sending">⏳ جاري الإرسال</span>';
+            } else if (isFailed) {
+                statusText = '<span class="status-label failed">⚠️ فشل الإرسال</span>';
+            } else if (isRead) {
+                statusText = '<span class="status-label read">✓✓ قرأ</span>';
+            } else if (msg.status === 'delivered') {
+                statusText = '<span class="status-label">✓✓ وصلت</span>';
+            } else {
+                statusText = '<span class="status-label">✓ مرسلة</span>';
+            }
+        } else {
+            if (isRead) {
+                statusText = '<span class="status-label read">✓✓ مقروءة</span>';
+            } else {
+                statusText = '<span class="status-label unread">✓ لم يقرأ</span>';
+            }
+        }
+        
+        let replyHtml = '';
+        if (msg.replyTo) {
+            const repliedMsg = allMessages.find(m => m.id === msg.replyTo.id);
+            if (repliedMsg && !repliedMsg.isDeleted) {
+                const isReplyFromMe = repliedMsg.senderId === currentUser.id;
+                replyHtml = `
+                    <div class="reply-to">
+                        <div class="reply-sender">${isReplyFromMe ? 'أنت' : chatUser.username}</div>
+                        <div class="reply-text">${escapeHtml(repliedMsg.text || 'ملف')}</div>
+                    </div>
+                `;
+            }
+        }
+        
+        let reactionsHtml = '';
+        if (reactionKeys.length > 0) {
+            reactionsHtml = '<div class="message-reactions">';
+            reactionKeys.forEach(key => {
+                const isActive = reactions[key] === currentUser.id;
+                reactionsHtml += `<span class="reaction-emoji ${isActive ? 'active' : ''}" 
+                                  onclick="toggleReaction('${msg.id}', '${key}')">${key}</span>`;
+            });
+            reactionsHtml += '</div>';
+        }
+        
+        const editedLabel = isEdited ? '<span class="edited-label">(تم التعديل)</span>' : '';
+        const sendingLabel = isSendingMsg ? '<span class="sending-label">⏳</span>' : '';
+        
+        let contentHtml = '';
+        if (isDeleted) {
+            contentHtml = '<span class="deleted-label">🗑️ تم حذف هذه الرسالة</span>';
+        } else {
+            // محتوى الملفات
+            if (msg.imageUrl) {
+                contentHtml += `<img src="${msg.imageUrl}" class="message-media" onclick="window.open('${msg.imageUrl}','_blank')" />`;
+            }
+            if (msg.videoUrl) {
+                contentHtml += `<video src="${msg.videoUrl}" class="message-media" controls onclick="event.stopPropagation()"></video>`;
+            }
+            if (msg.audioUrl) {
+                contentHtml += `<audio src="${msg.audioUrl}" class="message-audio" controls onclick="event.stopPropagation()"></audio>`;
+            }
+            if (msg.file) {
+                const icon = msg.fileType && msg.fileType.startsWith('image/') ? 'fa-image' :
+                           msg.fileType && msg.fileType.startsWith('video/') ? 'fa-video' :
+                           msg.fileType && msg.fileType.startsWith('audio/') ? 'fa-music' : 'fa-file';
+                contentHtml += `<div class="file-name"><i class="fas ${icon}"></i> ${escapeHtml(msg.fileName || 'ملف')}</div>`;
+                contentHtml += `<div class="file-size">${formatFileSize(msg.fileSize || 0)}</div>`;
+            }
+            if (msg.text) {
+                contentHtml += escapeHtml(msg.text);
+            }
+        }
+        
+        return `
+            <div class="message-wrapper ${isSent ? 'sent' : 'received'}" 
+                 id="msg-${msg.id}"
+                 onclick="handleClick('${msg.id}')"
+                 oncontextmenu="event.preventDefault(); openMessageActions('${msg.id}')"
+                 ontouchstart="handleTouchStart(event, '${msg.id}')"
+                 ontouchend="handleTouchEnd(event)">
+                <div class="message-bubble">
+                    ${replyHtml}
+                    <div class="message-text">
+                        ${contentHtml}
+                        ${editedLabel}
+                        ${sendingLabel}
+                    </div>
+                    <div class="message-time">
+                        ${formatTime(msg.timestamp)}
+                        ${statusText}
+                    </div>
+                    ${!isDeleted ? reactionsHtml : ''}
+                </div>
+            </div>
+        `;
+    }
+    
+    // ============================================================
+    //  👆  معالجة النقر (ضغطة واحدة = تفاعلات)
+    // ============================================================
+    function handleClick(messageId) {
+        const msg = allMessages.find(m => m.id === messageId);
+        if (!msg || msg.id.startsWith('temp_') || msg.isDeleted) return;
+        
+        // ضغطة واحدة = تفاعلات
+        showReactionPopup(messageId);
+    }
+    
+    // ============================================================
+    //  ➕  إضافة رسائل جديدة
+    // ============================================================
+    function addNewMessages(newMessages) {
+        const container = document.getElementById('messagesArea');
+        
+        const emptyState = container.querySelector('.empty-chat');
+        if (emptyState) {
+            emptyState.remove();
+        }
+        
+        newMessages.forEach(msg => {
+            if (msg.isDeleted || msg.id.startsWith('temp_')) return;
+            if (document.getElementById('msg-' + msg.id)) return;
+            
+            const html = createMessageHTML(msg);
+            container.insertAdjacentHTML('beforeend', html);
+            
+            const el = container.lastElementChild;
+            if (el && el.id === 'msg-' + msg.id) {
+                messageElements[msg.id] = el;
+            }
+        });
+        
+        setTimeout(() => scrollToBottom(), 50);
+    }
+    
+    // ============================================================
+    //  📜  التمرير للأسفل
     // ============================================================
     function scrollToBottom() {
         const container = document.getElementById('messagesArea');
-        // نتمرير إلى الأسفل مباشرة
         container.scrollTop = container.scrollHeight;
     }
     
-    // عند تغيير حجم الكيبورد أو أي حدث آخر، نتمرير للأسفل
     window.addEventListener('resize', function() {
         setTimeout(scrollToBottom, 200);
     });
     
-    // مراقبة التغييرات في منطقة الرسائل
-    const messagesObserver = new MutationObserver(function() {
-        scrollToBottom();
-    });
+    // ============================================================
+    //  🎤  تسجيل صوتي
+    // ============================================================
+    async function toggleRecording() {
+        if (isRecording) {
+            stopRecording();
+        } else {
+            startRecording();
+        }
+    }
+    
+    async function startRecording() {
+        try {
+            const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+            mediaRecorder = new MediaRecorder(stream);
+            audioChunks = [];
+            
+            mediaRecorder.ondataavailable = event => {
+                audioChunks.push(event.data);
+            };
+            
+            mediaRecorder.onstop = async () => {
+                const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
+                await uploadAudio(audioBlob);
+                stream.getTracks().forEach(track => track.stop());
+            };
+            
+            mediaRecorder.start();
+            isRecording = true;
+            
+            document.getElementById('recordBtn').innerHTML = '<i class="fas fa-stop"></i>';
+            document.getElementById('recordBtn').classList.add('recording');
+            document.getElementById('recordingTimer').classList.add('active');
+            
+            recordingSeconds = 0;
+            updateTimerDisplay();
+            recordingTimer = setInterval(() => {
+                recordingSeconds++;
+                updateTimerDisplay();
+            }, 1000);
+            
+            showToast('🎤 تسجيل', 'جاري التسجيل...', '🎤', 2000);
+            
+        } catch (error) {
+            console.error('❌ خطأ في التسجيل:', error);
+            showToast('❌ خطأ', 'فشل الوصول للميكروفون', '❌', 3000);
+        }
+    }
+    
+    function stopRecording() {
+        if (mediaRecorder && isRecording) {
+            mediaRecorder.stop();
+            isRecording = false;
+            
+            document.getElementById('recordBtn').innerHTML = '<i class="fas fa-microphone"></i>';
+            document.getElementById('recordBtn').classList.remove('recording');
+            document.getElementById('recordingTimer').classList.remove('active');
+            
+            clearInterval(recordingTimer);
+        }
+    }
+    
+    function updateTimerDisplay() {
+        const minutes = Math.floor(recordingSeconds / 60);
+        const seconds = recordingSeconds % 60;
+        document.getElementById('recordingTimer').textContent = 
+            `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+    }
     
     // ============================================================
-    //  ⌨️  إرسال رسالة (مع بقاء الكيبورد)
+    //  📤  رفع الصوت
+    // ============================================================
+    async function uploadAudio(audioBlob) {
+        const fileName = `audio_${Date.now()}.webm`;
+        const storageRef = storage.ref(`chat_audio/${chatId}/${fileName}`);
+        
+        try {
+            const snapshot = await storageRef.put(audioBlob);
+            const audioUrl = await snapshot.ref.getDownloadURL();
+            
+            // إرسال الرسالة الصوتية
+            await sendMediaMessage(audioUrl, 'audio', fileName, audioBlob.size);
+            
+        } catch (error) {
+            console.error('❌ خطأ في رفع الصوت:', error);
+            showToast('❌ خطأ', 'فشل رفع الملف الصوتي', '❌', 3000);
+        }
+    }
+    
+    // ============================================================
+    //  📎  رفع ملف
+    // ============================================================
+    async function handleFileUpload(event) {
+        const files = event.target.files;
+        if (!files || files.length === 0) return;
+        
+        for (const file of files) {
+            // التحقق من نوع الملف
+            const fileType = file.type;
+            
+            if (fileType.startsWith('image/')) {
+                await uploadImage(file);
+            } else if (fileType.startsWith('video/')) {
+                await uploadVideo(file);
+            } else {
+                await uploadFile(file);
+            }
+        }
+        
+        event.target.value = '';
+    }
+    
+    async function uploadImage(file) {
+        const fileName = `image_${Date.now()}_${file.name}`;
+        const storageRef = storage.ref(`chat_images/${chatId}/${fileName}`);
+        
+        try {
+            const snapshot = await storageRef.put(file);
+            const imageUrl = await snapshot.ref.getDownloadURL();
+            
+            await sendMediaMessage(imageUrl, 'image', fileName, file.size);
+            
+        } catch (error) {
+            console.error('❌ خطأ في رفع الصورة:', error);
+            showToast('❌ خطأ', 'فشل رفع الصورة', '❌', 3000);
+        }
+    }
+    
+    async function uploadVideo(file) {
+        const fileName = `video_${Date.now()}_${file.name}`;
+        const storageRef = storage.ref(`chat_videos/${chatId}/${fileName}`);
+        
+        try {
+            const snapshot = await storageRef.put(file);
+            const videoUrl = await snapshot.ref.getDownloadURL();
+            
+            await sendMediaMessage(videoUrl, 'video', fileName, file.size);
+            
+        } catch (error) {
+            console.error('❌ خطأ في رفع الفيديو:', error);
+            showToast('❌ خطأ', 'فشل رفع الفيديو', '❌', 3000);
+        }
+    }
+    
+    async function uploadFile(file) {
+        const fileName = `file_${Date.now()}_${file.name}`;
+        const storageRef = storage.ref(`chat_files/${chatId}/${fileName}`);
+        
+        try {
+            const snapshot = await storageRef.put(file);
+            const fileUrl = await snapshot.ref.getDownloadURL();
+            
+            await sendMediaMessage(fileUrl, 'file', fileName, file.size, file.type);
+            
+        } catch (error) {
+            console.error('❌ خطأ في رفع الملف:', error);
+            showToast('❌ خطأ', 'فشل رفع الملف', '❌', 3000);
+        }
+    }
+    
+    // ============================================================
+    //  📨  إرسال رسالة وسائط
+    // ============================================================
+    async function sendMediaMessage(url, type, name, size, mimeType = null) {
+        const tempId = 'temp_' + Date.now() + '_' + Math.random().toString(36).substr(2, 6);
+        
+        const messageData = {
+            chatId: chatId,
+            senderId: currentUser.id,
+            receiverId: chatUser.id,
+            text: '',
+            timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+            status: 'sending',
+            reactions: {},
+            isEdited: false,
+            isDeleted: false,
+            file: url,
+            fileType: mimeType || type,
+            fileName: name,
+            fileSize: size
+        };
+        
+        // إضافة URL حسب النوع
+        if (type === 'image') messageData.imageUrl = url;
+        if (type === 'video') messageData.videoUrl = url;
+        if (type === 'audio') messageData.audioUrl = url;
+        
+        const localMessage = {
+            id: tempId,
+            senderId: currentUser.id,
+            receiverId: chatUser.id,
+            text: '',
+            timestamp: new Date(),
+            status: 'sending',
+            reactions: {},
+            isEdited: false,
+            isDeleted: false,
+            file: url,
+            fileType: mimeType || type,
+            fileName: name,
+            fileSize: size,
+            imageUrl: type === 'image' ? url : null,
+            videoUrl: type === 'video' ? url : null,
+            audioUrl: type === 'audio' ? url : null
+        };
+        
+        pendingMessages[tempId] = localMessage;
+        allMessages.push(localMessage);
+        
+        // عرض محلي
+        const container = document.getElementById('messagesArea');
+        const emptyState = container.querySelector('.empty-chat');
+        if (emptyState) emptyState.remove();
+        
+        const html = createMessageHTML(localMessage);
+        container.insertAdjacentHTML('beforeend', html);
+        scrollToBottom();
+        
+        try {
+            const docRef = await db.collection('messages').add(messageData);
+            const realId = docRef.id;
+            
+            delete pendingMessages[tempId];
+            
+            const index = allMessages.findIndex(m => m.id === tempId);
+            if (index !== -1) {
+                allMessages[index].id = realId;
+                allMessages[index].status = 'sent';
+            }
+            
+            processedMessageIds.add(realId);
+            
+            // تحديث العنصر
+            const oldEl = document.getElementById('msg-' + tempId);
+            if (oldEl) {
+                oldEl.id = 'msg-' + realId;
+                const newHtml = createMessageHTML(allMessages[index]);
+                oldEl.outerHTML = newHtml;
+            }
+            
+            showToast('✅ تم الإرسال', 'تم إرسال الملف بنجاح', '✅', 2000);
+            
+        } catch (error) {
+            console.error('❌ خطأ:', error);
+            showToast('❌ خطأ', 'فشل إرسال الملف', '❌', 3000);
+            
+            const index = allMessages.findIndex(m => m.id === tempId);
+            if (index !== -1) {
+                allMessages[index].status = 'failed';
+                const el = document.getElementById('msg-' + tempId);
+                if (el) {
+                    const newHtml = createMessageHTML(allMessages[index]);
+                    el.outerHTML = newHtml;
+                }
+            }
+        }
+    }
+    
+    // ============================================================
+    //  ⌨️  إرسال رسالة نصية
     // ============================================================
     async function sendMessage() {
         const input = document.getElementById('messageInput');
         const text = input.value.trim();
         
-        if (!text) return;
+        if (!text || isSending) return;
+        
+        isSending = true;
+        
+        const tempId = 'temp_' + Date.now() + '_' + Math.random().toString(36).substr(2, 6);
+        
+        const localMessage = {
+            id: tempId,
+            senderId: currentUser.id,
+            receiverId: chatUser.id,
+            text: text,
+            timestamp: new Date(),
+            status: 'sending',
+            reactions: {},
+            isEdited: false,
+            isDeleted: false,
+            replyTo: replyingTo ? {
+                id: replyingTo.id,
+                text: replyingTo.text,
+                sender: replyingTo.sender
+            } : null,
+            file: null,
+            fileType: null,
+            fileName: null,
+            fileSize: null,
+            imageUrl: null,
+            videoUrl: null,
+            audioUrl: null
+        };
+        
+        pendingMessages[tempId] = localMessage;
+        allMessages.push(localMessage);
+        
+        const container = document.getElementById('messagesArea');
+        const emptyState = container.querySelector('.empty-chat');
+        if (emptyState) emptyState.remove();
+        
+        const html = createMessageHTML(localMessage);
+        container.insertAdjacentHTML('beforeend', html);
+        scrollToBottom();
+        
+        input.value = '';
+        input.focus();
+        
+        const replyData = replyingTo;
+        if (replyingTo) cancelReply();
         
         try {
             const messageData = {
@@ -1366,35 +2054,89 @@
                 status: 'sent',
                 reactions: {},
                 isEdited: false,
-                isDeleted: false
+                isDeleted: false,
+                file: null,
+                fileType: null,
+                fileName: null,
+                fileSize: null,
+                imageUrl: null,
+                videoUrl: null,
+                audioUrl: null
             };
             
-            if (replyingTo) {
+            if (replyData) {
                 messageData.replyTo = {
-                    id: replyingTo.id,
-                    text: replyingTo.text,
-                    sender: replyingTo.sender
+                    id: replyData.id,
+                    text: replyData.text,
+                    sender: replyData.sender
                 };
-                cancelReply();
             }
             
-            await db.collection('messages').add(messageData);
+            const docRef = await db.collection('messages').add(messageData);
+            const realId = docRef.id;
             
-            input.value = '';
+            delete pendingMessages[tempId];
             
-            // تأكد من بقاء الكيبورد مفتوحاً
-            setTimeout(() => {
-                input.focus();
-                // التمرير للأسفل
-                scrollToBottom();
-            }, 50);
+            const index = allMessages.findIndex(m => m.id === tempId);
+            if (index !== -1) {
+                allMessages[index].id = realId;
+                allMessages[index].status = 'sent';
+            }
             
-            sendNotification(text);
+            processedMessageIds.add(realId);
+            
+            const oldEl = document.getElementById('msg-' + tempId);
+            if (oldEl) {
+                oldEl.id = 'msg-' + realId;
+                const newHtml = createMessageHTML(allMessages[index]);
+                oldEl.outerHTML = newHtml;
+            }
             
         } catch (error) {
-            console.error('❌ خطأ في إرسال الرسالة:', error);
-            showToast('❌ خطأ', 'فشل إرسال الرسالة', '❌', 3000);
+            console.error('❌ خطأ:', error);
+            
+            const index = allMessages.findIndex(m => m.id === tempId);
+            if (index !== -1) {
+                allMessages[index].status = 'failed';
+                const el = document.getElementById('msg-' + tempId);
+                if (el) {
+                    const newHtml = createMessageHTML(allMessages[index]);
+                    el.outerHTML = newHtml;
+                }
+            }
+            
+            showToast('❌ فشل الإرسال', 'حدث خطأ في الإرسال', '❌', 3000);
+            input.focus();
+        } finally {
+            isSending = false;
         }
+    }
+    
+    // ============================================================
+    //  📋  نسخ الرسالة
+    // ============================================================
+    function copyMessage() {
+        if (!selectedMessageData) return;
+        
+        const text = selectedMessageData.text || '';
+        if (text) {
+            navigator.clipboard.writeText(text).then(() => {
+                showToast('📋 تم النسخ', 'تم نسخ الرسالة إلى الحافظة', '📋', 2000);
+            }).catch(() => {
+                // طريقة بديلة
+                const textarea = document.createElement('textarea');
+                textarea.value = text;
+                document.body.appendChild(textarea);
+                textarea.select();
+                document.execCommand('copy');
+                textarea.remove();
+                showToast('📋 تم النسخ', 'تم نسخ الرسالة إلى الحافظة', '📋', 2000);
+            });
+        } else {
+            showToast('⚠️ تنبيه', 'لا يوجد نص لنسخه', '⚠️', 2000);
+        }
+        
+        closeMessageActions();
     }
     
     // ============================================================
@@ -1405,7 +2147,7 @@
         
         replyingTo = {
             id: selectedMessageData.id,
-            text: selectedMessageData.text,
+            text: selectedMessageData.text || 'ملف',
             sender: selectedMessageData.senderId === currentUser.id ? 'أنت' : chatUser.username
         };
         
@@ -1428,7 +2170,7 @@
     // ============================================================
     async function markMessagesAsRead() {
         const unreadMessages = allMessages.filter(msg => 
-            msg.receiverId === currentUser.id && msg.status !== 'read' && !msg.isDeleted
+            msg.receiverId === currentUser.id && msg.status !== 'read' && !msg.isDeleted && !msg.id.startsWith('temp_')
         );
         
         for (const msg of unreadMessages) {
@@ -1473,7 +2215,7 @@
             showToast('✅ تم التعديل', 'تم تعديل الرسالة بنجاح', '✏️', 2000);
             closeEditInput();
         } catch (error) {
-            console.error('❌ خطأ في تعديل الرسالة:', error);
+            console.error('❌ خطأ:', error);
             showToast('❌ خطأ', 'فشل تعديل الرسالة', '❌', 3000);
         }
     }
@@ -1484,22 +2226,22 @@
     async function deleteMessage() {
         if (!selectedMessageId) return;
         
-        if (!confirm('هل أنت متأكد من حذف هذه الرسالة؟')) {
-            closeMessageActions();
-            return;
-        }
+        const isOwner = selectedMessageData.senderId === currentUser.id;
+        const msg = isOwner ? 'هل أنت متأكد من حذف هذه الرسالة؟' : 'سيتم إخفاؤها للجميع.';
         
-        try {
-            await db.collection('messages').doc(selectedMessageId).update({
-                isDeleted: true,
-                text: 'تم حذف هذه الرسالة'
-            });
-            showToast('🗑️ تم الحذف', 'تم حذف الرسالة بنجاح', '🗑️', 2000);
-            closeMessageActions();
-        } catch (error) {
-            console.error('❌ خطأ في حذف الرسالة:', error);
-            showToast('❌ خطأ', 'فشل حذف الرسالة', '❌', 3000);
-        }
+        showConfirm('🗑️ حذف الرسالة', msg, async function() {
+            try {
+                await db.collection('messages').doc(selectedMessageId).update({
+                    isDeleted: true,
+                    text: 'تم حذف هذه الرسالة'
+                });
+                showToast('🗑️ تم الحذف', 'تم حذف الرسالة بنجاح', '🗑️', 2000);
+                closeMessageActions();
+            } catch (error) {
+                console.error('❌ خطأ:', error);
+                showToast('❌ خطأ', 'فشل حذف الرسالة', '❌', 3000);
+            }
+        });
     }
     
     // ============================================================
@@ -1507,15 +2249,18 @@
     // ============================================================
     function openMessageActions(messageId) {
         const msg = allMessages.find(m => m.id === messageId);
-        if (!msg) return;
-        
-        if (msg.senderId !== currentUser.id) {
-            showReactionPopup(messageId);
-            return;
-        }
+        if (!msg || msg.id.startsWith('temp_') || msg.isDeleted) return;
         
         selectedMessageId = messageId;
         selectedMessageData = msg;
+        
+        const editBtn = document.getElementById('editActionBtn');
+        if (msg.senderId === currentUser.id) {
+            editBtn.style.display = 'flex';
+        } else {
+            editBtn.style.display = 'none';
+        }
+        
         document.getElementById('messageActionsOverlay').classList.add('active');
     }
     
@@ -1526,8 +2271,8 @@
     }
     
     function editMessage() {
-        if (selectedMessageData) {
-            openEditInput(selectedMessageId, selectedMessageData.text);
+        if (selectedMessageData && selectedMessageData.senderId === currentUser.id) {
+            openEditInput(selectedMessageId, selectedMessageData.text || '');
         }
     }
     
@@ -1537,11 +2282,9 @@
     function handleTouchStart(event, messageId) {
         touchTimer = setTimeout(() => {
             const msg = allMessages.find(m => m.id === messageId);
-            if (msg && msg.senderId === currentUser.id) {
-                openMessageActions(messageId);
-            } else {
-                showReactionPopup(messageId);
-            }
+            if (!msg || msg.id.startsWith('temp_') || msg.isDeleted) return;
+            // ضغطة مطولة = قائمة الخيارات
+            openMessageActions(messageId);
         }, 500);
         touchMessageId = messageId;
     }
@@ -1593,28 +2336,14 @@
             closeReactionPopup();
             
         } catch (error) {
-            console.error('❌ خطأ في إضافة التفاعل:', error);
+            console.error('❌ خطأ:', error);
+            showToast('❌ خطأ', 'فشل إضافة التفاعل', '❌', 2000);
         }
     }
     
     async function toggleReaction(messageId, emoji) {
         selectedMessageId = messageId;
         await addReaction(emoji);
-    }
-    
-    // ============================================================
-    //  🔔  الإشعارات
-    // ============================================================
-    function sendNotification(text) {
-        if (!('Notification' in window)) return;
-        if (Notification.permission === 'granted') {
-            new Notification('📱 رسائلنا', {
-                body: `رسالة من ${currentUser.username}: ${text.substring(0, 30)}...`,
-                icon: 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><text y=".9em" font-size="90">💬</text></svg>'
-            });
-        } else if (Notification.permission === 'default') {
-            Notification.requestPermission();
-        }
     }
     
     // ============================================================
@@ -1647,6 +2376,13 @@
         return div.innerHTML;
     }
     
+    function formatFileSize(bytes) {
+        if (bytes < 1024) return bytes + ' B';
+        if (bytes < 1048576) return (bytes / 1024).toFixed(1) + ' KB';
+        if (bytes < 1073741824) return (bytes / 1048576).toFixed(1) + ' MB';
+        return (bytes / 1073741824).toFixed(1) + ' GB';
+    }
+    
     // ============================================================
     //  🧹  تنظيف
     // ============================================================
@@ -1654,15 +2390,19 @@
         if (unsubscribeMessages) {
             unsubscribeMessages();
         }
+        if (isRecording) {
+            stopRecording();
+        }
     });
     
-    // طلب إذن الإشعارات
-    if ('Notification' in window && Notification.permission === 'default') {
-        Notification.requestPermission();
-    }
-    
-    console.log('📱 رسائلنا — صفحة الدردشة النهائية ✅');
-    console.log('✨ الكيبورد ثابت، آخر رسالة دائماً في الأسفل');
+    console.log('📱 رسائلنا — النسخة النهائية ✅');
+    console.log('✨ كل المميزات مضافة');
+    console.log('🎤 تسجيل صوتي');
+    console.log('📷 صور وفيديوهات وملفات');
+    console.log('📋 نسخ الرسالة');
+    console.log('👆 ضغطة واحدة = تفاعلات');
+    console.log('👆 ضغطة مطولة = قائمة خيارات');
+    console.log('📌 تحميل مرة واحدة فقط');
 </script>
 
 </body>
