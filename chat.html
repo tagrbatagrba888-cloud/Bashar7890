@@ -1,3 +1,4 @@
+```html
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
@@ -49,10 +50,12 @@
             margin: 0 auto;
         }
         
-        /* ====== الهيدر ثابت في الأعلى ====== */
+        /* ====== الهيدر ثابت 100% ====== */
         .chat-header {
             flex-shrink: 0;
             flex-grow: 0;
+            min-height: 70px;
+            max-height: 70px;
             position: relative;
             z-index: 100;
             background: rgba(255, 252, 248, 0.98);
@@ -62,9 +65,9 @@
             align-items: center;
             justify-content: space-between;
             border-bottom: 1px solid rgba(212, 160, 140, 0.10);
-            min-height: 65px;
             width: 100%;
             box-shadow: 0 1px 8px rgba(0,0,0,0.04);
+            overflow: hidden;
         }
         .header-left {
             display: flex;
@@ -97,9 +100,7 @@
         .chat-user-info {
             flex: 1;
             min-width: 0;
-            flex-shrink: 0;
             overflow: hidden;
-            max-height: 60px;
         }
         .chat-user-info .name {
             font-size: 16px;
@@ -111,7 +112,7 @@
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
-            line-height: 1.4;
+            line-height: 1.3;
         }
         .chat-user-info .name .custom-name {
             color: #D4A08C;
@@ -125,7 +126,7 @@
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
-            line-height: 1.4;
+            line-height: 1.3;
         }
         .chat-user-info .status .online {
             color: #6FCF97;
@@ -161,7 +162,7 @@
         
         /* ====== منطقة الرسائل (تتحرك) ====== */
         .messages-area {
-            flex: 1 1 auto;
+            flex: 1;
             overflow-y: auto;
             padding: 12px 12px 8px;
             display: flex;
@@ -643,15 +644,17 @@
             transform: scale(1.05);
         }
         
-        /* ====== شريط الكتابة ثابت في الأسفل ====== */
+        /* ====== شريط الكتابة ثابت ====== */
         .input-area {
             flex-shrink: 0;
             flex-grow: 0;
+            min-height: 60px;
+            max-height: 60px;
             position: relative;
             background: rgba(255, 252, 248, 0.95);
             backdrop-filter: blur(12px);
             border-top: 1px solid rgba(212, 160, 140, 0.08);
-            padding: 10px 16px 14px;
+            padding: 8px 16px 10px;
             display: flex;
             gap: 8px;
             align-items: center;
@@ -666,6 +669,7 @@
             min-width: 0;
             align-items: center;
             width: 100%;
+            height: 100%;
         }
         .input-area .input-row form {
             display: flex;
@@ -673,10 +677,11 @@
             flex: 1;
             align-items: center;
             min-width: 0;
+            height: 100%;
         }
         .input-area input[type="text"] {
             flex: 1;
-            padding: 12px 18px;
+            padding: 10px 16px;
             background: rgba(245, 230, 211, 0.2);
             border: 1.5px solid rgba(212, 160, 140, 0.08);
             border-radius: 40px;
@@ -687,6 +692,7 @@
             font-family: 'Cairo', sans-serif;
             min-width: 60px;
             width: 100%;
+            height: 42px;
             autocomplete: off;
             inputmode: text;
             autocorrect: off;
@@ -709,13 +715,13 @@
             background: none;
             border: none;
             color: #D4A08C;
-            font-size: 22px;
+            font-size: 20px;
             cursor: pointer;
-            padding: 8px;
+            padding: 4px;
             border-radius: 50%;
             transition: 0.2s;
-            width: 44px;
-            height: 44px;
+            width: 38px;
+            height: 38px;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -737,8 +743,8 @@
             background: linear-gradient(135deg, #D4A08C, #C4907C);
             border: none;
             color: #FFFFFF;
-            width: 44px;
-            height: 44px;
+            width: 40px;
+            height: 40px;
             border-radius: 50%;
             font-size: 18px;
             cursor: pointer;
@@ -904,55 +910,6 @@
             color: #6FAF8A;
         }
         
-        /* ====== نافذة البحث ====== */
-        .search-modal .modal-box {
-            max-width: 420px;
-        }
-        .search-modal .modal-box .search-results {
-            max-height: 300px;
-            overflow-y: auto;
-            margin-top: 12px;
-            border-radius: 16px;
-            background: rgba(245, 230, 211, 0.10);
-        }
-        .search-modal .modal-box .search-results .search-item {
-            padding: 12px 16px;
-            border-bottom: 1px solid rgba(212, 160, 140, 0.06);
-            cursor: pointer;
-            transition: 0.15s;
-            border-radius: 8px;
-        }
-        .search-modal .modal-box .search-results .search-item:hover {
-            background: rgba(212, 160, 140, 0.06);
-        }
-        .search-modal .modal-box .search-results .search-item .search-sender {
-            font-size: 12px;
-            color: #D4A08C;
-            font-weight: 600;
-        }
-        .search-modal .modal-box .search-results .search-item .search-text {
-            font-size: 14px;
-            color: #3D2C20;
-            margin-top: 2px;
-        }
-        .search-modal .modal-box .search-results .search-item .search-time {
-            font-size: 11px;
-            color: #B8A090;
-            margin-top: 2px;
-        }
-        .search-modal .modal-box .search-results .no-results {
-            padding: 20px;
-            text-align: center;
-            color: #B8A090;
-            font-size: 14px;
-        }
-        .search-modal .modal-box .search-results .no-results i {
-            font-size: 32px;
-            display: block;
-            margin-bottom: 8px;
-            opacity: 0.3;
-        }
-        
         .toast-container {
             position: fixed;
             top: 20px;
@@ -1098,21 +1055,21 @@
         }
         
         @media (max-width: 480px) {
-            .chat-header { padding: 10px 12px; min-height: 58px; }
-            .chat-user-info .name { font-size: 15px; }
+            .chat-header { padding: 8px 12px; min-height: 60px; max-height: 60px; }
+            .chat-user-info .name { font-size: 14px; }
+            .chat-user-info .status { font-size: 11px; }
             .messages-area { padding: 12px 8px; }
             .message-bubble { padding: 8px 12px; font-size: 14px; }
-            .input-area { padding: 8px 12px 12px; gap: 4px; }
-            .input-area input[type="text"] { padding: 10px 14px; font-size: 14px; }
-            .input-area .action-btn { width: 38px; height: 38px; font-size: 18px; }
-            .input-area .send-btn { width: 38px; height: 38px; font-size: 16px; }
+            .input-area { padding: 6px 12px 8px; min-height: 52px; max-height: 52px; }
+            .input-area input[type="text"] { padding: 8px 14px; font-size: 14px; height: 36px; }
+            .input-area .action-btn { width: 32px; height: 32px; font-size: 16px; }
+            .input-area .send-btn { width: 34px; height: 34px; font-size: 16px; }
             .reaction-popup { padding: 8px 12px; bottom: 80px; }
             .reaction-popup .reaction-option { font-size: 24px; }
             .edit-input-container { bottom: 70px; padding: 12px 16px; }
             .reply-preview { padding: 6px 10px; }
             .message-media { max-width: 150px; max-height: 150px; }
             .message-audio { width: 150px; }
-            .search-modal .modal-box { padding: 24px 18px 20px; }
         }
     </style>
 </head>
@@ -1175,7 +1132,7 @@
         <div class="reply-text" id="replyPreviewText"></div>
     </div>
     
-    <!-- ====== شريط الكتابة ثابت في الأسفل ====== -->
+    <!-- ====== شريط الكتابة ثابت ====== -->
     <div class="input-area">
         <div class="input-row">
             <button class="action-btn" onclick="document.getElementById('fileInput').click()" title="إرفاق ملف">
@@ -1189,7 +1146,7 @@
             
             <span class="recording-timer" id="recordingTimer">00:00</span>
             
-            <form autocomplete="off" onsubmit="return false;" style="display:flex;flex:1;gap:8px;align-items:center;min-width:0;">
+            <form autocomplete="off" onsubmit="return false;" style="display:flex;flex:1;gap:8px;align-items:center;min-width:0;height:100%;">
                 <input type="text" 
                        id="messageInput" 
                        placeholder="اكتب رسالة..." 
@@ -1202,6 +1159,7 @@
                        data-form-type="other"
                        data-lpignore="true"
                        data-1p-ignore="true"
+                       onfocus="this.removeAttribute('readonly')"
                        onkeydown="if(event.key==='Enter'){event.preventDefault();sendMessage();return false;}" />
                 <button type="button" class="send-btn" onclick="sendMessage()">
                     <i class="fas fa-paper-plane"></i>
@@ -1276,6 +1234,7 @@
                    data-form-type="other"
                    data-lpignore="true"
                    data-1p-ignore="true"
+                   onfocus="this.removeAttribute('readonly')"
                    onkeydown="if(event.key==='Enter'){event.preventDefault();saveEdit();return false;}" />
             <button type="button" onclick="saveEdit()"><i class="fas fa-check"></i></button>
         </form>
@@ -2523,8 +2482,9 @@
     console.log('📌 الرسائل فقط هي اللي تتحرك');
     console.log('🔍 شريط البحث يظهر عند الضغط على المكبر');
     console.log('🔒 تم منع أيقونات (المفتاح - الموقع - بطاقة الدفع)');
-    console.log('✅ أقسم بالله أن الكود شغال 100%');
+    console.log('✅ تم تثبيت الاسم نهائياً');
 </script>
 
 </body>
 </html>
+```
