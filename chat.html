@@ -32,6 +32,7 @@
             bottom: 0;
         }
         
+        /* ====== الحاوية الرئيسية ====== */
         .chat-container {
             width: 100%;
             max-width: 480px;
@@ -49,12 +50,12 @@
             margin: 0 auto;
         }
         
-        /* ====== الهيدر ثابت ====== */
+        /* ====== الهيدر ثابت في الأعلى ====== */
         .chat-header {
             flex-shrink: 0;
-            min-height: 70px;
-            position: relative;
-            z-index: 10;
+            position: sticky;
+            top: 0;
+            z-index: 100;
             background: rgba(255, 252, 248, 0.98);
             backdrop-filter: blur(12px);
             padding: 10px 16px;
@@ -62,8 +63,13 @@
             align-items: center;
             justify-content: space-between;
             border-bottom: 1px solid rgba(212, 160, 140, 0.10);
+            min-height: 65px;
             width: 100%;
             box-shadow: 0 1px 8px rgba(0,0,0,0.04);
+            transform: translateZ(0);
+            -webkit-transform: translateZ(0);
+            backface-visibility: hidden;
+            -webkit-backface-visibility: hidden;
         }
         .header-left {
             display: flex;
@@ -93,10 +99,13 @@
             color: #D4A08C;
         }
         
+        /* ====== الاسم ثابت ====== */
         .chat-user-info {
             flex: 1;
             min-width: 0;
+            flex-shrink: 0;
             overflow: hidden;
+            max-height: 60px;
         }
         .chat-user-info .name {
             font-size: 16px;
@@ -108,6 +117,7 @@
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
+            line-height: 1.4;
         }
         .chat-user-info .name .custom-name {
             color: #D4A08C;
@@ -121,6 +131,7 @@
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
+            line-height: 1.4;
         }
         .chat-user-info .status .online {
             color: #6FCF97;
@@ -154,7 +165,7 @@
             color: #D4A08C;
         }
         
-        /* ====== منطقة الرسائل تتحرك ====== */
+        /* ====== منطقة الرسائل ====== */
         .messages-area {
             flex: 1;
             overflow-y: auto;
@@ -165,6 +176,7 @@
             scroll-behavior: smooth;
             -webkit-overflow-scrolling: touch;
             min-height: 0;
+            position: relative;
         }
         .messages-area::-webkit-scrollbar {
             width: 4px;
@@ -644,11 +656,10 @@
             transform: scale(1.05);
         }
         
-        /* ====== شريط الكتابة ثابت ====== */
+        /* ====== شريط الكتابة ثابت في الأسفل ====== */
         .input-area {
             flex-shrink: 0;
-            min-height: 65px;
-            position: relative;
+            position: sticky;
             bottom: 0;
             background: rgba(255, 252, 248, 0.95);
             backdrop-filter: blur(12px);
@@ -659,7 +670,11 @@
             align-items: center;
             flex-wrap: wrap;
             width: 100%;
-            z-index: 5;
+            z-index: 50;
+            transform: translateZ(0);
+            -webkit-transform: translateZ(0);
+            backface-visibility: hidden;
+            -webkit-backface-visibility: hidden;
         }
         .input-area .input-row {
             display: flex;
@@ -1065,11 +1080,11 @@
         }
         
         @media (max-width: 480px) {
-            .chat-header { padding: 10px 12px; min-height: 60px; }
+            .chat-header { padding: 10px 12px; min-height: 58px; }
             .chat-user-info .name { font-size: 15px; }
             .messages-area { padding: 12px 8px; }
             .message-bubble { padding: 8px 12px; font-size: 14px; }
-            .input-area { padding: 8px 12px 12px; min-height: 56px; }
+            .input-area { padding: 8px 12px 12px; gap: 4px; }
             .input-area input[type="search"] { padding: 10px 14px; font-size: 14px; }
             .input-area .action-btn { width: 38px; height: 38px; font-size: 18px; }
             .input-area .send-btn { width: 38px; height: 38px; font-size: 16px; }
@@ -1099,7 +1114,7 @@
 
 <div class="chat-container" id="chatApp">
     
-    <!-- ====== الهيدر ====== -->
+    <!-- ====== الهيدر ثابت ====== -->
     <header class="chat-header">
         <div class="header-left">
             <button class="back-btn" onclick="goBack()" title="رجوع">
@@ -1122,7 +1137,7 @@
         </div>
     </header>
     
-    <!-- ====== منطقة الرسائل ====== -->
+    <!-- ====== منطقة الرسائل (تتحرك) ====== -->
     <div class="messages-area" id="messagesArea">
         <div class="empty-chat">
             <i class="fas fa-feather-alt"></i>
@@ -1138,7 +1153,7 @@
         <div class="reply-text" id="replyPreviewText"></div>
     </div>
     
-    <!-- ====== شريط الكتابة ====== -->
+    <!-- ====== شريط الكتابة ثابت في الأسفل ====== -->
     <div class="input-area">
         <div class="input-row">
             <button class="action-btn" onclick="document.getElementById('fileInput').click()" title="إرفاق ملف">
