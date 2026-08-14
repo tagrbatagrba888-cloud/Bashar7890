@@ -48,13 +48,13 @@
             margin: 0 auto;
         }
         
-        /* ====== الهيدر ثابت ومقاوم للاختفاء ====== */
+        /* ====== الهيدر ثابت مثل الكود الثاني ====== */
         .chat-header {
-            flex-shrink: 0;
-            min-height: 70px;
-            position: sticky;
+            position: fixed;
             top: 0;
-            z-index: 100;
+            right: 0;
+            left: 0;
+            z-index: 1000;
             background: rgba(255, 252, 248, 0.98);
             backdrop-filter: blur(12px);
             padding: 10px 16px;
@@ -62,7 +62,7 @@
             align-items: center;
             justify-content: space-between;
             border-bottom: 1px solid rgba(212, 160, 140, 0.10);
-            width: 100%;
+            height: 70px;
             box-shadow: 0 1px 8px rgba(0,0,0,0.04);
             transform: translateZ(0);
             backface-visibility: hidden;
@@ -162,7 +162,13 @@
             color: #D4A08C;
         }
         
-        /* ====== منطقة الرسائل تتحرك ====== */
+        /* مسافة للهيدر */
+        .header-spacer {
+            height: 70px;
+            flex-shrink: 0;
+        }
+        
+        /* ====== منطقة الرسائل ====== */
         .messages-area {
             flex: 1;
             overflow-y: auto;
@@ -653,22 +659,22 @@
             transform: scale(1.05);
         }
         
-        /* ====== شريط الكتابة ثابت ====== */
+        /* ====== شريط الكتابة ثابت في الأسفل ====== */
         .input-area {
-            flex-shrink: 0;
-            min-height: 65px;
-            position: sticky;
+            position: fixed;
             bottom: 0;
+            right: 0;
+            left: 0;
             background: rgba(255, 252, 248, 0.95);
             backdrop-filter: blur(12px);
             border-top: 1px solid rgba(212, 160, 140, 0.08);
             padding: 10px 16px 14px;
+            padding-bottom: calc(14px + env(safe-area-inset-bottom));
             display: flex;
             gap: 8px;
             align-items: center;
             flex-wrap: wrap;
-            width: 100%;
-            z-index: 50;
+            z-index: 100;
         }
         .input-area .input-row {
             display: flex;
@@ -1074,14 +1080,15 @@
         }
         
         @media (max-width: 480px) {
-            .chat-header { padding: 10px 12px; min-height: 60px; }
+            .chat-header { padding: 10px 12px; height: 60px; }
+            .header-spacer { height: 60px; }
             .chat-user-info .name { font-size: 15px; }
             .messages-area { 
                 padding: 12px 8px; 
                 height: calc(100dvh - 60px - 56px);
             }
             .message-bubble { padding: 8px 12px; font-size: 14px; }
-            .input-area { padding: 8px 12px 12px; min-height: 56px; }
+            .input-area { padding: 8px 12px 12px; }
             .input-area input[type="search"] { padding: 10px 14px; font-size: 14px; }
             .input-area .action-btn { width: 38px; height: 38px; font-size: 18px; }
             .input-area .send-btn { width: 38px; height: 38px; font-size: 16px; }
@@ -1111,7 +1118,7 @@
 
 <div class="chat-container" id="chatApp">
     
-    <!-- ====== الهيدر ====== -->
+    <!-- ====== الهيدر ثابت مثل الكود الثاني ====== -->
     <header class="chat-header" id="chatHeader">
         <div class="header-left">
             <button class="back-btn" onclick="goBack()" title="رجوع">
@@ -1134,6 +1141,9 @@
         </div>
     </header>
     
+    <!-- ====== مسافة للهيدر ====== -->
+    <div class="header-spacer"></div>
+    
     <!-- ====== منطقة الرسائل ====== -->
     <div class="messages-area" id="messagesArea">
         <div class="empty-chat">
@@ -1149,42 +1159,42 @@
         <div class="reply-label">الرد على:</div>
         <div class="reply-text" id="replyPreviewText"></div>
     </div>
-    
-    <!-- ====== شريط الكتابة ====== -->
-    <div class="input-area" id="inputArea">
-        <div class="input-row">
-            <button class="action-btn" onclick="document.getElementById('fileInput').click()" title="إرفاق ملف">
-                <i class="fas fa-paperclip"></i>
+</div>
+
+<!-- ====== شريط الكتابة ثابت في الأسفل ====== -->
+<div class="input-area" id="inputArea">
+    <div class="input-row">
+        <button class="action-btn" onclick="document.getElementById('fileInput').click()" title="إرفاق ملف">
+            <i class="fas fa-paperclip"></i>
+        </button>
+        <input type="file" id="fileInput" class="file-input" accept="image/*,video/*,audio/*,.pdf,.doc,.docx,.txt" multiple onchange="handleFileUpload(event)" />
+        
+        <button class="action-btn" id="recordBtn" onclick="toggleRecording()" title="تسجيل صوتي">
+            <i class="fas fa-microphone"></i>
+        </button>
+        
+        <span class="recording-timer" id="recordingTimer">00:00</span>
+        
+        <form autocomplete="off" onsubmit="return false;" style="display:flex;flex:1;gap:8px;align-items:center;min-width:0;">
+            <input type="search" 
+                   id="messageInput" 
+                   name="search"
+                   role="searchbox"
+                   placeholder="اكتب رسالة..." 
+                   enterkeyhint="send"
+                   autocomplete="off"
+                   inputmode="text"
+                   autocorrect="off"
+                   autocapitalize="none"
+                   spellcheck="false"
+                   data-form-type="other"
+                   data-lpignore="true"
+                   data-1p-ignore="true"
+                   onkeydown="if(event.key==='Enter'){event.preventDefault();sendMessage();return false;}" />
+            <button type="button" class="send-btn" onclick="sendMessage()">
+                <i class="fas fa-paper-plane"></i>
             </button>
-            <input type="file" id="fileInput" class="file-input" accept="image/*,video/*,audio/*,.pdf,.doc,.docx,.txt" multiple onchange="handleFileUpload(event)" />
-            
-            <button class="action-btn" id="recordBtn" onclick="toggleRecording()" title="تسجيل صوتي">
-                <i class="fas fa-microphone"></i>
-            </button>
-            
-            <span class="recording-timer" id="recordingTimer">00:00</span>
-            
-            <form autocomplete="off" onsubmit="return false;" style="display:flex;flex:1;gap:8px;align-items:center;min-width:0;">
-                <input type="search" 
-                       id="messageInput" 
-                       name="search"
-                       role="searchbox"
-                       placeholder="اكتب رسالة..." 
-                       enterkeyhint="send"
-                       autocomplete="off"
-                       inputmode="text"
-                       autocorrect="off"
-                       autocapitalize="none"
-                       spellcheck="false"
-                       data-form-type="other"
-                       data-lpignore="true"
-                       data-1p-ignore="true"
-                       onkeydown="if(event.key==='Enter'){event.preventDefault();sendMessage();return false;}" />
-                <button type="button" class="send-btn" onclick="sendMessage()">
-                    <i class="fas fa-paper-plane"></i>
-                </button>
-            </form>
-        </div>
+        </form>
     </div>
 </div>
 
@@ -1292,7 +1302,7 @@
 </div>
 
 <script>
-    // ====== جافاسكريبت كامل ======
+    // ====== جافاسكريبت كامل مع تحديث فوري للتفاعلات والحذف ======
     const firebaseConfig = {
         apiKey: "AIzaSyBPRXdX-2O76F4-Q553GVY3G0fMsevaQCE",
         authDomain: "bbbb-1135e.firebaseapp.com",
@@ -1331,10 +1341,6 @@
     let isRecording = false;
     let recordingTimer = null;
     let recordingSeconds = 0;
-    
-    // متغيرات للتعامل مع تغيير حجم الشاشة
-    let viewportHeight = window.innerHeight;
-    let keyboardOpen = false;
     
     function showToast(title, text, icon = '🕊️', duration = 3000) {
         const container = document.getElementById('toastContainer');
@@ -1411,42 +1417,11 @@
                 scrollToBottom();
             }, 500);
             
-            // إضافة مستمع لتغيير حجم الشاشة
-            window.addEventListener('resize', handleResize);
-            
         } catch (e) {
             console.error(e);
             window.location.href = 'index.html';
         }
     };
-    
-    function handleResize() {
-        const newHeight = window.innerHeight;
-        const header = document.getElementById('chatHeader');
-        const messagesArea = document.getElementById('messagesArea');
-        const inputArea = document.getElementById('inputArea');
-        
-        // تحديد إذا كانت لوحة المفاتيح مفتوحة (عندما يصبح الارتفاع أصغر)
-        if (newHeight < viewportHeight) {
-            keyboardOpen = true;
-            // تأكد من أن الهيدر ثابت في الأعلى
-            header.style.position = 'sticky';
-            header.style.top = '0';
-            header.style.zIndex = '100';
-        } else {
-            keyboardOpen = false;
-            header.style.position = 'sticky';
-            header.style.top = '0';
-        }
-        
-        // تحديث ارتفاع منطقة الرسائل
-        const headerHeight = header.offsetHeight || 70;
-        const inputHeight = inputArea.offsetHeight || 65;
-        messagesArea.style.height = `calc(100dvh - ${headerHeight}px - ${inputHeight}px)`;
-        
-        viewportHeight = newHeight;
-        setTimeout(scrollToBottom, 200);
-    }
     
     function loadUserStatus() {
         db.collection('users').doc(chatUser.id).onSnapshot((doc) => {
@@ -1599,53 +1574,99 @@
             .where('chatId', '==', chatId)
             .orderBy('timestamp', 'asc')
             .onSnapshot((snapshot) => {
-                const newMessages = [];
-                const tempIds = Object.keys(pendingMessages);
-                
-                snapshot.forEach((doc) => {
+                snapshot.docChanges().forEach((change) => {
+                    const doc = change.doc;
                     const data = doc.data();
-                    if (tempIds.includes(doc.id)) return;
-                    if (processedMessageIds.has(doc.id)) return;
                     
-                    newMessages.push({
-                        id: doc.id,
-                        senderId: data.senderId || '',
-                        receiverId: data.receiverId || '',
-                        text: data.text || '',
-                        timestamp: data.timestamp ? data.timestamp.toDate() : new Date(),
-                        status: data.status || 'sent',
-                        reactions: data.reactions || {},
-                        isEdited: data.isEdited || false,
-                        isDeleted: data.isDeleted || false,
-                        replyTo: data.replyTo || null,
-                        file: data.file || null,
-                        fileType: data.fileType || null,
-                        fileName: data.fileName || null,
-                        fileSize: data.fileSize || null,
-                        audioUrl: data.audioUrl || null,
-                        imageUrl: data.imageUrl || null,
-                        videoUrl: data.videoUrl || null
-                    });
-                });
-                
-                if (newMessages.length > 0) {
-                    newMessages.forEach(msg => {
-                        processedMessageIds.add(msg.id);
-                    });
-                    
-                    allMessages = [...allMessages, ...newMessages];
-                    allMessages.sort((a, b) => a.timestamp.getTime() - b.timestamp.getTime());
-                    
-                    try {
-                        localStorage.setItem('cachedMessages_' + chatId, JSON.stringify(allMessages));
-                    } catch (e) {}
-                    
-                    if (!isSending) {
-                        addNewMessages(newMessages);
+                    if (change.type === 'added') {
+                        // رسالة جديدة
+                        if (processedMessageIds.has(doc.id)) return;
+                        if (pendingMessages[doc.id]) return;
+                        
+                        const newMsg = {
+                            id: doc.id,
+                            senderId: data.senderId || '',
+                            receiverId: data.receiverId || '',
+                            text: data.text || '',
+                            timestamp: data.timestamp ? data.timestamp.toDate() : new Date(),
+                            status: data.status || 'sent',
+                            reactions: data.reactions || {},
+                            isEdited: data.isEdited || false,
+                            isDeleted: data.isDeleted || false,
+                            replyTo: data.replyTo || null,
+                            file: data.file || null,
+                            fileType: data.fileType || null,
+                            fileName: data.fileName || null,
+                            fileSize: data.fileSize || null,
+                            audioUrl: data.audioUrl || null,
+                            imageUrl: data.imageUrl || null,
+                            videoUrl: data.videoUrl || null
+                        };
+                        
+                        processedMessageIds.add(doc.id);
+                        allMessages.push(newMsg);
+                        allMessages.sort((a, b) => a.timestamp.getTime() - b.timestamp.getTime());
+                        
+                        // إضافة الرسالة فوراً بدون إعادة تحميل الكل
+                        addNewMessage(newMsg);
+                        setTimeout(() => scrollToBottom(), 150);
                     }
                     
-                    setTimeout(() => scrollToBottom(), 150);
-                }
+                    if (change.type === 'modified') {
+                        // تحديث رسالة موجودة (تفاعلات، تعديل، حذف)
+                        const index = allMessages.findIndex(m => m.id === doc.id);
+                        if (index !== -1) {
+                            const oldMsg = allMessages[index];
+                            const newMsg = {
+                                id: doc.id,
+                                senderId: data.senderId || oldMsg.senderId,
+                                receiverId: data.receiverId || oldMsg.receiverId,
+                                text: data.text || oldMsg.text,
+                                timestamp: data.timestamp ? data.timestamp.toDate() : oldMsg.timestamp,
+                                status: data.status || oldMsg.status,
+                                reactions: data.reactions || {},
+                                isEdited: data.isEdited || false,
+                                isDeleted: data.isDeleted || false,
+                                replyTo: data.replyTo || oldMsg.replyTo || null,
+                                file: data.file || oldMsg.file || null,
+                                fileType: data.fileType || oldMsg.fileType || null,
+                                fileName: data.fileName || oldMsg.fileName || null,
+                                fileSize: data.fileSize || oldMsg.fileSize || null,
+                                audioUrl: data.audioUrl || oldMsg.audioUrl || null,
+                                imageUrl: data.imageUrl || oldMsg.imageUrl || null,
+                                videoUrl: data.videoUrl || oldMsg.videoUrl || null
+                            };
+                            
+                            allMessages[index] = newMsg;
+                            
+                            // تحديث الرسالة فوراً في الواجهة
+                            updateMessageElement(newMsg);
+                        }
+                    }
+                    
+                    if (change.type === 'removed') {
+                        // حذف رسالة
+                        const index = allMessages.findIndex(m => m.id === doc.id);
+                        if (index !== -1) {
+                            allMessages.splice(index, 1);
+                            // حذف العنصر من الواجهة
+                            const el = document.getElementById('msg-' + doc.id);
+                            if (el) {
+                                el.remove();
+                            }
+                            // إذا أصبحت الرسائل فارغة
+                            if (allMessages.filter(m => !m.isDeleted).length === 0) {
+                                document.getElementById('messagesArea').innerHTML = `
+                                    <div class="empty-chat">
+                                        <i class="fas fa-feather-alt"></i>
+                                        <h3>لا توجد رسائل بعد</h3>
+                                        <p>ابدأ المحادثة الآن</p>
+                                    </div>
+                                `;
+                            }
+                        }
+                    }
+                });
                 
                 setTimeout(() => {
                     markMessagesAsRead();
@@ -1653,6 +1674,40 @@
             }, (error) => {
                 console.error('❌ خطأ في الاستماع:', error);
             });
+    }
+    
+    function addNewMessage(msg) {
+        const container = document.getElementById('messagesArea');
+        const emptyState = container.querySelector('.empty-chat');
+        if (emptyState) {
+            emptyState.remove();
+        }
+        
+        if (msg.isDeleted) return;
+        if (document.getElementById('msg-' + msg.id)) return;
+        
+        const html = createMessageHTML(msg);
+        container.insertAdjacentHTML('beforeend', html);
+        
+        const el = container.lastElementChild;
+        if (el && el.id === 'msg-' + msg.id) {
+            messageElements[msg.id] = el;
+        }
+    }
+    
+    function updateMessageElement(msg) {
+        const el = document.getElementById('msg-' + msg.id);
+        if (!el) return;
+        
+        // إعادة إنشاء العنصر بالبيانات الجديدة
+        const newHtml = createMessageHTML(msg);
+        el.outerHTML = newHtml;
+        
+        // تحديث المرجع
+        const newEl = document.getElementById('msg-' + msg.id);
+        if (newEl) {
+            messageElements[msg.id] = newEl;
+        }
     }
     
     function renderAllMessages(messages) {
@@ -1801,38 +1856,12 @@
         showReactionPopup(messageId);
     }
     
-    function addNewMessages(newMessages) {
-        const container = document.getElementById('messagesArea');
-        
-        const emptyState = container.querySelector('.empty-chat');
-        if (emptyState) {
-            emptyState.remove();
-        }
-        
-        newMessages.forEach(msg => {
-            if (msg.isDeleted || msg.id.startsWith('temp_')) return;
-            if (document.getElementById('msg-' + msg.id)) return;
-            
-            const html = createMessageHTML(msg);
-            container.insertAdjacentHTML('beforeend', html);
-            
-            const el = container.lastElementChild;
-            if (el && el.id === 'msg-' + msg.id) {
-                messageElements[msg.id] = el;
-            }
-        });
-        
-        setTimeout(() => scrollToBottom(), 50);
-    }
-    
     function scrollToBottom() {
         const container = document.getElementById('messagesArea');
-        container.scrollTop = container.scrollHeight;
+        if (container) {
+            container.scrollTop = container.scrollHeight;
+        }
     }
-    
-    window.addEventListener('resize', function() {
-        setTimeout(scrollToBottom, 200);
-    });
     
     async function toggleRecording() {
         if (isRecording) {
@@ -2272,6 +2301,7 @@
         const msg = isOwner ? 'هل أنت متأكد من حذف هذه الرسالة؟' : 'سيتم إخفاؤها للجميع.';
         showConfirm('🗑️ حذف الرسالة', msg, async function() {
             try {
+                // حذف من Firestore - سيتم تحديث الواجهة فوراً من خلال المستمع
                 await db.collection('messages').doc(selectedMessageId).update({ isDeleted: true, text: 'تم حذف هذه الرسالة' });
                 showToast('🗑️ تم الحذف', 'تم حذف الرسالة بنجاح', '🗑️', 2000);
                 closeMessageActions();
@@ -2360,6 +2390,7 @@
             
             await msgRef.update({ reactions: reactions });
             closeReactionPopup();
+            // المستمع سيقوم بتحديث الواجهة فوراً
         } catch (error) {
             console.error('❌ خطأ:', error);
             showToast('❌ خطأ', 'فشل إضافة التفاعل', '❌', 2000);
@@ -2410,10 +2441,32 @@
         }
     });
     
+    // التحقق من تغيير ارتفاع الشاشة (لوحة المفاتيح)
+    let lastHeight = window.innerHeight;
+    window.addEventListener('resize', function() {
+        const currentHeight = window.innerHeight;
+        if (currentHeight !== lastHeight) {
+            // تحديث ارتفاع منطقة الرسائل
+            const messagesArea = document.getElementById('messagesArea');
+            const header = document.querySelector('.chat-header');
+            const inputArea = document.getElementById('inputArea');
+            
+            const headerHeight = header ? header.offsetHeight : 70;
+            const inputHeight = inputArea ? inputArea.offsetHeight : 65;
+            
+            if (messagesArea) {
+                messagesArea.style.height = `calc(100dvh - ${headerHeight}px - ${inputHeight}px)`;
+            }
+            
+            lastHeight = currentHeight;
+            setTimeout(scrollToBottom, 200);
+        }
+    });
+    
     console.log('📱 رسائلنا — الدردشة النهائية ✅');
-    console.log('📌 الهيدر ثابت في الأعلى');
+    console.log('📌 الهيدر ثابت في الأعلى (مثل الكود الثاني)');
     console.log('📌 شريط الكتابة ثابت في الأسفل');
-    console.log('📌 الرسائل فقط هي اللي تتحرك');
+    console.log('📌 تحديث فوري للتفاعلات والحذف بدون تحديث الصفحة');
     console.log('🔒 تم منع أيقونات (المفتاح - الموقع - بطاقة الدفع)');
 </script>
 
