@@ -1,4 +1,4 @@
- <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8" />
@@ -35,7 +35,6 @@
         .chat-container {
             width: 100%;
             max-width: 480px;
-            height: 100vh;
             height: 100dvh;
             background: rgba(255, 252, 248, 0.92);
             backdrop-filter: blur(20px);
@@ -49,12 +48,13 @@
             margin: 0 auto;
         }
         
-        /* ====== الهيدر ثابت ====== */
+        /* ====== الهيدر ثابت ومقاوم للاختفاء ====== */
         .chat-header {
             flex-shrink: 0;
             min-height: 70px;
-            position: relative;
-            z-index: 10;
+            position: sticky;
+            top: 0;
+            z-index: 100;
             background: rgba(255, 252, 248, 0.98);
             backdrop-filter: blur(12px);
             padding: 10px 16px;
@@ -64,6 +64,10 @@
             border-bottom: 1px solid rgba(212, 160, 140, 0.10);
             width: 100%;
             box-shadow: 0 1px 8px rgba(0,0,0,0.04);
+            transform: translateZ(0);
+            backface-visibility: hidden;
+            -webkit-backface-visibility: hidden;
+            will-change: transform;
         }
         .header-left {
             display: flex;
@@ -97,6 +101,9 @@
             flex: 1;
             min-width: 0;
             overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
         }
         .chat-user-info .name {
             font-size: 16px;
@@ -113,6 +120,7 @@
             color: #D4A08C;
             font-size: 12px;
             font-weight: 400;
+            flex-shrink: 0;
         }
         .chat-user-info .status {
             font-size: 12px;
@@ -165,6 +173,7 @@
             scroll-behavior: smooth;
             -webkit-overflow-scrolling: touch;
             min-height: 0;
+            height: calc(100dvh - 70px - 65px);
         }
         .messages-area::-webkit-scrollbar {
             width: 4px;
@@ -648,7 +657,7 @@
         .input-area {
             flex-shrink: 0;
             min-height: 65px;
-            position: relative;
+            position: sticky;
             bottom: 0;
             background: rgba(255, 252, 248, 0.95);
             backdrop-filter: blur(12px);
@@ -659,7 +668,7 @@
             align-items: center;
             flex-wrap: wrap;
             width: 100%;
-            z-index: 5;
+            z-index: 50;
         }
         .input-area .input-row {
             display: flex;
@@ -1067,7 +1076,10 @@
         @media (max-width: 480px) {
             .chat-header { padding: 10px 12px; min-height: 60px; }
             .chat-user-info .name { font-size: 15px; }
-            .messages-area { padding: 12px 8px; }
+            .messages-area { 
+                padding: 12px 8px; 
+                height: calc(100dvh - 60px - 56px);
+            }
             .message-bubble { padding: 8px 12px; font-size: 14px; }
             .input-area { padding: 8px 12px 12px; min-height: 56px; }
             .input-area input[type="search"] { padding: 10px 14px; font-size: 14px; }
@@ -1100,7 +1112,7 @@
 <div class="chat-container" id="chatApp">
     
     <!-- ====== الهيدر ====== -->
-    <header class="chat-header">
+    <header class="chat-header" id="chatHeader">
         <div class="header-left">
             <button class="back-btn" onclick="goBack()" title="رجوع">
                 <i class="fas fa-arrow-right"></i>
@@ -1139,7 +1151,7 @@
     </div>
     
     <!-- ====== شريط الكتابة ====== -->
-    <div class="input-area">
+    <div class="input-area" id="inputArea">
         <div class="input-row">
             <button class="action-btn" onclick="document.getElementById('fileInput').click()" title="إرفاق ملف">
                 <i class="fas fa-paperclip"></i>
@@ -1320,6 +1332,10 @@
     let recordingTimer = null;
     let recordingSeconds = 0;
     
+    // متغيرات للتعامل مع تغيير حجم الشاشة
+    let viewportHeight = window.innerHeight;
+    let keyboardOpen = false;
+    
     function showToast(title, text, icon = '🕊️', duration = 3000) {
         const container = document.getElementById('toastContainer');
         const toast = document.createElement('div');
@@ -1395,11 +1411,42 @@
                 scrollToBottom();
             }, 500);
             
+            // إضافة مستمع لتغيير حجم الشاشة
+            window.addEventListener('resize', handleResize);
+            
         } catch (e) {
             console.error(e);
             window.location.href = 'index.html';
         }
     };
+    
+    function handleResize() {
+        const newHeight = window.innerHeight;
+        const header = document.getElementById('chatHeader');
+        const messagesArea = document.getElementById('messagesArea');
+        const inputArea = document.getElementById('inputArea');
+        
+        // تحديد إذا كانت لوحة المفاتيح مفتوحة (عندما يصبح الارتفاع أصغر)
+        if (newHeight < viewportHeight) {
+            keyboardOpen = true;
+            // تأكد من أن الهيدر ثابت في الأعلى
+            header.style.position = 'sticky';
+            header.style.top = '0';
+            header.style.zIndex = '100';
+        } else {
+            keyboardOpen = false;
+            header.style.position = 'sticky';
+            header.style.top = '0';
+        }
+        
+        // تحديث ارتفاع منطقة الرسائل
+        const headerHeight = header.offsetHeight || 70;
+        const inputHeight = inputArea.offsetHeight || 65;
+        messagesArea.style.height = `calc(100dvh - ${headerHeight}px - ${inputHeight}px)`;
+        
+        viewportHeight = newHeight;
+        setTimeout(scrollToBottom, 200);
+    }
     
     function loadUserStatus() {
         db.collection('users').doc(chatUser.id).onSnapshot((doc) => {
