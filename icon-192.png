@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 192 192" width="192" height="192">
+  <rect width="192" height="192" rx="40" fill="#D4A08C"/>
+  <circle cx="96" cy="96" r="70" fill="#FFFFFF" opacity="0.15"/>
+  <text x="96" y="115" font-family="Cairo, sans-serif" font-size="100" font-weight="800" fill="#FFFFFF" text-anchor="middle">🕊️</text>
+  <text x="96" y="165" font-family="Cairo, sans-serif" font-size="28" font-weight="700" fill="#FFFFFF" text-anchor="middle">رسائلنا</text>
+</svg>

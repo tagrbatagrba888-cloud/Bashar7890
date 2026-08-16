@@ -1,31 +1,40 @@
-
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
     <title>رسائلنا - الرئيسية</title>
     
-    <!-- ربط Firebase -->
+    <!-- ====== PWA ====== -->
+    <link rel="manifest" href="manifest.json" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="رسائلنا" />
+    <link rel="apple-touch-icon" href="icon-192.png" />
+    <meta name="theme-color" content="#D4A08C" />
+    
+    <!-- ====== Firebase ====== -->
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
     
-    <!-- أيقونات Font Awesome -->
+    <!-- ====== Font Awesome ====== -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
     
-    <!-- خط أنيق -->
+    <!-- ====== Google Font ====== -->
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;800&display=swap" rel="stylesheet" />
     
     <style>
-        /* ====== RESET & BASE ====== */
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
             font-family: 'Cairo', 'Segoe UI', system-ui, sans-serif;
+            -webkit-tap-highlight-color: transparent;
+            touch-action: manipulation;
         }
+        
         body {
-            min-height: 100vh;
+            min-height: 100dvh;
             display: flex;
             justify-content: center;
             align-items: flex-start;
@@ -36,11 +45,10 @@
             overflow: hidden;
         }
         
-        /* ====== MAIN CONTAINER ====== */
         .app-container {
             width: 100%;
             max-width: 480px;
-            min-height: 100vh;
+            min-height: 100dvh;
             background: rgba(255, 252, 248, 0.92);
             backdrop-filter: blur(20px);
             display: flex;
@@ -52,11 +60,10 @@
             border-right: 1px solid rgba(255,255,255,0.3);
         }
         
-        /* ====== HEADER ====== */
         .header {
             background: rgba(255, 252, 248, 0.95);
             backdrop-filter: blur(12px);
-            padding: 16px 20px;
+            padding: 14px 20px;
             display: flex;
             align-items: center;
             justify-content: space-between;
@@ -64,6 +71,7 @@
             position: sticky;
             top: 0;
             z-index: 100;
+            min-height: 64px;
         }
         .header-left {
             display: flex;
@@ -88,20 +96,20 @@
         }
         .header-actions {
             display: flex;
-            gap: 8px;
+            gap: 6px;
             align-items: center;
         }
         .header-actions button {
             background: none;
             border: none;
             color: #B8A090;
-            font-size: 20px;
+            font-size: 18px;
             cursor: pointer;
             transition: 0.2s;
             padding: 6px;
             border-radius: 50%;
-            width: 40px;
-            height: 40px;
+            width: 38px;
+            height: 38px;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -110,12 +118,13 @@
             background: rgba(212, 160, 140, 0.08);
             color: #D4A08C;
         }
-        .header-actions .settings-btn:hover { color: #D4A08C; }
-        .header-actions .logout-btn:hover { color: #C87A7A; }
+        .header-actions .logout-btn:hover {
+            color: #C87A7A;
+            background: rgba(200, 122, 122, 0.08);
+        }
         
-        /* ====== SEARCH BAR ====== */
         .search-container {
-            padding: 16px 20px 12px;
+            padding: 12px 20px 10px;
             background: rgba(255, 252, 248, 0.6);
         }
         .search-box {
@@ -138,27 +147,22 @@
         }
         .search-box input {
             flex: 1;
-            padding: 14px 12px;
+            padding: 12px 12px;
             background: transparent;
             border: none;
             color: #3D2C20;
             font-size: 15px;
             outline: none;
-            autocomplete: off;
-            inputmode: text;
-            autocorrect: off;
-            autocapitalize: none;
-            spellcheck: false;
+            min-width: 60px;
         }
         .search-box input::placeholder {
             color: #C4B0A0;
             font-weight: 300;
         }
         
-        /* ====== USERS LIST ====== */
         .users-list {
             flex: 1;
-            padding: 8px 16px 20px;
+            padding: 8px 16px 80px;
             overflow-y: auto;
             display: flex;
             flex-direction: column;
@@ -175,11 +179,10 @@
             border-radius: 10px;
         }
         
-        /* ====== USER CARD ====== */
         .user-card {
             display: flex;
             align-items: center;
-            padding: 14px 16px;
+            padding: 12px 16px;
             border-radius: 16px;
             background: rgba(255, 252, 248, 0.5);
             transition: 0.2s;
@@ -187,9 +190,10 @@
             border: 1px solid transparent;
             position: relative;
             animation: fadeInCard 0.2s ease;
+            touch-action: manipulation;
         }
         @keyframes fadeInCard {
-            from { opacity: 0; transform: translateY(8px); }
+            from { opacity: 0; transform: translateY(6px); }
             to { opacity: 1; transform: translateY(0); }
         }
         .user-card:hover {
@@ -214,10 +218,9 @@
             text-align: center;
         }
         
-        /* ====== USER AVATAR ====== */
         .user-avatar {
-            width: 52px;
-            height: 52px;
+            width: 50px;
+            height: 50px;
             border-radius: 50%;
             flex-shrink: 0;
             position: relative;
@@ -256,7 +259,6 @@
         .online-dot.online { background: #6FCF97; }
         .online-dot.offline { background: #BDBDBD; }
         
-        /* ====== صورة طبيعة ====== */
         .nature-avatar {
             width: 100%;
             height: 100%;
@@ -266,7 +268,7 @@
         
         .user-info {
             flex: 1;
-            margin: 0 14px;
+            margin: 0 12px;
             min-width: 0;
         }
         .user-info .name {
@@ -275,11 +277,32 @@
             color: #3D2C20;
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 6px;
+            flex-wrap: wrap;
         }
         .user-info .name .pinned {
             color: #D4A08C;
             font-size: 12px;
+        }
+        .user-info .name .custom-name {
+            color: #D4A08C;
+            font-size: 12px;
+            font-weight: 400;
+            flex-shrink: 0;
+        }
+        .user-info .name .edit-name-btn {
+            background: none;
+            border: none;
+            color: #C4B0A0;
+            font-size: 12px;
+            cursor: pointer;
+            padding: 2px 6px;
+            border-radius: 12px;
+            transition: 0.2s;
+        }
+        .user-info .name .edit-name-btn:hover {
+            background: rgba(212, 160, 140, 0.08);
+            color: #D4A08C;
         }
         .user-info .last-message {
             font-size: 13px;
@@ -289,7 +312,7 @@
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
-            max-width: 180px;
+            max-width: 160px;
         }
         .user-info .last-message i {
             font-size: 10px;
@@ -311,6 +334,7 @@
             display: flex;
             gap: 4px;
             align-items: center;
+            flex-shrink: 0;
         }
         .user-actions button {
             background: none;
@@ -326,6 +350,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
+            touch-action: manipulation;
         }
         .user-actions .pin-btn:hover {
             color: #D4A08C;
@@ -342,7 +367,6 @@
             background: rgba(212, 160, 140, 0.08);
         }
         
-        /* ====== EMPTY STATE ====== */
         .empty-state {
             text-align: center;
             padding: 60px 20px;
@@ -359,7 +383,7 @@
             font-size: 18px;
         }
         
-        /* ====== SETTINGS MODAL ====== */
+        /* ====== مودال تغيير اسم الشخص ====== */
         .modal-overlay {
             display: none;
             position: fixed;
@@ -382,7 +406,6 @@
             from { opacity: 0; transform: scale(0.95); }
             to { opacity: 1; transform: scale(1); }
         }
-        
         .modal-box {
             background: #FFFFFF;
             border-radius: 32px;
@@ -394,7 +417,7 @@
         }
         .modal-box h2 {
             font-size: 24px;
-            margin-bottom: 24px;
+            margin-bottom: 20px;
             text-align: center;
             color: #3D2C20;
         }
@@ -422,18 +445,13 @@
             font-size: 15px;
             outline: none;
             transition: 0.25s;
-            autocomplete: off;
-            inputmode: text;
-            autocorrect: off;
-            autocapitalize: none;
-            spellcheck: false;
+            touch-action: manipulation;
         }
         .modal-box .input-group input:focus {
             border-color: #D4A08C;
             background: #FFFFFF;
             box-shadow: 0 0 0 4px rgba(212, 160, 140, 0.06);
         }
-        
         .modal-divider {
             height: 1px;
             background: rgba(212, 160, 140, 0.10);
@@ -453,6 +471,7 @@
             font-weight: 600;
             cursor: pointer;
             transition: 0.25s;
+            touch-action: manipulation;
         }
         .modal-actions .btn-save {
             background: linear-gradient(135deg, #D4A08C, #C4907C);
@@ -462,14 +481,6 @@
         .modal-actions .btn-save:hover {
             transform: scale(1.02);
             box-shadow: 0 8px 28px rgba(212, 160, 140, 0.35);
-        }
-        .modal-actions .btn-danger {
-            background: rgba(200, 122, 122, 0.10);
-            color: #C87A7A;
-            border: 1px solid rgba(200, 122, 122, 0.15);
-        }
-        .modal-actions .btn-danger:hover {
-            background: rgba(200, 122, 122, 0.15);
         }
         .modal-actions .btn-cancel {
             background: rgba(212, 160, 140, 0.06);
@@ -486,20 +497,19 @@
             margin-top: 12px;
             display: none;
         }
-        .modal-message.error {
-            display: block;
-            background: rgba(200, 122, 122, 0.08);
-            color: #C87A7A;
-            border: 1px solid rgba(200, 122, 122, 0.10);
-        }
         .modal-message.success {
             display: block;
             background: rgba(111, 207, 151, 0.08);
             color: #6FAF8A;
             border: 1px solid rgba(111, 207, 151, 0.10);
         }
+        .modal-message.error {
+            display: block;
+            background: rgba(200, 122, 122, 0.08);
+            color: #C87A7A;
+            border: 1px solid rgba(200, 122, 122, 0.10);
+        }
         
-        /* ====== TOAST ====== */
         .toast-container {
             position: fixed;
             top: 20px;
@@ -563,42 +573,37 @@
             padding: 4px;
         }
         
-        /* ====== RESPONSIVE ====== */
         @media (max-width: 480px) {
-            .header { padding: 12px 16px; }
+            .header { padding: 12px 16px; min-height: 56px; }
             .header-left h1 { font-size: 18px; }
-            .user-card { padding: 12px 14px; }
+            .user-card { padding: 10px 12px; }
             .user-avatar { width: 44px; height: 44px; }
             .user-avatar .avatar-fallback { font-size: 18px; }
             .modal-box { padding: 24px 16px; }
             .toast { padding: 12px 16px; }
+            .users-list { padding: 8px 12px 80px; }
+            .user-info .last-message { max-width: 100px; }
         }
     </style>
 </head>
 <body>
 
-<!-- ====== TOAST CONTAINER ====== -->
 <div class="toast-container" id="toastContainer"></div>
 
 <div class="app-container" id="app">
     
-    <!-- ====== HEADER ====== -->
     <header class="header">
         <div class="header-left">
             <i class="fas fa-feather-alt"></i>
             <h1>رسائل<span>نا</span></h1>
         </div>
         <div class="header-actions">
-            <button class="settings-btn" onclick="openSettings()" title="الإعدادات">
-                <i class="fas fa-cog"></i>
-            </button>
             <button class="logout-btn" onclick="handleLogout()" title="تسجيل الخروج">
                 <i class="fas fa-sign-out-alt"></i>
             </button>
         </div>
     </header>
     
-    <!-- ====== SEARCH ====== -->
     <div class="search-container">
         <div class="search-box">
             <i class="fas fa-search"></i>
@@ -612,56 +617,37 @@
         </div>
     </div>
     
-    <!-- ====== USERS LIST ====== -->
     <div class="users-list" id="usersList">
         <!-- سيتم عرض المستخدمين فوراً من الكاش -->
     </div>
 </div>
 
-<!-- ====== SETTINGS MODAL ====== -->
-<div class="modal-overlay" id="settingsModal">
+<!-- ====== مودال تغيير اسم الشخص ====== -->
+<div class="modal-overlay" id="nameModal">
     <div class="modal-box">
-        <h2><i class="fas fa-cog"></i> الإعدادات</h2>
-        
+        <h2><i class="fas fa-user-edit"></i> تغيير اسم الشخص</h2>
+        <p style="text-align:center;color:#B8A090;font-size:14px;margin-bottom:16px;">
+            الاسم الجديد سيظهر لك فقط
+        </p>
         <div class="input-group">
-            <label>اسم المستخدم الجديد</label>
-            <input type="text" id="newUsername" placeholder="أدخل الاسم الجديد"
+            <label>الاسم الجديد</label>
+            <input type="text" id="customNameInput" placeholder="أدخل الاسم الجديد" 
                    autocomplete="off"
                    inputmode="text"
                    autocorrect="off"
                    autocapitalize="none"
                    spellcheck="false" />
         </div>
-        <div class="input-group">
-            <label>كلمة المرور الجديدة</label>
-            <input type="password" id="newPassword" placeholder="أدخل كلمة المرور الجديدة"
-                   autocomplete="new-password"
-                   inputmode="text"
-                   autocorrect="off"
-                   autocapitalize="none"
-                   spellcheck="false" />
-        </div>
-        
-        <div id="settingsMessage" class="modal-message"></div>
-        
-        <div class="modal-divider"></div>
-        
-        <div class="modal-actions" style="flex-direction:column; gap:10px;">
-            <button class="btn-danger" onclick="deleteAccount()" style="width:100%;">
-                <i class="fas fa-trash-alt" style="margin-left:8px;"></i> حذف الحساب
-            </button>
-            <div style="display:flex; gap:12px; width:100%;">
-                <button class="btn-cancel" onclick="closeSettings()" style="flex:1;">إلغاء</button>
-                <button class="btn-save" onclick="saveSettings()" style="flex:2;">حفظ التغييرات</button>
-            </div>
+        <div id="nameModalMessage" class="modal-message"></div>
+        <div class="modal-actions">
+            <button class="btn-cancel" onclick="closeNameModal()">إلغاء</button>
+            <button class="btn-save" onclick="saveCustomName()">حفظ</button>
         </div>
     </div>
 </div>
 
 <script>
-    // ============================================================
-    //  🔥  إعداد Firebase
-    // ============================================================
+    // ====== Firebase ======
     const firebaseConfig = {
         apiKey: "AIzaSyBPRXdX-2O76F4-Q553GVY3G0fMsevaQCE",
         authDomain: "bbbb-1135e.firebaseapp.com",
@@ -675,27 +661,18 @@
     firebase.initializeApp(firebaseConfig);
     const db = firebase.firestore();
     
-    // ============================================================
-    //  🧠  المتغيرات
-    // ============================================================
     let currentUser = null;
     let allUsers = [];
     let pinnedUsers = [];
     let unreadCounts = {};
     let lastMessages = {};
-    let userStatusMap = {};
+    let customNames = {};  // { userId: customName }
     let unsubscribeUsers = null;
     let unsubscribeMessages = null;
-    let searchTimeout = null;
-    let isFirstLoad = true;
-    let welcomeShown = false;
-    let lastNotificationMessage = null;
-    let isUpdating = false;
     let renderTimeout = null;
+    let editingUserId = null;
     
-    // ============================================================
-    //  📸  صور طبيعة
-    // ============================================================
+    // ====== صور طبيعة (نفس نسخة الإدمن) ======
     const natureImages = [
         'https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=150&h=150&fit=crop',
         'https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?w=150&h=150&fit=crop',
@@ -704,20 +681,25 @@
         'https://images.unsplash.com/photo-1504384308090-c894fdcc538d?w=150&h=150&fit=crop',
         'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=150&h=150&fit=crop',
         'https://images.unsplash.com/photo-1506744038136-46273834b3fb?w=150&h=150&fit=crop',
-        'https://images.unsplash.com/photo-1493246507139-91e8fad9978e?w=150&h=150&fit=crop'
+        'https://images.unsplash.com/photo-1493246507139-91e8fad9978e?w=150&h=150&fit=crop',
+        'https://images.unsplash.com/photo-1501785888041-af3ef285b470?w=150&h=150&fit=crop',
+        'https://images.unsplash.com/photo-1472214103451-9374bd1c798e?w=150&h=150&fit=crop',
+        'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=150&h=150&fit=crop',
+        'https://images.unsplash.com/photo-1505228395891-9a51e7e86bf6?w=150&h=150&fit=crop'
     ];
     
-    function getRandomNatureImage(username) {
+    function getNatureImage(username, timestamp = Date.now()) {
         let hash = 0;
         for (let i = 0; i < username.length; i++) {
             hash = username.charCodeAt(i) + ((hash << 5) - hash);
         }
-        return natureImages[Math.abs(hash) % natureImages.length];
+        // تتغير الصورة كل ساعة (نفس نظام الإدمن)
+        const hour = Math.floor(timestamp / (1000 * 60 * 60));
+        const index = (Math.abs(hash) + hour) % natureImages.length;
+        return natureImages[index];
     }
     
-    // ============================================================
-    //  🍞  Toast
-    // ============================================================
+    // ====== Toast ======
     function showToast(title, text, icon = '🕊️', duration = 3000) {
         const container = document.getElementById('toastContainer');
         const toast = document.createElement('div');
@@ -734,9 +716,7 @@
         setTimeout(() => { toast.classList.add('hide'); setTimeout(() => toast.remove(), 300); }, duration);
     }
     
-    // ============================================================
-    //  💾  التخزين المحلي (مثل الواتساب)
-    // ============================================================
+    // ====== التخزين المحلي ======
     function saveUsersCache(users) {
         try {
             localStorage.setItem('cachedUsers', JSON.stringify(users));
@@ -746,9 +726,7 @@
     function loadUsersCache() {
         try {
             const cached = localStorage.getItem('cachedUsers');
-            if (cached) {
-                return JSON.parse(cached);
-            }
+            if (cached) return JSON.parse(cached);
         } catch (e) {}
         return null;
     }
@@ -762,30 +740,46 @@
     function loadLastMessagesCache() {
         try {
             const cached = localStorage.getItem('cachedLastMessages');
-            if (cached) {
-                return JSON.parse(cached);
-            }
+            if (cached) return JSON.parse(cached);
         } catch (e) {}
         return null;
     }
     
-    // ============================================================
-    //  🚀  تحميل الصفحة (فوري مثل الواتساب)
-    // ============================================================
+    function saveCustomNames() {
+        try {
+            localStorage.setItem('customNames', JSON.stringify(customNames));
+        } catch (e) {}
+    }
+    
+    function loadCustomNames() {
+        try {
+            const saved = localStorage.getItem('customNames');
+            if (saved) {
+                customNames = JSON.parse(saved);
+                return true;
+            }
+        } catch (e) {}
+        return false;
+    }
+    
+    // ====== تحميل الصفحة ======
     window.onload = function() {
         const saved = localStorage.getItem('chatUser');
-        if (!saved) { window.location.href = 'login.html'; return; }
+        if (!saved) {
+            window.location.href = 'login.html';
+            return;
+        }
         
         try {
             currentUser = JSON.parse(saved);
             
-            // تحديث حالة الاتصال
             db.collection('users').doc(currentUser.id).update({
                 online: true,
                 lastSeen: firebase.firestore.FieldValue.serverTimestamp()
             }).catch(() => {});
             
-            // ========== 1. عرض من الكاش فوراً (0.1 ثانية) ==========
+            loadCustomNames();
+            
             const cachedUsers = loadUsersCache();
             const cachedMessages = loadLastMessagesCache();
             
@@ -805,20 +799,9 @@
                 `;
             }
             
-            // ========== 2. تحميل المثبتين ==========
             loadPinned();
-            
-            // ========== 3. الاستماع للتحديثات (بدون إعادة تحميل) ==========
             listenToUsers();
             listenToMessages();
-            
-            // ========== 4. ترحيب واحد فقط ==========
-            setTimeout(() => {
-                if (!welcomeShown) {
-                    showToast('👋 مرحباً', `أهلاً بك ${currentUser.username}`, '👋', 3000);
-                    welcomeShown = true;
-                }
-            }, 1000);
             
         } catch (e) {
             localStorage.removeItem('chatUser');
@@ -826,9 +809,7 @@
         }
     };
     
-    // ============================================================
-    //  👥  الاستماع للمستخدمين (تحديث فوري بدون إعادة تحميل)
-    // ============================================================
+    // ====== الاستماع للمستخدمين ======
     function listenToUsers() {
         if (unsubscribeUsers) {
             unsubscribeUsers();
@@ -838,9 +819,6 @@
         unsubscribeUsers = db.collection('users')
             .orderBy('username')
             .onSnapshot((snapshot) => {
-                if (isUpdating) return;
-                isUpdating = true;
-                
                 let hasChanges = false;
                 
                 snapshot.docChanges().forEach((change) => {
@@ -856,17 +834,15 @@
                             username: data.username || 'مستخدم',
                             online: data.online || false,
                             lastSeen: data.lastSeen ? data.lastSeen.toDate() : new Date(),
+                            fullName: data.fullName || '',
+                            birthDate: data.birthDate || ''
                         };
                         
                         if (existingIndex > -1) {
-                            // تحديث فقط لو تغيرت البيانات
                             if (allUsers[existingIndex].online !== userData.online ||
-                                allUsers[existingIndex].username !== userData.username) {
-                                allUsers[existingIndex].online = userData.online;
-                                allUsers[existingIndex].lastSeen = userData.lastSeen;
-                                if (data.username && data.username !== allUsers[existingIndex].username) {
-                                    allUsers[existingIndex].username = data.username;
-                                }
+                                allUsers[existingIndex].username !== userData.username ||
+                                allUsers[existingIndex].fullName !== userData.fullName) {
+                                allUsers[existingIndex] = userData;
                                 hasChanges = true;
                             }
                         } else {
@@ -887,30 +863,20 @@
                     });
                     
                     saveUsersCache(allUsers);
-                    
-                    // تحديث بدون إعادة رسم كامل
                     updateUsersUI(allUsers);
                 }
-                
-                isUpdating = false;
             }, (error) => {
-                console.error('خطأ في تحميل المستخدمين:', error);
-                isUpdating = false;
+                console.error('❌ خطأ:', error);
             });
     }
     
-    // ============================================================
-    //  💬  الاستماع للرسائل (تحديث فوري بدون إعادة تحميل)
-    // ============================================================
+    // ====== الاستماع للرسائل ======
     function listenToMessages() {
         if (unsubscribeMessages) {
             unsubscribeMessages();
             unsubscribeMessages = null;
         }
         
-        let lastMessageTimestamp = 0;
-        
-        // الاستماع للرسائل الواردة فقط
         unsubscribeMessages = db.collection('messages')
             .where('receiverId', '==', currentUser.id)
             .onSnapshot((snapshot) => {
@@ -940,25 +906,23 @@
                     }
                 });
                 
-                // إشعار واحد فقط عن آخر رسالة (مرة واحدة)
                 if (latestMessage && latestSender) {
                     const sender = allUsers.find(u => u.id === latestSender);
-                    const senderName = sender ? sender.username : 'مستخدم';
+                    const senderName = sender ? (customNames[sender.id] || sender.username) : 'مستخدم';
                     const msgText = latestMessage.text || 'ملف';
                     
                     const notificationKey = `${latestSender}_${msgText.substring(0, 20)}_${latestMessage.timestamp.getTime()}`;
-                    if (lastNotificationMessage !== notificationKey) {
+                    if (window.lastNotification !== notificationKey) {
                         showToast(
                             '💬 رسالة جديدة',
                             `من ${senderName}: ${msgText.substring(0, 40)}${msgText.length > 40 ? '...' : ''}`,
                             '💌',
                             4000
                         );
-                        lastNotificationMessage = notificationKey;
+                        window.lastNotification = notificationKey;
                     }
                 }
                 
-                // تحديث غير المقروء
                 if (hasChanges) {
                     db.collection('messages')
                         .where('receiverId', '==', currentUser.id)
@@ -972,7 +936,6 @@
                                 unread[senderId] = (unread[senderId] || 0) + 1;
                             });
                             
-                            // تحديث فقط لو تغيرت القيم
                             const unreadChanged = JSON.stringify(unreadCounts) !== JSON.stringify(unread);
                             if (unreadChanged) {
                                 unreadCounts = unread;
@@ -983,7 +946,6 @@
                 }
             });
         
-        // الاستماع لآخر رسالة لكل محادثة
         db.collection('messages')
             .orderBy('timestamp', 'desc')
             .limit(100)
@@ -1003,7 +965,6 @@
                     }
                 });
                 
-                // تحديث فقط لو تغيرت آخر رسالة
                 const lastChanged = JSON.stringify(lastMessages) !== JSON.stringify(tempLast);
                 if (lastChanged) {
                     lastMessages = tempLast;
@@ -1013,9 +974,7 @@
             });
     }
     
-    // ============================================================
-    //  🎨  تحديث واجهة المستخدمين (بدون إعادة رسم كامل)
-    // ============================================================
+    // ====== تحديث واجهة المستخدمين ======
     function updateUsersUI(users) {
         if (renderTimeout) {
             clearTimeout(renderTimeout);
@@ -1027,7 +986,11 @@
             
             let filtered = users;
             if (searchTerm) {
-                filtered = users.filter(u => u.username.toLowerCase().includes(searchTerm));
+                filtered = users.filter(u => {
+                    const displayName = customNames[u.id] || u.username;
+                    return displayName.toLowerCase().includes(searchTerm) ||
+                           u.username.toLowerCase().includes(searchTerm);
+                });
             }
             
             const pinned = filtered.filter(u => pinnedUsers.includes(u.id));
@@ -1044,7 +1007,6 @@
                 return;
             }
             
-            // الحصول على البطاقات الموجودة
             const existingCards = container.querySelectorAll('.user-card');
             const existingIds = new Set();
             existingCards.forEach(card => {
@@ -1052,17 +1014,14 @@
                 if (id) existingIds.add(id);
             });
             
-            // إنشاء خريطة للبطاقات الموجودة
             const cardMap = {};
             existingCards.forEach(card => {
                 const id = card.dataset.id;
                 if (id) cardMap[id] = card;
             });
             
-            // الحصول على ترتيب المستخدمين الجديد
             const newIds = sorted.map(u => u.id);
             
-            // حذف البطاقات التي لم تعد موجودة
             existingCards.forEach(card => {
                 const id = card.dataset.id;
                 if (id && !newIds.includes(id)) {
@@ -1070,7 +1029,6 @@
                 }
             });
             
-            // إضافة أو تحديث البطاقات
             let lastCard = null;
             sorted.forEach((user, index) => {
                 const chatId = [currentUser.id, user.id].sort().join('_');
@@ -1078,21 +1036,28 @@
                 const lastMsgText = lastMsg ? lastMsg.text : '';
                 const isFromMe = lastMsg ? lastMsg.senderId === currentUser.id : false;
                 const unreadCount = unreadCounts[user.id] || 0;
-                const natureImage = getRandomNatureImage(user.username);
+                const natureImage = getNatureImage(user.username);
+                const displayName = customNames[user.id] || user.username;
+                const isPinned = pinnedUsers.includes(user.id);
+                const hasCustomName = !!customNames[user.id];
                 
                 const cardHtml = `
                     <div class="user-card" data-id="${user.id}">
                         ${unreadCount > 0 ? `<span class="unread-badge">${unreadCount}</span>` : ''}
-                        <div class="user-avatar">
+                        <div class="user-avatar" onclick="openChat('${user.id}')">
                             <img src="${natureImage}" alt="طبيعة" class="nature-avatar" 
                                  onerror="this.style.display='none';this.nextElementSibling.style.display='flex'" />
-                            <div class="avatar-fallback" style="display:none;">${user.username.charAt(0).toUpperCase()}</div>
+                            <div class="avatar-fallback" style="display:none;">${displayName.charAt(0).toUpperCase()}</div>
                             <span class="online-dot ${user.online ? 'online' : 'offline'}"></span>
                         </div>
-                        <div class="user-info">
+                        <div class="user-info" onclick="openChat('${user.id}')">
                             <div class="name">
-                                ${user.username}
-                                ${pinnedUsers.includes(user.id) ? '<span class="pinned"><i class="fas fa-thumbtack"></i></span>' : ''}
+                                ${displayName}
+                                ${hasCustomName ? `<span class="custom-name">(${user.username})</span>` : ''}
+                                ${isPinned ? '<span class="pinned"><i class="fas fa-thumbtack"></i></span>' : ''}
+                                <button class="edit-name-btn" onclick="event.stopPropagation(); openNameModal('${user.id}')" title="تغيير اسم الشخص">
+                                    <i class="fas fa-pen"></i>
+                                </button>
                             </div>
                             ${lastMsgText ? `
                                 <div class="last-message">
@@ -1107,9 +1072,9 @@
                             `}
                         </div>
                         <div class="user-actions">
-                            <button class="pin-btn ${pinnedUsers.includes(user.id) ? 'pinned' : ''}" 
+                            <button class="pin-btn ${isPinned ? 'pinned' : ''}" 
                                     onclick="event.stopPropagation(); togglePin('${user.id}')" 
-                                    title="${pinnedUsers.includes(user.id) ? 'إلغاء التثبيت' : 'تثبيت'}">
+                                    title="${isPinned ? 'إلغاء التثبيت' : 'تثبيت'}">
                                 <i class="fas fa-thumbtack"></i>
                             </button>
                             <button class="chat-btn" onclick="event.stopPropagation(); openChat('${user.id}')" title="فتح الدردشة">
@@ -1119,23 +1084,18 @@
                     </div>
                 `;
                 
-                // تحديث أو إضافة البطاقة
                 if (cardMap[user.id]) {
-                    // تحديث البطاقة الموجودة (تحديث المحتوى فقط)
                     const existingCard = cardMap[user.id];
                     const tempDiv = document.createElement('div');
                     tempDiv.innerHTML = cardHtml;
                     const newCard = tempDiv.firstElementChild;
                     
-                    // نسخ الخصائص المهمة
                     if (newCard) {
                         existingCard.innerHTML = newCard.innerHTML;
                         existingCard.className = newCard.className;
                         existingCard.dataset.id = user.id;
-                        // إعادة ربط الأحداث (لأن الأحداث مرتبطة بالـ onclick في HTML)
                     }
                 } else {
-                    // إضافة بطاقة جديدة في المكان الصحيح
                     const tempDiv = document.createElement('div');
                     tempDiv.innerHTML = cardHtml;
                     const newCard = tempDiv.firstElementChild;
@@ -1155,16 +1115,18 @@
         }, 100);
     }
     
-    // ============================================================
-    //  🎨  عرض المستخدمين (مرة واحدة)
-    // ============================================================
+    // ====== عرض المستخدمين ======
     function renderUsers(users) {
         const container = document.getElementById('usersList');
         const searchTerm = document.getElementById('searchInput').value.toLowerCase().trim();
         
         let filtered = users;
         if (searchTerm) {
-            filtered = users.filter(u => u.username.toLowerCase().includes(searchTerm));
+            filtered = users.filter(u => {
+                const displayName = customNames[u.id] || u.username;
+                return displayName.toLowerCase().includes(searchTerm) ||
+                       u.username.toLowerCase().includes(searchTerm);
+            });
         }
         
         const pinned = filtered.filter(u => pinnedUsers.includes(u.id));
@@ -1187,21 +1149,28 @@
             const lastMsgText = lastMsg ? lastMsg.text : '';
             const isFromMe = lastMsg ? lastMsg.senderId === currentUser.id : false;
             const unreadCount = unreadCounts[user.id] || 0;
-            const natureImage = getRandomNatureImage(user.username);
+            const natureImage = getNatureImage(user.username);
+            const displayName = customNames[user.id] || user.username;
+            const isPinned = pinnedUsers.includes(user.id);
+            const hasCustomName = !!customNames[user.id];
             
             return `
                 <div class="user-card" data-id="${user.id}">
                     ${unreadCount > 0 ? `<span class="unread-badge">${unreadCount}</span>` : ''}
-                    <div class="user-avatar">
+                    <div class="user-avatar" onclick="openChat('${user.id}')">
                         <img src="${natureImage}" alt="طبيعة" class="nature-avatar" 
                              onerror="this.style.display='none';this.nextElementSibling.style.display='flex'" />
-                        <div class="avatar-fallback" style="display:none;">${user.username.charAt(0).toUpperCase()}</div>
+                        <div class="avatar-fallback" style="display:none;">${displayName.charAt(0).toUpperCase()}</div>
                         <span class="online-dot ${user.online ? 'online' : 'offline'}"></span>
                     </div>
-                    <div class="user-info">
+                    <div class="user-info" onclick="openChat('${user.id}')">
                         <div class="name">
-                            ${user.username}
-                            ${pinnedUsers.includes(user.id) ? '<span class="pinned"><i class="fas fa-thumbtack"></i></span>' : ''}
+                            ${displayName}
+                            ${hasCustomName ? `<span class="custom-name">(${user.username})</span>` : ''}
+                            ${isPinned ? '<span class="pinned"><i class="fas fa-thumbtack"></i></span>' : ''}
+                            <button class="edit-name-btn" onclick="event.stopPropagation(); openNameModal('${user.id}')" title="تغيير اسم الشخص">
+                                <i class="fas fa-pen"></i>
+                            </button>
                         </div>
                         ${lastMsgText ? `
                             <div class="last-message">
@@ -1216,9 +1185,9 @@
                         `}
                     </div>
                     <div class="user-actions">
-                        <button class="pin-btn ${pinnedUsers.includes(user.id) ? 'pinned' : ''}" 
+                        <button class="pin-btn ${isPinned ? 'pinned' : ''}" 
                                 onclick="event.stopPropagation(); togglePin('${user.id}')" 
-                                title="${pinnedUsers.includes(user.id) ? 'إلغاء التثبيت' : 'تثبيت'}">
+                                title="${isPinned ? 'إلغاء التثبيت' : 'تثبيت'}">
                             <i class="fas fa-thumbtack"></i>
                         </button>
                         <button class="chat-btn" onclick="event.stopPropagation(); openChat('${user.id}')" title="فتح الدردشة">
@@ -1230,23 +1199,19 @@
         }).join('');
     }
     
-    // ============================================================
-    //  🔍  بحث سريع
-    // ============================================================
+    // ====== البحث ======
     function searchUsers(value) {
-        clearTimeout(searchTimeout);
-        searchTimeout = setTimeout(() => {
-            renderUsers(allUsers);
-        }, 150);
+        renderUsers(allUsers);
     }
     
-    // ============================================================
-    //  📌  تثبيت
-    // ============================================================
+    // ====== التثبيت ======
     function togglePin(userId) {
         const index = pinnedUsers.indexOf(userId);
-        if (index > -1) { pinnedUsers.splice(index, 1); } 
-        else { pinnedUsers.push(userId); }
+        if (index > -1) {
+            pinnedUsers.splice(index, 1);
+        } else {
+            pinnedUsers.push(userId);
+        }
         savePinned();
         renderUsers(allUsers);
     }
@@ -1254,17 +1219,19 @@
     function loadPinned() {
         try {
             const saved = localStorage.getItem('pinnedUsers');
-            if (saved) { pinnedUsers = JSON.parse(saved); }
-        } catch (e) { pinnedUsers = []; }
+            if (saved) {
+                pinnedUsers = JSON.parse(saved);
+            }
+        } catch (e) {
+            pinnedUsers = [];
+        }
     }
     
     function savePinned() {
         localStorage.setItem('pinnedUsers', JSON.stringify(pinnedUsers));
     }
     
-    // ============================================================
-    //  💬  فتح الدردشة
-    // ============================================================
+    // ====== فتح الدردشة ======
     function openChat(userId) {
         const user = allUsers.find(u => u.id === userId);
         if (!user) return;
@@ -1279,13 +1246,63 @@
         window.location.href = 'chat.html';
     }
     
-    // ============================================================
-    //  ⏰  تنسيق آخر ظهور
-    // ============================================================
+    // ====== مودال تغيير اسم الشخص ======
+    function openNameModal(userId) {
+        editingUserId = userId;
+        const currentName = customNames[userId] || '';
+        document.getElementById('customNameInput').value = currentName;
+        document.getElementById('nameModalMessage').className = 'modal-message';
+        document.getElementById('nameModalMessage').style.display = 'none';
+        document.getElementById('nameModal').classList.add('active');
+        setTimeout(() => {
+            document.getElementById('customNameInput').focus();
+        }, 300);
+    }
+    
+    function closeNameModal() {
+        document.getElementById('nameModal').classList.remove('active');
+        editingUserId = null;
+    }
+    
+    function saveCustomName() {
+        if (!editingUserId) return;
+        
+        const newName = document.getElementById('customNameInput').value.trim();
+        const msgBox = document.getElementById('nameModalMessage');
+        
+        msgBox.className = 'modal-message';
+        msgBox.style.display = 'none';
+        
+        if (!newName) {
+            delete customNames[editingUserId];
+        } else {
+            customNames[editingUserId] = newName;
+        }
+        
+        saveCustomNames();
+        renderUsers(allUsers);
+        
+        const user = allUsers.find(u => u.id === editingUserId);
+        const displayName = user ? (customNames[editingUserId] || user.username) : '';
+        
+        msgBox.textContent = `✅ تم تغيير اسم "${displayName}" بنجاح!`;
+        msgBox.className = 'modal-message success';
+        msgBox.style.display = 'block';
+        
+        showToast('✅ تم التحديث', `تم تغيير اسم الشخص بنجاح`, '✅', 2000);
+        
+        setTimeout(() => {
+            closeNameModal();
+        }, 1000);
+    }
+    
+    // ====== تنسيق آخر ظهور ======
     function formatLastSeen(date) {
         if (!date) return 'غير معروف';
         let dateObj = date;
-        if (typeof date.toDate === 'function') { dateObj = date.toDate(); }
+        if (typeof date.toDate === 'function') {
+            dateObj = date.toDate();
+        }
         if (!(dateObj instanceof Date) || isNaN(dateObj.getTime())) return 'غير معروف';
         const diff = Math.floor((new Date() - dateObj) / 1000);
         if (diff < 60) return 'منذ لحظات';
@@ -1294,113 +1311,7 @@
         return dateObj.toLocaleDateString('ar-EG', { year: 'numeric', month: 'short', day: 'numeric' });
     }
     
-    // ============================================================
-    //  ⚙️  الإعدادات
-    // ============================================================
-    function openSettings() {
-        document.getElementById('settingsModal').classList.add('active');
-        document.getElementById('newUsername').value = currentUser.username || '';
-        document.getElementById('newPassword').value = '';
-        document.getElementById('settingsMessage').className = 'modal-message';
-        document.getElementById('settingsMessage').style.display = 'none';
-    }
-    
-    function closeSettings() {
-        document.getElementById('settingsModal').classList.remove('active');
-    }
-    
-    async function saveSettings() {
-        const newUsername = document.getElementById('newUsername').value.trim();
-        const newPassword = document.getElementById('newPassword').value.trim();
-        const msgBox = document.getElementById('settingsMessage');
-        msgBox.className = 'modal-message';
-        msgBox.style.display = 'none';
-        
-        if (!newUsername && !newPassword) {
-            msgBox.textContent = '✖️ الرجاء إدخال بيانات جديدة';
-            msgBox.className = 'modal-message error';
-            msgBox.style.display = 'block';
-            return;
-        }
-        
-        try {
-            const updates = {};
-            if (newUsername && newUsername !== currentUser.username) {
-                const snapshot = await db.collection('users').where('username', '==', newUsername).get();
-                if (!snapshot.empty) {
-                    msgBox.textContent = '⚠️ هذا الاسم مستخدم بالفعل';
-                    msgBox.className = 'modal-message error';
-                    msgBox.style.display = 'block';
-                    return;
-                }
-                updates.username = newUsername;
-            }
-            if (newPassword && newPassword.length >= 6) {
-                updates.password = newPassword;
-            } else if (newPassword && newPassword.length < 6) {
-                msgBox.textContent = '✖️ كلمة المرور 6 أحرف على الأقل';
-                msgBox.className = 'modal-message error';
-                msgBox.style.display = 'block';
-                return;
-            }
-            
-            if (Object.keys(updates).length === 0) {
-                msgBox.textContent = '✖️ لم يتم تغيير أي شيء';
-                msgBox.className = 'modal-message error';
-                msgBox.style.display = 'block';
-                return;
-            }
-            
-            await db.collection('users').doc(currentUser.id).update(updates);
-            if (updates.username) currentUser.username = updates.username;
-            if (updates.password) currentUser.password = updates.password;
-            localStorage.setItem('chatUser', JSON.stringify(currentUser));
-            
-            msgBox.textContent = '✅ تم التحديث بنجاح!';
-            msgBox.className = 'modal-message success';
-            msgBox.style.display = 'block';
-            
-            showToast('✅ تم التحديث', 'تم تحديث بياناتك بنجاح', '✅', 2500);
-            
-            setTimeout(() => { closeSettings(); }, 1500);
-        } catch (err) {
-            console.error(err);
-            msgBox.textContent = '❌ خطأ: ' + err.message;
-            msgBox.className = 'modal-message error';
-            msgBox.style.display = 'block';
-        }
-    }
-    
-    // ============================================================
-    //  🗑️  حذف الحساب
-    // ============================================================
-    async function deleteAccount() {
-        if (!confirm('⚠️ هل أنت متأكد من حذف حسابك؟')) return;
-        if (!confirm('❗ تأكيد نهائي: حذف الحساب نهائياً؟')) return;
-        
-        try {
-            const messagesSnapshot = await db.collection('messages').where('senderId', '==', currentUser.id).get();
-            const batch = db.batch();
-            messagesSnapshot.forEach(doc => { batch.delete(doc.ref); });
-            await batch.commit();
-            await db.collection('users').doc(currentUser.id).delete();
-            
-            localStorage.removeItem('chatUser');
-            localStorage.removeItem('pinnedUsers');
-            localStorage.removeItem('cachedUsers');
-            localStorage.removeItem('cachedLastMessages');
-            
-            showToast('🗑️ تم الحذف', 'تم حذف حسابك بنجاح', '🗑️', 3000);
-            setTimeout(() => { window.location.href = 'login.html'; }, 1500);
-        } catch (err) {
-            console.error(err);
-            alert('خطأ في حذف الحساب: ' + err.message);
-        }
-    }
-    
-    // ============================================================
-    //  🚪  تسجيل الخروج
-    // ============================================================
+    // ====== تسجيل الخروج ======
     async function handleLogout() {
         if (!confirm('هل أنت متأكد من تسجيل الخروج؟')) return;
         try {
@@ -1408,22 +1319,22 @@
                 online: false,
                 lastSeen: firebase.firestore.FieldValue.serverTimestamp()
             });
-        } catch (e) { console.error(e); }
+        } catch (e) {
+            console.error(e);
+        }
         localStorage.removeItem('chatUser');
         localStorage.removeItem('pinnedUsers');
         window.location.href = 'login.html';
     }
     
-    // ============================================================
-    //  📱  إغلاق المودال
-    // ============================================================
-    document.getElementById('settingsModal').addEventListener('click', function(e) {
-        if (e.target === this) { closeSettings(); }
+    // ====== إغلاق المودال ======
+    document.getElementById('nameModal').addEventListener('click', function(e) {
+        if (e.target === this) {
+            closeNameModal();
+        }
     });
     
-    // ============================================================
-    //  🧹  تنظيف
-    // ============================================================
+    // ====== تنظيف ======
     window.addEventListener('beforeunload', function() {
         if (currentUser && currentUser.id) {
             db.collection('users').doc(currentUser.id).update({
@@ -1431,17 +1342,25 @@
                 lastSeen: firebase.firestore.FieldValue.serverTimestamp()
             }).catch(() => {});
         }
-        if (unsubscribeUsers) { unsubscribeUsers(); }
-        if (unsubscribeMessages) { unsubscribeMessages(); }
+        if (unsubscribeUsers) {
+            unsubscribeUsers();
+        }
+        if (unsubscribeMessages) {
+            unsubscribeMessages();
+        }
     });
     
-    console.log('📱 رسائلنا — النسخة النهائية ✅');
-    console.log('🌊 تم حذف صوت الأمواج نهائياً');
-    console.log('🔔 إشعار واحد فقط عند الدخول');
-    console.log('💬 إشعار آخر رسالة فقط');
-    console.log('⚡ ظهور فوري مثل الواتساب');
-    console.log('🔒 منع بيانات الدفع في البحث');
-    console.log('🔄 تحديث فوري بدون إعادة تحميل');
+    // ====== تسجيل Service Worker ======
+    if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register('sw.js')
+            .then(() => console.log('✅ Service Worker مسجل'))
+            .catch(() => console.log('⚠️ فشل تسجيل Service Worker'));
+    }
+    
+    console.log('📱 رسائلنا — نسخة المستخدم النهائية ✅');
+    console.log('🖼️ صور طبيعة تتغير كل ساعة (مثل الإدمن)');
+    console.log('✏️ تغيير اسم الشخص الآخر يظهر لي فقط');
+    console.log('⚡ تحديث فوري مثل واتساب');
 </script>
 
 </body>

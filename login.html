@@ -2,30 +2,38 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
     <title>رسائلنا - تسجيل الدخول</title>
     
-    <!-- ربط Firebase -->
+    <!-- ====== PWA ====== -->
+    <link rel="manifest" href="manifest.json" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="رسائلنا" />
+    <link rel="apple-touch-icon" href="icon-192.png" />
+    <meta name="theme-color" content="#D4A08C" />
+    
+    <!-- ====== Firebase ====== -->
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
     
-    <!-- أيقونات Font Awesome -->
+    <!-- ====== Font Awesome ====== -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
     
-    <!-- خط أنيق ومريح -->
+    <!-- ====== Google Font ====== -->
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;800&display=swap" rel="stylesheet" />
     
     <style>
-        /* ====== RESET & BASE ====== */
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
             font-family: 'Cairo', 'Segoe UI', system-ui, sans-serif;
+            -webkit-tap-highlight-color: transparent;
         }
         
         body {
-            min-height: 100vh;
+            min-height: 100dvh;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -36,7 +44,6 @@
             overflow: hidden;
         }
         
-        /* عناصر زخرفية خلفية */
         body::before {
             content: '🌿';
             position: absolute;
@@ -56,13 +63,12 @@
             transform: rotate(-10deg);
         }
         
-        /* ====== CARD ====== */
         .login-card {
-            background: rgba(255, 252, 248, 0.88);
+            background: rgba(255, 252, 248, 0.92);
             backdrop-filter: blur(20px);
             -webkit-backdrop-filter: blur(20px);
             border-radius: 48px 48px 32px 32px;
-            padding: 40px 32px 38px;
+            padding: 36px 28px 34px;
             max-width: 420px;
             width: 100%;
             box-shadow: 
@@ -75,13 +81,12 @@
             z-index: 1;
         }
         
-        /* ====== LOGO & TITLE ====== */
         .app-icon {
             display: flex;
             justify-content: center;
             align-items: center;
             gap: 14px;
-            margin-bottom: 16px;
+            margin-bottom: 14px;
         }
         .app-icon i {
             font-size: 42px;
@@ -106,7 +111,7 @@
             color: #B8A090;
             font-size: 14px;
             margin-top: -4px;
-            margin-bottom: 28px;
+            margin-bottom: 24px;
             font-weight: 400;
             letter-spacing: 1px;
         }
@@ -116,13 +121,12 @@
             font-size: 12px;
         }
         
-        /* ====== TABS ====== */
         .tabs {
             display: flex;
             background: rgba(212, 160, 140, 0.08);
             border-radius: 60px;
             padding: 5px;
-            margin-bottom: 28px;
+            margin-bottom: 24px;
             border: 1px solid rgba(212, 160, 140, 0.10);
         }
         .tab-btn {
@@ -137,29 +141,36 @@
             cursor: pointer;
             transition: 0.3s;
             letter-spacing: 0.3px;
+            user-select: none;
+            -webkit-user-select: none;
         }
         .tab-btn.active {
             background: linear-gradient(135deg, #D4A08C, #C4907C);
             color: #FFFFFF;
             box-shadow: 0 6px 20px rgba(212, 160, 140, 0.30);
         }
-        .tab-btn:hover:not(.active) { color: #3D2C20; }
+        .tab-btn:hover:not(.active) { 
+            color: #3D2C20; 
+        }
+        .tab-btn:active {
+            transform: scale(0.96);
+        }
         
-        /* ====== FORMS ====== */
         .form-container {
             display: none;
             flex-direction: column;
-            gap: 18px;
-            animation: fade 0.3s ease;
+            gap: 16px;
+            animation: fade 0.25s ease;
         }
-        .form-container.active { display: flex; }
+        .form-container.active {
+            display: flex;
+        }
         
         @keyframes fade { 
             from { opacity: 0.3; transform: translateY(8px); } 
             to { opacity: 1; transform: translateY(0); } 
         }
         
-        /* ====== INPUT GROUP ====== */
         .input-group {
             position: relative;
             width: 100%;
@@ -185,6 +196,8 @@
             outline: none;
             transition: 0.3s;
             font-weight: 400;
+            -webkit-appearance: none;
+            appearance: none;
         }
         .input-group input::placeholder { 
             color: #C4B0A0; 
@@ -199,9 +212,10 @@
         .input-group input:focus ~ i {
             color: #D4A08C;
         }
-        .input-group input[dir="ltr"] { text-align: left; }
+        .input-group input[dir="ltr"] { 
+            text-align: left; 
+        }
         
-        /* ====== زر العين (مُحسّن للضغط) ====== */
         .toggle-pwd {
             position: absolute;
             left: 12px;
@@ -220,7 +234,6 @@
             justify-content: center;
             min-width: 44px;
             min-height: 44px;
-            /* زيادة مساحة الضغط */
         }
         .toggle-pwd:hover { 
             color: #D4A08C; 
@@ -235,7 +248,6 @@
             pointer-events: none;
         }
         
-        /* ====== زر رئيسي ====== */
         .btn-primary {
             width: 100%;
             padding: 16px;
@@ -250,6 +262,11 @@
             box-shadow: 0 8px 28px rgba(212, 160, 140, 0.30);
             letter-spacing: 0.5px;
             margin-top: 8px;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
         }
         .btn-primary:hover { 
             transform: translateY(-2px); 
@@ -258,28 +275,30 @@
         .btn-primary:active { 
             transform: scale(0.97) translateY(0);
         }
+        .btn-primary:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none !important;
+        }
+        .btn-primary .spinner {
+            display: none;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255,255,255,0.3);
+            border-top-color: #FFFFFF;
+            border-radius: 50%;
+            animation: spin 0.6s linear infinite;
+        }
+        .btn-primary.loading .spinner {
+            display: block;
+        }
+        .btn-primary.loading .btn-text {
+            display: none;
+        }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
         
-        /* ====== تبديل النص ====== */
-        .switch-text {
-            text-align: center;
-            color: #C4B0A0;
-            font-size: 14px;
-            margin-top: 12px;
-        }
-        .switch-text span {
-            color: #D4A08C;
-            font-weight: 600;
-            cursor: pointer;
-            transition: 0.2s;
-            padding: 4px 8px;
-            border-radius: 20px;
-        }
-        .switch-text span:hover { 
-            color: #B8806A; 
-            background: rgba(212, 160, 140, 0.08);
-        }
-        
-        /* ====== رسائل الخطأ / النجاح ====== */
         .message-box {
             padding: 12px 18px;
             border-radius: 40px;
@@ -302,7 +321,25 @@
             display: block;
         }
         
-        /* ====== أيقونة PWA ====== */
+        .switch-text {
+            text-align: center;
+            color: #C4B0A0;
+            font-size: 14px;
+            margin-top: 12px;
+        }
+        .switch-text span {
+            color: #D4A08C;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.2s;
+            padding: 4px 8px;
+            border-radius: 20px;
+        }
+        .switch-text span:hover { 
+            color: #B8806A; 
+            background: rgba(212, 160, 140, 0.08);
+        }
+        
         .pwa-badge {
             display: flex;
             justify-content: center;
@@ -315,7 +352,6 @@
         }
         .pwa-badge i { font-size: 16px; }
         
-        /* ====== RESPONSIVE ====== */
         @media (max-width: 480px) {
             .login-card { 
                 padding: 28px 18px 32px; 
@@ -336,10 +372,15 @@
             .toggle-pwd i { font-size: 18px; }
         }
         
-        /* إخفاء أيقونة المتصفح الافتراضية لكلمة السر */
         input[type="password"]::-ms-reveal,
         input[type="password"]::-webkit-contacts-auto-fill-button { 
             display: none; 
+        }
+        
+        /* منع التحديد */
+        .no-select {
+            user-select: none;
+            -webkit-user-select: none;
         }
     </style>
 </head>
@@ -347,7 +388,6 @@
 
 <div class="login-card">
     
-    <!-- الأيقونة + الاسم -->
     <div class="app-icon">
         <i class="fas fa-feather-alt"></i>
         <h1>رسائل<span>نا</span></h1>
@@ -358,57 +398,57 @@
         <i class="fas fa-circle" style="font-size:6px;"></i>
     </div>
     
-    <!-- التبويبات -->
     <div class="tabs">
-        <button class="tab-btn active" data-tab="login">تسجيل الدخول</button>
-        <button class="tab-btn" data-tab="signup">إنشاء حساب</button>
+        <button class="tab-btn active" data-tab="login" id="loginTab">تسجيل الدخول</button>
+        <button class="tab-btn" data-tab="signup" id="signupTab">إنشاء حساب</button>
     </div>
     
-    <!-- ====== نموذج تسجيل الدخول ====== -->
+    <!-- ====== تسجيل الدخول ====== -->
     <div id="loginForm" class="form-container active">
         <div class="input-group">
             <i class="fas fa-user"></i>
-            <input type="text" id="loginUsername" placeholder="اسم المستخدم" dir="auto" />
+            <input type="text" id="loginUsername" placeholder="اسم المستخدم" dir="auto" autocomplete="username" />
         </div>
         <div class="input-group">
             <i class="fas fa-lock"></i>
-            <input type="password" id="loginPassword" placeholder="كلمة السر" />
+            <input type="password" id="loginPassword" placeholder="كلمة السر" autocomplete="current-password" />
             <button class="toggle-pwd" type="button" onclick="togglePassword('loginPassword', this)">
                 <i class="fas fa-eye"></i>
             </button>
         </div>
         <div id="loginMessage" class="message-box"></div>
-        <button class="btn-primary" onclick="handleLogin()">
-            <i class="fas fa-sign-in-alt" style="margin-left: 10px;"></i> تسجيل الدخول
+        <button class="btn-primary" id="loginBtn" onclick="handleLogin()">
+            <span class="spinner"></span>
+            <span class="btn-text"><i class="fas fa-sign-in-alt" style="margin-left: 10px;"></i> تسجيل الدخول</span>
         </button>
         <div class="switch-text">
             ليس لديك حساب؟ <span onclick="switchTab('signup')">إنشاء حساب جديد</span>
         </div>
     </div>
     
-    <!-- ====== نموذج إنشاء حساب ====== -->
+    <!-- ====== إنشاء حساب ====== -->
     <div id="signupForm" class="form-container">
         <div class="input-group">
             <i class="fas fa-user-plus"></i>
-            <input type="text" id="signupUsername" placeholder="اسم المستخدم (عربي / إنجليزي)" dir="auto" />
+            <input type="text" id="signupUsername" placeholder="اسم المستخدم" dir="auto" autocomplete="username" />
         </div>
         <div class="input-group">
             <i class="fas fa-lock"></i>
-            <input type="password" id="signupPassword" placeholder="كلمة السر" />
+            <input type="password" id="signupPassword" placeholder="كلمة السر (6 أحرف على الأقل)" autocomplete="new-password" />
             <button class="toggle-pwd" type="button" onclick="togglePassword('signupPassword', this)">
                 <i class="fas fa-eye"></i>
             </button>
         </div>
         <div id="signupMessage" class="message-box"></div>
-        <button class="btn-primary" onclick="handleSignup()">
-            <i class="fas fa-user-check" style="margin-left: 10px;"></i> إنشاء حساب
+        <button class="btn-primary" id="signupBtn" onclick="handleSignup()">
+            <span class="spinner"></span>
+            <span class="btn-text"><i class="fas fa-user-check" style="margin-left: 10px;"></i> إنشاء حساب</span>
         </button>
         <div class="switch-text">
             لديك حساب؟ <span onclick="switchTab('login')">تسجيل الدخول</span>
         </div>
     </div>
     
-    <!-- تذكير PWA -->
     <div class="pwa-badge">
         <i class="fas fa-mobile-alt"></i>
         <span>تثبيت على هاتفك</span>
@@ -417,9 +457,7 @@
 </div>
 
 <script>
-    // ============================================================
-    //  🔥  إعداد Firebase
-    // ============================================================
+    // ====== Firebase ======
     const firebaseConfig = {
         apiKey: "AIzaSyBPRXdX-2O76F4-Q553GVY3G0fMsevaQCE",
         authDomain: "bbbb-1135e.firebaseapp.com",
@@ -433,26 +471,23 @@
     firebase.initializeApp(firebaseConfig);
     const db = firebase.firestore();
     
-    // ============================================================
-    //  🧠  المتغيرات العامة
-    // ============================================================
-    let currentUser = null;
+    let isProcessing = false;
     
-    // ============================================================
-    //  📌  التبويبات
-    // ============================================================
+    // ====== التبويبات ======
     function switchTab(tab) {
         document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
         document.querySelectorAll('.form-container').forEach(f => f.classList.remove('active'));
         
         if (tab === 'login') {
-            document.querySelector('[data-tab="login"]').classList.add('active');
+            document.getElementById('loginTab').classList.add('active');
             document.getElementById('loginForm').classList.add('active');
             clearMessages();
+            document.getElementById('loginUsername').focus();
         } else {
-            document.querySelector('[data-tab="signup"]').classList.add('active');
+            document.getElementById('signupTab').classList.add('active');
             document.getElementById('signupForm').classList.add('active');
             clearMessages();
+            document.getElementById('signupUsername').focus();
         }
     }
     
@@ -462,9 +497,7 @@
         });
     });
     
-    // ============================================================
-    //  👁️  إظهار / إخفاء كلمة السر (مُحسّن)
-    // ============================================================
+    // ====== إظهار/إخفاء كلمة السر ======
     function togglePassword(inputId, btn) {
         const input = document.getElementById(inputId);
         const icon = btn.querySelector('i');
@@ -478,20 +511,17 @@
             icon.classList.remove('fa-eye-slash');
             icon.classList.add('fa-eye');
         }
-        
-        // تركيز على الحقل بعد الضغط
         input.focus();
     }
     
-    // ============================================================
-    //  📨  رسائل الخطأ / النجاح
-    // ============================================================
+    // ====== الرسائل ======
     function showMessage(containerId, text, type = 'error') {
         const box = document.getElementById(containerId);
         box.textContent = text;
         box.className = 'message-box ' + type;
         box.style.display = 'block';
     }
+    
     function clearMessages() {
         document.querySelectorAll('.message-box').forEach(box => {
             box.style.display = 'none';
@@ -499,78 +529,132 @@
         });
     }
     
-    // ============================================================
-    //  ✅  إنشاء حساب (Signup)
-    // ============================================================
+    // ====== تعطيل/تفعيل الأزرار ======
+    function setLoading(btnId, loading) {
+        const btn = document.getElementById(btnId);
+        if (loading) {
+            btn.classList.add('loading');
+            btn.disabled = true;
+        } else {
+            btn.classList.remove('loading');
+            btn.disabled = false;
+        }
+    }
+    
+    // ====== إنشاء حساب ======
     async function handleSignup() {
+        if (isProcessing) return;
+        isProcessing = true;
+        
         const username = document.getElementById('signupUsername').value.trim();
         const password = document.getElementById('signupPassword').value.trim();
         const msgBox = 'signupMessage';
         
         clearMessages();
+        setLoading('signupBtn', true);
         
         if (!username || !password) {
             showMessage(msgBox, '✖️ الرجاء ملء جميع الحقول', 'error');
+            setLoading('signupBtn', false);
+            isProcessing = false;
             return;
         }
         if (username.length < 3) {
             showMessage(msgBox, '✖️ اسم المستخدم يجب أن يكون 3 أحرف على الأقل', 'error');
+            setLoading('signupBtn', false);
+            isProcessing = false;
             return;
         }
         if (password.length < 6) {
             showMessage(msgBox, '✖️ كلمة السر يجب أن تكون 6 أحرف على الأقل', 'error');
+            setLoading('signupBtn', false);
+            isProcessing = false;
             return;
         }
         
         try {
+            // التحقق من وجود اسم المستخدم
             const snapshot = await db.collection('users')
                 .where('username', '==', username)
                 .get();
             
             if (!snapshot.empty) {
                 showMessage(msgBox, '⚠️ اسم المستخدم موجود بالفعل، اختر اسماً آخر', 'error');
+                setLoading('signupBtn', false);
+                isProcessing = false;
                 return;
             }
-        } catch (err) {
-            console.error(err);
-            showMessage(msgBox, '❌ خطأ في التحقق من الاسم، حاول مجدداً', 'error');
-            return;
-        }
-        
-        try {
+            
+            // إنشاء الحساب
             await db.collection('users').add({
                 username: username,
                 password: password,
+                fullName: '',
+                birthDate: '',
                 online: false,
+                isAdmin: false,
                 lastSeen: firebase.firestore.FieldValue.serverTimestamp(),
                 createdAt: firebase.firestore.FieldValue.serverTimestamp()
             });
             
-            showMessage(msgBox, '✅ تم إنشاء الحساب بنجاح! يمكنك تسجيل الدخول الآن', 'success');
+            showMessage(msgBox, '✅ تم إنشاء الحساب بنجاح! جاري تسجيل الدخول...', 'success');
             
-            document.getElementById('signupUsername').value = '';
-            document.getElementById('signupPassword').value = '';
-            
-            setTimeout(() => switchTab('login'), 1200);
+            // تسجيل الدخول تلقائياً
+            setTimeout(async () => {
+                try {
+                    const loginSnapshot = await db.collection('users')
+                        .where('username', '==', username)
+                        .where('password', '==', password)
+                        .get();
+                    
+                    if (!loginSnapshot.empty) {
+                        const doc = loginSnapshot.docs[0];
+                        const userData = doc.data();
+                        const user = {
+                            id: doc.id,
+                            username: userData.username,
+                            ...userData
+                        };
+                        
+                        await db.collection('users').doc(doc.id).update({
+                            online: true,
+                            lastSeen: firebase.firestore.FieldValue.serverTimestamp()
+                        });
+                        
+                        localStorage.setItem('chatUser', JSON.stringify(user));
+                        window.location.href = 'index.html';
+                    }
+                } catch (e) {
+                    showMessage(msgBox, '❌ تم إنشاء الحساب لكن فشل تسجيل الدخول التلقائي', 'error');
+                    setLoading('signupBtn', false);
+                    isProcessing = false;
+                }
+            }, 800);
             
         } catch (err) {
             console.error(err);
             showMessage(msgBox, '❌ فشل إنشاء الحساب: ' + err.message, 'error');
+            setLoading('signupBtn', false);
+            isProcessing = false;
         }
     }
     
-    // ============================================================
-    //  🔑  تسجيل الدخول (Login)
-    // ============================================================
+    // ====== تسجيل الدخول ======
     async function handleLogin() {
+        if (isProcessing) return;
+        isProcessing = true;
+        
         const username = document.getElementById('loginUsername').value.trim();
         const password = document.getElementById('loginPassword').value.trim();
         const msgBox = 'loginMessage';
         
         clearMessages();
+        setLoading('loginBtn', true);
         
         if (!username || !password) {
             showMessage(msgBox, '✖️ الرجاء إدخال اسم المستخدم وكلمة السر', 'error');
+            setLoading('loginBtn', false);
+            isProcessing = false;
             return;
         }
         
@@ -582,12 +666,14 @@
             
             if (snapshot.empty) {
                 showMessage(msgBox, '❌ اسم المستخدم أو كلمة السر غير صحيحة', 'error');
+                setLoading('loginBtn', false);
+                isProcessing = false;
                 return;
             }
             
             const doc = snapshot.docs[0];
             const userData = doc.data();
-            currentUser = {
+            const user = {
                 id: doc.id,
                 username: userData.username,
                 ...userData
@@ -598,29 +684,28 @@
                 lastSeen: firebase.firestore.FieldValue.serverTimestamp()
             });
             
-            localStorage.setItem('chatUser', JSON.stringify(currentUser));
+            localStorage.setItem('chatUser', JSON.stringify(user));
             
             showMessage(msgBox, '✅ جارٍ التوجيه...', 'success');
             
             setTimeout(() => {
                 window.location.href = 'index.html';
-            }, 600);
+            }, 400);
             
         } catch (err) {
             console.error(err);
             showMessage(msgBox, '❌ خطأ في تسجيل الدخول: ' + err.message, 'error');
+            setLoading('loginBtn', false);
+            isProcessing = false;
         }
     }
     
-    // ============================================================
-    //  🚀  التحقق من جلسة سابقة
-    // ============================================================
+    // ====== التحقق من جلسة سابقة ======
     (function checkSession() {
         const saved = localStorage.getItem('chatUser');
         if (saved) {
             try {
                 const user = JSON.parse(saved);
-                currentUser = user;
                 if (user.id) {
                     db.collection('users').doc(user.id).update({
                         online: true,
@@ -629,15 +714,33 @@
                 }
                 setTimeout(() => {
                     window.location.href = 'index.html';
-                }, 400);
+                }, 300);
             } catch (e) {
                 localStorage.removeItem('chatUser');
             }
         }
     })();
     
-    console.log('📱 رسائلنا — صفحة الدخول جاهزة ✅');
-    console.log('🌿 تصميم مريح 10/10 — تحدث بحرية');
+    // ====== Enter ======
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter') {
+            const activeForm = document.querySelector('.form-container.active');
+            if (activeForm) {
+                const btn = activeForm.querySelector('.btn-primary');
+                if (btn) btn.click();
+            }
+        }
+    });
+    
+    // ====== تسجيل Service Worker ======
+    if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register('sw.js')
+            .then(() => console.log('✅ Service Worker مسجل'))
+            .catch(() => console.log('⚠️ فشل تسجيل Service Worker'));
+    }
+    
+    console.log('📱 رسائلنا — نسخة PWA ✅');
+    console.log('🕊️ تحدث بحرية');
 </script>
 
 </body>
