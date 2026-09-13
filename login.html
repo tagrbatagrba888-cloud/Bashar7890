@@ -8,9 +8,7 @@
 
 <link rel="manifest" href="manifest.json" />
 <meta name="apple-mobile-web-app-capable" content="yes" />
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
 <meta name="apple-mobile-web-app-title" content="BORSA CLUP" />
-<meta name="mobile-web-app-capable" content="yes" />
 <link rel="icon" id="siteFavicon" href="https://i.ibb.co/PzcMFkpR/FB-IMG-1789241464654.jpg" />
 <link rel="apple-touch-icon" id="siteAppleIcon" href="https://i.ibb.co/PzcMFkpR/FB-IMG-1789241464654.jpg" />
 <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet" />
@@ -24,7 +22,6 @@
     background:radial-gradient(circle at 50% 0%, #0f2f4a 0%, #0a1929 40%, #000 100%);
   }
 
-  /* Loading */
   .loading-screen {
     position:fixed; inset:0; z-index:9999;
     background:radial-gradient(circle at 50% 30%, #0f2f4a 0%, #0a1929 40%, #000 100%);
@@ -34,24 +31,10 @@
     overflow:hidden;
   }
   .loading-screen.hide { opacity:0; visibility:hidden; pointer-events:none; }
-  .loading-screen::before {
-    content:''; position:absolute; inset:0;
-    background-image:
-      radial-gradient(2px 2px at 20% 30%, rgba(30,144,255,.6), transparent),
-      radial-gradient(2px 2px at 60% 70%, rgba(30,144,255,.4), transparent),
-      radial-gradient(1px 1px at 50% 50%, rgba(255,255,255,.5), transparent),
-      radial-gradient(1px 1px at 80% 10%, rgba(255,255,255,.3), transparent);
-    animation:starsMove 20s linear infinite;
-  }
-  @keyframes starsMove { to { transform:translateY(-100vh); } }
   .loading-content {
     position:relative; z-index:2;
     display:flex; flex-direction:column;
     align-items:center; gap:22px;
-    animation:fadeInScale .8s ease;
-  }
-  @keyframes fadeInScale {
-    from { opacity:0; transform:scale(.9); } to { opacity:1; transform:scale(1); }
   }
   .logo-loader {
     position:relative; width:160px; height:160px;
@@ -62,19 +45,14 @@
     border-radius:50%; border:3px solid transparent;
     border-top-color:#1e90ff; border-right-color:#1e90ff;
     animation:spinRing 1.5s linear infinite;
-    box-shadow:0 0 20px rgba(30,144,255,.5);
   }
   @keyframes spinRing { to { transform:rotate(360deg); } }
   .loading-logo {
     width:110px; height:110px; border-radius:50%; object-fit:cover;
     border:3px solid rgba(30,144,255,.4);
-    box-shadow:0 0 30px rgba(30,144,255,.6);
-    animation:pulseLogo 2s ease-in-out infinite;
   }
-  @keyframes pulseLogo { 0%,100%{transform:scale(1);} 50%{transform:scale(1.05);} }
   .loading-brand {
-    font-size:28px; font-weight:900; letter-spacing:2px; color:#fff;
-    text-shadow:0 0 20px rgba(30,144,255,.8);
+    font-size:28px; font-weight:900; color:#fff;
   }
   .loading-brand span { color:#1e90ff; }
   .loading-sub { color:#8fb3d9; font-size:13px; font-weight:600; }
@@ -85,22 +63,19 @@
   .loading-bar-fill {
     height:100%;
     background:linear-gradient(90deg, #0066cc, #1e90ff, #6bb7ff);
-    background-size:200% 100%; width:0%; transition:width .4s ease;
+    width:0%; transition:width .4s ease;
     border-radius:2px;
-    box-shadow:0 0 12px rgba(30,144,255,.8);
   }
   .loading-footer {
     position:absolute; bottom:30px; color:#4d6d8f;
-    font-size:11px; letter-spacing:1px; font-weight:600; z-index:2;
+    font-size:11px; letter-spacing:1px; font-weight:600;
   }
 
-  /* Phone */
   .phone {
     position:relative;
     width:100%; max-width:430px; min-height:100vh;
     background:linear-gradient(180deg,#0a1929 0%,#06121e 100%);
     display:flex; flex-direction:column; overflow:hidden;
-    box-shadow:0 0 60px rgba(30,144,255,.25);
     opacity:0; transition:opacity .5s ease;
   }
   .phone.show { opacity:1; }
@@ -128,71 +103,39 @@
     font-family:'Cairo',sans-serif;
     font-size:13px; font-weight:700;
     cursor:pointer; border-radius:11px;
-    transition:.2s;
   }
   .tab.active {
     background:linear-gradient(135deg,#1e90ff,#0066cc);
     color:#fff;
-    box-shadow:0 6px 16px rgba(30,144,255,.35);
   }
   .content { flex:1; padding:16px; overflow-y:auto; }
   .form-view { display:none; }
-  .form-view.active { display:block; animation:fadeUp .3s ease; }
-  @keyframes fadeUp { from{opacity:0;transform:translateY(20px);} to{opacity:1;transform:none;} }
+  .form-view.active { display:block; }
 
   .card {
     padding:22px 20px;
     background:rgba(255,255,255,.04);
     border:1px solid rgba(30,144,255,.25);
     border-radius:20px;
-    backdrop-filter:blur(10px);
   }
-  .card h2 {
-    color:#fff; font-size:17px; margin-bottom:16px;
-    text-align:center; font-weight:900;
-  }
+  .card h2 { color:#fff; font-size:17px; margin-bottom:16px; text-align:center; font-weight:900; }
   .card h2 span { color:#1e90ff; }
 
   .field { position:relative; margin-bottom:12px; }
-  .field label {
-    display:block; color:#9fc1e3;
-    font-size:12px; margin-bottom:5px; font-weight:600;
-  }
+  .field label { display:block; color:#9fc1e3; font-size:12px; margin-bottom:5px; font-weight:600; }
   .field .input-wrap { position:relative; }
   .field input {
     width:100%; padding:12px 42px 12px 14px;
     background:#0d2033; border:1.5px solid #1b3a5c;
     border-radius:11px; color:#fff; font-size:14px;
-    font-family:'Cairo',sans-serif;
-    outline:none; transition:.2s;
+    font-family:'Cairo',sans-serif; outline:none;
   }
-  .field input:focus {
-    border-color:#1e90ff;
-    box-shadow:0 0 0 3px rgba(30,144,255,.15);
-  }
+  .field input:focus { border-color:#1e90ff; }
   .field input::placeholder { color:#4d6d8f; }
-  .field .icon-inp {
-    position:absolute; left:12px; top:50%;
-    transform:translateY(-50%);
-    font-size:15px; color:#6b8fb0;
-    pointer-events:none;
-  }
-  .field .eye {
-    position:absolute; left:12px; top:50%;
-    transform:translateY(-50%);
-    width:22px; height:22px; cursor:pointer;
-    opacity:.75; transition:.2s;
-  }
-  .field .eye:hover { opacity:1; }
+  .field .icon-inp { position:absolute; left:12px; top:50%; transform:translateY(-50%); font-size:15px; color:#6b8fb0; pointer-events:none; }
+  .field .eye { position:absolute; left:12px; top:50%; transform:translateY(-50%); width:22px; height:22px; cursor:pointer; }
   .field .eye svg { width:100%; height:100%; fill:#8fb3d9; }
-  .field.error input {
-    border-color:#ff3b3b;
-    box-shadow:0 0 0 3px rgba(255,60,60,.15);
-  }
-  .field .help {
-    color:#6b8fb0; font-size:10.5px;
-    margin-top:4px; line-height:1.4;
-  }
+  .field .help { color:#6b8fb0; font-size:10.5px; margin-top:4px; }
   .field .help.err { color:#ff6b6b; }
   .field .help.ok { color:#3ddc84; }
 
@@ -201,10 +144,8 @@
   .verify-sm-btn {
     padding:0 14px;
     background:linear-gradient(135deg,#28c878,#1a9e5a);
-    color:#fff; border:none;
-    border-radius:11px;
-    font-family:'Cairo',sans-serif;
-    font-size:12px; font-weight:700;
+    color:#fff; border:none; border-radius:11px;
+    font-family:'Cairo',sans-serif; font-size:12px; font-weight:700;
     cursor:pointer; white-space:nowrap;
   }
 
@@ -214,49 +155,31 @@
     background:rgba(255,255,255,.04);
     border:1.5px solid rgba(30,144,255,.2);
     border-radius:11px; text-align:center;
-    cursor:pointer; transition:.2s;
-    font-size:13px; font-weight:700;
-    color:#8fb3d9;
+    cursor:pointer; font-size:13px; font-weight:700; color:#8fb3d9;
   }
-  .gender-opt.selected {
-    color:#fff; border-color:#1e90ff;
-    background:rgba(30,144,255,.15);
-  }
+  .gender-opt.selected { color:#fff; border-color:#1e90ff; background:rgba(30,144,255,.15); }
 
   .captcha-row { display:flex; gap:8px; align-items:stretch; }
-  .captcha-canvas-wrap {
-    flex:1; height:52px;
-    background:#0d2033;
-    border:1.5px solid #1b3a5c;
-    border-radius:11px;
-    overflow:hidden;
-  }
+  .captcha-canvas-wrap { flex:1; height:52px; background:#0d2033; border:1.5px solid #1b3a5c; border-radius:11px; overflow:hidden; }
   .captcha-canvas-wrap canvas { width:100%; height:100%; display:block; }
   .captcha-refresh {
-    width:52px;
-    background:rgba(30,144,255,.15);
-    border:1.5px solid rgba(30,144,255,.3);
-    border-radius:11px;
-    color:#6bb7ff; font-size:20px;
-    cursor:pointer;
+    width:52px; background:rgba(30,144,255,.15);
+    border:1.5px solid rgba(30,144,255,.3); border-radius:11px;
+    color:#6bb7ff; font-size:20px; cursor:pointer;
     display:flex; align-items:center; justify-content:center;
   }
 
   .btn {
     width:100%; padding:14px;
     border:none; border-radius:12px;
-    font-family:'Cairo',sans-serif;
-    font-size:15px; font-weight:700;
-    cursor:pointer; transition:.25s;
-    display:flex; align-items:center; justify-content:center; gap:8px;
+    font-family:'Cairo',sans-serif; font-size:15px; font-weight:700;
+    cursor:pointer; display:flex; align-items:center; justify-content:center; gap:8px;
   }
   .btn.primary {
     background:linear-gradient(135deg,#1e90ff,#0066cc);
-    color:#fff;
-    box-shadow:0 8px 22px rgba(30,144,255,.35);
+    color:#fff; box-shadow:0 8px 22px rgba(30,144,255,.35);
     margin-top:14px;
   }
-  .btn.primary:hover { transform:translateY(-2px); }
   .btn.primary:disabled { opacity:.5; cursor:not-allowed; }
   .btn.google {
     background:#fff; color:#333;
@@ -266,40 +189,21 @@
   .btn.google img { width:20px; height:20px; }
 
   .forgot-btn {
-    width:100%; padding:11px;
-    background:transparent;
-    color:#6bb7ff;
-    border:1.5px dashed rgba(30,144,255,.4);
-    border-radius:11px;
-    font-family:'Cairo',sans-serif;
-    font-size:13px; font-weight:700;
-    cursor:pointer;
+    width:100%; padding:11px; background:transparent;
+    color:#6bb7ff; border:1.5px dashed rgba(30,144,255,.4);
+    border-radius:11px; font-family:'Cairo',sans-serif;
+    font-size:13px; font-weight:700; cursor:pointer;
     display:flex; align-items:center; justify-content:center; gap:6px;
-    margin-top:12px;
-    text-decoration:none;
-  }
-  .forgot-btn:hover {
-    background:rgba(30,144,255,.1);
-    border-style:solid;
-    border-color:#1e90ff;
-    color:#fff;
+    margin-top:12px; text-decoration:none;
   }
 
-  .divider {
-    display:flex; align-items:center;
-    gap:10px; margin:14px 0 10px;
-  }
-  .divider::before, .divider::after {
-    content:''; flex:1; height:1px;
-    background:rgba(255,255,255,.08);
-  }
+  .divider { display:flex; align-items:center; gap:10px; margin:14px 0 10px; }
+  .divider::before, .divider::after { content:''; flex:1; height:1px; background:rgba(255,255,255,.08); }
   .divider span { color:#6b8fb0; font-size:11px; font-weight:700; }
 
   .msg {
-    margin-top:14px; padding:11px;
-    border-radius:11px;
-    font-size:13px; text-align:center; font-weight:700;
-    display:none;
+    margin-top:14px; padding:11px; border-radius:11px;
+    font-size:13px; text-align:center; font-weight:700; display:none;
   }
   .msg.err { display:block; background:rgba(255,60,60,.12); color:#ff6b6b; border:1px solid rgba(255,60,60,.3); }
   .msg.ok  { display:block; background:rgba(40,200,120,.12); color:#3ddc84; border:1px solid rgba(40,200,120,.3); }
@@ -315,7 +219,6 @@
 
   .footer { text-align:center; padding:14px; font-size:11px; color:#4d6d8f; }
 
-  /* Modal */
   .modal-overlay {
     position:fixed; inset:0;
     background:rgba(0,0,0,.8);
@@ -328,51 +231,23 @@
     width:100%; max-width:480px;
     background:linear-gradient(180deg,#0d1f33,#0a1929);
     border:1px solid rgba(30,144,255,.35);
-    border-radius:22px;
-    padding:22px 20px;
-    box-shadow:0 30px 80px rgba(0,0,0,.7);
-    animation:popIn .3s ease;
-    max-height:92vh; overflow-y:auto;
-    margin:auto;
+    border-radius:22px; padding:22px 20px;
+    max-height:92vh; overflow-y:auto; margin:auto;
   }
-  @keyframes popIn { from{opacity:0;transform:scale(.95);} to{opacity:1;transform:scale(1);} }
-  .modal h3 {
-    color:#fff; font-size:18px; font-weight:900;
-    margin-bottom:6px; text-align:center;
-  }
-  .modal-sub {
-    color:#8fb3d9; font-size:12.5px;
-    text-align:center; margin-bottom:16px; font-weight:600;
-  }
+  .modal h3 { color:#fff; font-size:18px; font-weight:900; margin-bottom:6px; text-align:center; }
+  .modal-sub { color:#8fb3d9; font-size:12.5px; text-align:center; margin-bottom:16px; font-weight:600; }
   .modal .field { margin-bottom:12px; }
   .modal-actions { display:flex; gap:10px; margin-top:16px; }
   .modal-btn {
-    flex:1; padding:12px;
-    border:none; border-radius:11px;
-    font-family:'Cairo',sans-serif;
-    font-size:14px; font-weight:700;
-    cursor:pointer;
+    flex:1; padding:12px; border:none; border-radius:11px;
+    font-family:'Cairo',sans-serif; font-size:14px; font-weight:700; cursor:pointer;
   }
-  .modal-btn.primary {
-    background:linear-gradient(135deg,#1e90ff,#0066cc);
-    color:#fff;
-  }
-  .modal-btn.cancel {
-    background:rgba(255,255,255,.06);
-    color:#a8c8e8;
-    border:1px solid rgba(255,255,255,.1);
-  }
+  .modal-btn.primary { background:linear-gradient(135deg,#1e90ff,#0066cc); color:#fff; }
+  .modal-btn.cancel { background:rgba(255,255,255,.06); color:#a8c8e8; border:1px solid rgba(255,255,255,.1); }
 
   @media (min-width:768px) {
     body { padding:30px; }
-    .phone {
-      max-width:520px; min-height:auto; height:auto;
-      border-radius:28px;
-      border:1px solid rgba(30,144,255,.25);
-      box-shadow:0 25px 70px rgba(0,150,255,.3);
-    }
-    .logo-wrap img { width:100px; height:100px; }
-    .brand { font-size:26px; }
+    .phone { max-width:520px; min-height:auto; height:auto; border-radius:28px; }
   }
   @media (min-width:1024px) {
     body { padding:40px 30px; }
@@ -382,11 +257,10 @@
 </head>
 <body>
 
-<!-- Loading -->
 <div class="loading-screen" id="loadingScreen">
   <div class="loading-content">
     <div class="logo-loader">
-      <img id="loadingLogo" class="loading-logo" src="https://i.ibb.co/PzcMFkpR/FB-IMG-1789241464654.jpg" alt="BORSA CLUP" />
+      <img id="loadingLogo" class="loading-logo" src="https://i.ibb.co/PzcMFkpR/FB-IMG-1789241464654.jpg" />
     </div>
     <div class="loading-brand" id="loadingBrand">BORSA <span>CLUP</span></div>
     <div class="loading-sub">البورصة المصرية</div>
@@ -400,7 +274,7 @@
 <div class="phone" id="mainApp">
 
   <div class="logo-wrap">
-    <img id="mainLogo" src="https://i.ibb.co/PzcMFkpR/FB-IMG-1789241464654.jpg" alt="BORSA CLUP" />
+    <img id="mainLogo" src="https://i.ibb.co/PzcMFkpR/FB-IMG-1789241464654.jpg" />
     <div class="brand" id="mainBrand">BORSA <span>CLUP</span></div>
     <div class="sub">البورصة المصرية</div>
   </div>
@@ -412,23 +286,22 @@
 
   <div class="content">
 
-    <!-- Login View -->
     <div class="form-view active" id="view-login">
       <div class="card">
         <h2>تسجيل <span>دخول</span></h2>
 
-        <div class="field" id="lf-user">
+        <div class="field">
           <label>اسم المستخدم</label>
           <div class="input-wrap">
-            <input type="text" id="loginUser" placeholder="أدخل اسم المستخدم" autocomplete="username" />
+            <input type="text" id="loginUser" placeholder="أدخل اسم المستخدم" />
             <span class="icon-inp">👤</span>
           </div>
         </div>
 
-        <div class="field" id="lf-pass">
+        <div class="field">
           <label>كلمة السر</label>
           <div class="input-wrap">
-            <input type="password" id="loginPass" placeholder="أدخل كلمة السر" autocomplete="current-password" />
+            <input type="password" id="loginPass" placeholder="أدخل كلمة السر" />
             <div class="eye" id="eyeLogin">
               <svg id="eyeLoginIcon" viewBox="0 0 24 24">
                 <path d="M12 5c-7 0-10 7-10 7s3 7 10 7 10-7 10-7-3-7-10-7zm0 12a5 5 0 1 1 0-10 5 5 0 0 1 0 10zm0-8a3 3 0 1 0 0 6 3 3 0 0 0 0-6z"/>
@@ -439,14 +312,12 @@
 
         <button class="btn primary" id="loginBtn">تسجيل الدخول</button>
 
-        <a href="daam.html" class="forgot-btn">
-          🔑 نسيت كلمة المرور؟
-        </a>
+        <a href="daam.html" class="forgot-btn">🔑 نسيت كلمة المرور؟</a>
 
         <div class="divider"><span>أو</span></div>
 
         <button class="btn google" id="googleLoginBtn">
-          <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google" />
+          <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" />
           المتابعة باستخدام Google
         </button>
 
@@ -454,49 +325,47 @@
       </div>
     </div>
 
-    <!-- Register View -->
     <div class="form-view" id="view-register">
       <div class="card">
         <h2>إنشاء <span>حساب جديد</span></h2>
 
-        <div class="field" id="rf-full">
+        <div class="field">
           <label>الاسم الكامل *</label>
           <div class="input-wrap">
-            <input type="text" id="regFull" placeholder="مثال: أحمد محمد علي" maxlength="60" />
+            <input type="text" id="regFull" placeholder="أحمد محمد" maxlength="60" />
             <span class="icon-inp">📝</span>
           </div>
         </div>
 
-        <div class="field" id="rf-user">
+        <div class="field">
           <label>اسم المستخدم * (فريد)</label>
           <div class="verify-row">
             <div class="input-wrap">
-              <input type="text" id="regUser" placeholder="مثال: ahmed77" maxlength="30" />
+              <input type="text" id="regUser" placeholder="ahmed77" maxlength="30" />
               <span class="icon-inp">👤</span>
             </div>
             <button class="verify-sm-btn" id="verifyUserBtn" type="button">تحقق</button>
           </div>
-          <div class="help" id="regUserHelp">سيُستخدم لتسجيل الدخول لاحقًا</div>
+          <div class="help" id="regUserHelp">سيُستخدم لتسجيل الدخول</div>
         </div>
 
-        <div class="field" id="rf-phone">
-          <label>رقم الهاتف (واتساب) *</label>
+        <div class="field">
+          <label>رقم الهاتف *</label>
           <div class="input-wrap">
-            <input type="tel" id="regPhone" placeholder="مثال: 01012345678" maxlength="15" />
+            <input type="tel" id="regPhone" placeholder="01xxxxxxxxx" maxlength="15" />
             <span class="icon-inp">📱</span>
           </div>
-          <div class="help">11 رقم يبدأ بـ 01</div>
         </div>
 
-        <div class="field" id="rf-email">
+        <div class="field">
           <label>البريد الإلكتروني *</label>
           <div class="input-wrap">
-            <input type="email" id="regEmail" placeholder="example@domain.com" maxlength="80" />
+            <input type="email" id="regEmail" placeholder="example@mail.com" maxlength="80" />
             <span class="icon-inp">📧</span>
           </div>
         </div>
 
-        <div class="field" id="rf-gender">
+        <div class="field">
           <label>النوع *</label>
           <div class="gender-grid">
             <div class="gender-opt" data-gender="male">👨 ذكر</div>
@@ -504,14 +373,14 @@
           </div>
         </div>
 
-        <div class="field" id="rf-birth">
+        <div class="field">
           <label>تاريخ الميلاد *</label>
           <div class="input-wrap">
             <input type="date" id="regBirth" />
           </div>
         </div>
 
-        <div class="field" id="rf-pass">
+        <div class="field">
           <label>كلمة السر *</label>
           <div class="input-wrap">
             <input type="password" id="regPass" placeholder="8 أحرف على الأقل" maxlength="60" />
@@ -521,13 +390,12 @@
               </svg>
             </div>
           </div>
-          <div class="help">8 أحرف على الأقل، حرف ورقم</div>
         </div>
 
-        <div class="field" id="rf-pass2">
+        <div class="field">
           <label>تأكيد كلمة السر *</label>
           <div class="input-wrap">
-            <input type="password" id="regPass2" placeholder="أعد كتابة كلمة السر" maxlength="60" />
+            <input type="password" id="regPass2" placeholder="أعد الكتابة" maxlength="60" />
             <div class="eye" id="eyeReg2">
               <svg id="eyeReg2Icon" viewBox="0 0 24 24">
                 <path d="M12 5c-7 0-10 7-10 7s3 7 10 7 10-7 10-7-3-7-10-7zm0 12a5 5 0 1 1 0-10 5 5 0 0 1 0 10zm0-8a3 3 0 1 0 0 6 3 3 0 0 0 0-6z"/>
@@ -536,7 +404,7 @@
           </div>
         </div>
 
-        <div class="field" id="rf-captcha">
+        <div class="field">
           <label>رمز التحقق *</label>
           <div class="captcha-row">
             <div class="captcha-canvas-wrap">
@@ -545,10 +413,9 @@
             <button class="captcha-refresh" id="captchaRefresh" type="button">🔄</button>
           </div>
           <div class="input-wrap" style="margin-top:8px;">
-            <input type="text" id="regCaptcha" placeholder="اكتب الرمز الظاهر" maxlength="8" autocomplete="off" />
+            <input type="text" id="regCaptcha" placeholder="الرمز الظاهر" maxlength="8" />
             <span class="icon-inp">🔐</span>
           </div>
-          <div class="help">حساس لحالة الأحرف</div>
         </div>
 
         <button class="btn primary" id="registerBtn">إنشاء الحساب</button>
@@ -556,7 +423,7 @@
         <div class="divider"><span>أو</span></div>
 
         <button class="btn google" id="googleRegisterBtn">
-          <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google" />
+          <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" />
           التسجيل باستخدام Google
         </button>
 
@@ -569,41 +436,33 @@
   <div class="footer">© BORSA CLUP — جميع الحقوق محفوظة</div>
 </div>
 
-<!-- Google Modal -->
 <div class="modal-overlay" id="googleModal">
   <div class="modal">
     <h3>إكمال البيانات</h3>
     <div class="modal-sub">نحتاج بعض المعلومات الإضافية</div>
 
-    <div class="field" id="gmf-phone">
-      <label>رقم الهاتف (واتساب) *</label>
-      <div class="input-wrap">
-        <input type="tel" id="gmPhone" placeholder="01xxxxxxxxx" maxlength="15" />
-        <span class="icon-inp">📱</span>
-      </div>
+    <div class="field">
+      <label>رقم الهاتف *</label>
+      <input type="tel" id="gmPhone" placeholder="01xxxxxxxxx" maxlength="15" />
     </div>
 
-    <div class="field" id="gmf-user">
+    <div class="field">
       <label>اسم المستخدم * (فريد)</label>
       <div class="verify-row">
         <div class="input-wrap">
-          <input type="text" id="gmUser" placeholder="مثال: ahmed77" maxlength="30" />
-          <span class="icon-inp">👤</span>
+          <input type="text" id="gmUser" placeholder="ahmed77" maxlength="30" />
         </div>
         <button class="verify-sm-btn" id="gmVerifyUserBtn" type="button">تحقق</button>
       </div>
-      <div class="help" id="gmUserHelp">سيُستخدم لتسجيل الدخول لاحقًا</div>
+      <div class="help" id="gmUserHelp">سيُستخدم لتسجيل الدخول</div>
     </div>
 
-    <div class="field" id="gmf-full">
+    <div class="field">
       <label>الاسم الكامل *</label>
-      <div class="input-wrap">
-        <input type="text" id="gmFull" placeholder="اسمك الكامل" maxlength="60" />
-        <span class="icon-inp">📝</span>
-      </div>
+      <input type="text" id="gmFull" placeholder="اسمك الكامل" maxlength="60" />
     </div>
 
-    <div class="field" id="gmf-gender">
+    <div class="field">
       <label>النوع *</label>
       <div class="gender-grid">
         <div class="gender-opt" data-gm-gender="male">👨 ذكر</div>
@@ -611,11 +470,9 @@
       </div>
     </div>
 
-    <div class="field" id="gmf-birth">
+    <div class="field">
       <label>تاريخ الميلاد *</label>
-      <div class="input-wrap">
-        <input type="date" id="gmBirth" />
-      </div>
+      <input type="date" id="gmBirth" />
     </div>
 
     <div class="modal-actions">
@@ -625,13 +482,11 @@
   </div>
 </div>
 
-<!-- ⚠️ الجزء 2 (JavaScript) في الرد التالي -->
-
-<script type="module">
+<!-- ⚠️ الجزء 2 في الرد التالي -->
+ <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword,
-         signInWithPopup, GoogleAuthProvider, signOut, updateProfile,
-         signInWithRedirect, getRedirectResult }
+         signInWithPopup, GoogleAuthProvider, signOut, updateProfile }
   from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 import { getFirestore, collection, doc, getDoc, getDocs, setDoc, updateDoc,
          query, where, serverTimestamp }
@@ -654,7 +509,7 @@ const db   = getFirestore(app);
 const USERS_COLLECTION = 'users';
 
 /* =====================================================
-   ★ حفظ الجلسة في الاثنين (sessionStorage + localStorage)
+   ★★★ حفظ الجلسة ★★★
 ===================================================== */
 function saveSession(data, uid) {
   const sessionData = {
@@ -692,12 +547,11 @@ function hideLoading() {
 }
 setProgress(20);
 
-/* ★ لو فيه جلسة موجودة → حوّل فورًا لـ index */
+/* ★ لو فيه جلسة → تحويل فوري */
 (function checkExistingSession() {
   const existing = sessionStorage.getItem('borsa_admin') || localStorage.getItem('borsa_admin');
   if (existing) {
-    console.log('✅ جلسة موجودة - تحويل لـ index:', existing);
-    setProgress(60);
+    console.log('✅ جلسة موجودة:', existing);
     window.location.replace('index.html');
   }
 })();
@@ -762,11 +616,6 @@ function showMsg(el, text, type = 'err') {
   setTimeout(() => { el.className = 'msg'; el.innerHTML = ''; }, 5000);
 }
 
-function setFieldError(id, hasError) {
-  const el = document.getElementById(id);
-  if (el) el.classList.toggle('error', !!hasError);
-}
-
 /* ========== تحميل الإعدادات ========== */
 async function loadSiteSettings() {
   try {
@@ -774,34 +623,17 @@ async function loadSiteSettings() {
     const snap = await getDoc(doc(db, 'settings', 'site'));
     if (snap.exists()) {
       const s = snap.data();
-
       if (s.logoUrl) {
-        const loadingLogo = document.getElementById('loadingLogo');
-        const mainLogo = document.getElementById('mainLogo');
+        document.getElementById('loadingLogo').src = s.logoUrl;
+        document.getElementById('mainLogo').src = s.logoUrl;
         const fav = document.getElementById('siteFavicon');
         const apple = document.getElementById('siteAppleIcon');
-
-        await new Promise((resolve) => {
-          const img = new Image();
-          img.onload = () => {
-            loadingLogo.src = s.logoUrl;
-            mainLogo.src = s.logoUrl;
-            if (fav) fav.href = s.logoUrl;
-            if (apple) apple.href = s.logoUrl;
-            resolve();
-          };
-          img.onerror = () => resolve();
-          img.src = s.logoUrl;
-        });
+        if (fav) fav.href = s.logoUrl;
+        if (apple) apple.href = s.logoUrl;
       }
-
       if (s.siteName) {
         const fullName = s.siteName;
         const accent = s.siteNameAccent || '';
-
-        const loadingBrand = document.getElementById('loadingBrand');
-        const mainBrand = document.getElementById('mainBrand');
-
         const buildName = (el) => {
           if (accent && fullName.includes(accent)) {
             const parts = fullName.split(accent);
@@ -812,15 +644,14 @@ async function loadSiteSettings() {
             el.textContent = fullName;
           }
         };
-
-        buildName(loadingBrand);
-        buildName(mainBrand);
+        buildName(document.getElementById('loadingBrand'));
+        buildName(document.getElementById('mainBrand'));
         document.title = fullName + ' - الدخول';
       }
     }
     setProgress(70);
   } catch (e) {
-    console.warn('settings load failed:', e);
+    console.warn('settings:', e);
     setProgress(70);
   }
 }
@@ -881,10 +712,7 @@ function generateCaptcha() {
   const ctx = canvas.getContext('2d');
   const W = canvas.width, H = canvas.height;
 
-  const grad = ctx.createLinearGradient(0, 0, W, H);
-  grad.addColorStop(0, '#0f253c');
-  grad.addColorStop(1, '#0d2033');
-  ctx.fillStyle = grad;
+  ctx.fillStyle = '#0d2033';
   ctx.fillRect(0, 0, W, H);
 
   for (let i = 0; i < 5; i++) {
@@ -895,55 +723,34 @@ function generateCaptcha() {
     ctx.lineTo(Math.random() * W, Math.random() * H);
     ctx.stroke();
   }
-  for (let i = 0; i < 30; i++) {
-    ctx.fillStyle = `rgba(${100 + Math.random() * 155},${100 + Math.random() * 155},255,0.5)`;
-    ctx.beginPath();
-    ctx.arc(Math.random() * W, Math.random() * H, 1 + Math.random() * 2, 0, Math.PI * 2);
-    ctx.fill();
-  }
   ctx.font = 'bold 26px Cairo, Arial';
   ctx.textBaseline = 'middle';
   for (let i = 0; i < text.length; i++) {
     const ch = text[i];
     const x = 20 + i * ((W - 40) / text.length);
     const y = H / 2 + (Math.random() - 0.5) * 8;
-    const rotate = (Math.random() - 0.5) * 0.5;
-    ctx.save();
-    ctx.translate(x, y);
-    ctx.rotate(rotate);
     ctx.fillStyle = `hsl(${Math.random() * 60 + 190}, 80%, 65%)`;
-    ctx.shadowColor = 'rgba(30,144,255,.6)';
-    ctx.shadowBlur = 6;
-    ctx.fillText(ch, 0, 0);
-    ctx.restore();
+    ctx.fillText(ch, x, y);
   }
 }
 document.getElementById('captchaRefresh').onclick = generateCaptcha;
 generateCaptcha();
 
-/* ========== username verification ========== */
+/* ========== التحقق من اسم المستخدم ========== */
 async function checkUsernameAvailable(username) {
-  if (!username || username.length < 3) return { ok: false, reason: 'اسم المستخدم قصير جدًا' };
-  if (!/^[a-zA-Z0-9_]{3,30}$/.test(username)) return { ok: false, reason: 'يُسمح بالأحرف والأرقام و _ فقط' };
+  if (!username || username.length < 3) return { ok: false, reason: 'قصير جدًا' };
+  if (!/^[a-zA-Z0-9_]{3,30}$/.test(username)) return { ok: false, reason: 'أحرف وأرقام و _ فقط' };
   const q = query(collection(db, USERS_COLLECTION), where('username', '==', username.toLowerCase()));
   const snap = await getDocs(q);
-  if (!snap.empty) return { ok: false, reason: 'اسم المستخدم محجوز' };
+  if (!snap.empty) return { ok: false, reason: 'محجوز' };
   return { ok: true };
 }
 
 verifyUserBtn.onclick = async () => {
   const u = regUser.value.trim().toLowerCase();
-  if (!u) {
-    regUserHelp.textContent = '⚠️ اكتب اسم المستخدم أولاً';
-    regUserHelp.className = 'help err';
-    usernameVerified = false;
-    return;
-  }
+  if (!u) { regUserHelp.textContent = '⚠️ اكتب اسم المستخدم'; regUserHelp.className = 'help err'; return; }
   verifyUserBtn.disabled = true;
   verifyUserBtn.textContent = '...';
-  regUserHelp.textContent = '⏳ جارٍ التحقق...';
-  regUserHelp.className = 'help';
-
   try {
     const res = await checkUsernameAvailable(u);
     if (res.ok) {
@@ -966,21 +773,15 @@ verifyUserBtn.onclick = async () => {
 };
 regUser.addEventListener('input', () => {
   usernameVerified = false;
-  regUserHelp.textContent = 'سيُستخدم لتسجيل الدخول لاحقًا';
+  regUserHelp.textContent = 'سيُستخدم لتسجيل الدخول';
   regUserHelp.className = 'help';
 });
 
 gmVerifyUserBtn.onclick = async () => {
   const u = gmUser.value.trim().toLowerCase();
-  if (!u) {
-    gmUserHelp.textContent = '⚠️ اكتب اسم المستخدم';
-    gmUserHelp.className = 'help err';
-    return;
-  }
+  if (!u) { gmUserHelp.textContent = '⚠️ اكتب اسم المستخدم'; gmUserHelp.className = 'help err'; return; }
   gmVerifyUserBtn.disabled = true;
   gmVerifyUserBtn.textContent = '...';
-  gmUserHelp.textContent = '⏳ جارٍ التحقق...';
-  gmUserHelp.className = 'help';
   try {
     const res = await checkUsernameAvailable(u);
     if (res.ok) {
@@ -994,7 +795,7 @@ gmVerifyUserBtn.onclick = async () => {
       gmUserHelp.className = 'help err';
     }
   } catch {
-    gmUserHelp.textContent = '❌ فشل التحقق';
+    gmUserHelp.textContent = '❌ فشل';
     gmUserHelp.className = 'help err';
   } finally {
     gmVerifyUserBtn.disabled = false;
@@ -1003,15 +804,15 @@ gmVerifyUserBtn.onclick = async () => {
 };
 gmUser.addEventListener('input', () => {
   gmUsernameVerified = false;
-  gmUserHelp.textContent = 'سيُستخدم لتسجيل الدخول لاحقًا';
+  gmUserHelp.textContent = 'سيُستخدم لتسجيل الدخول';
   gmUserHelp.className = 'help';
 });
 
-/* ========== Password ========== */
+/* ========== كلمة السر ========== */
 function validatePassword(pass) {
-  if (pass.length < 8) return 'كلمة السر قصيرة — 8 أحرف على الأقل';
-  if (!/[A-Za-z]/.test(pass)) return 'لازم تحتوي على حرف واحد على الأقل';
-  if (!/[0-9]/.test(pass)) return 'لازم تحتوي على رقم واحد على الأقل';
+  if (pass.length < 8) return '8 أحرف على الأقل';
+  if (!/[A-Za-z]/.test(pass)) return 'حرف واحد على الأقل';
+  if (!/[0-9]/.test(pass)) return 'رقم واحد على الأقل';
   return null;
 }
 
@@ -1025,7 +826,7 @@ async function saveUserDoc(uid, data) {
 }
 
 /* =====================================================
-   Register — تسجيل جديد
+   ★★★ Register ★★★
 ===================================================== */
 registerBtn.onclick = async () => {
   registerMsg.className = 'msg'; registerMsg.innerHTML = '';
@@ -1038,41 +839,27 @@ registerBtn.onclick = async () => {
   const pass2 = regPass2.value;
   const captcha = regCaptcha.value.trim();
 
-  setFieldError('rf-full', !full);
-  setFieldError('rf-user', !user);
-  setFieldError('rf-phone', !phone);
-  setFieldError('rf-email', !email);
-  setFieldError('rf-gender', !currentGender);
-  setFieldError('rf-birth', !birth);
-  setFieldError('rf-pass', !pass);
-  setFieldError('rf-pass2', !pass2);
-  setFieldError('rf-captcha', !captcha);
-
-  if (!full) { showMsg(registerMsg, '⚠️ الاسم الكامل مطلوب'); return; }
+  if (!full) { showMsg(registerMsg, '⚠️ الاسم مطلوب'); return; }
   if (!user) { showMsg(registerMsg, '⚠️ اسم المستخدم مطلوب'); return; }
   if (!usernameVerified || verifiedUsername !== user) {
-    showMsg(registerMsg, '⚠️ اضغط "تحقق" لتأكيد اسم المستخدم'); return;
+    showMsg(registerMsg, '⚠️ اضغط "تحقق"'); return;
   }
-  if (!/^01[0-9]{9}$/.test(phone)) {
-    showMsg(registerMsg, '⚠️ رقم الهاتف غير صحيح — 11 رقم يبدأ بـ 01'); return;
-  }
-  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-    showMsg(registerMsg, '⚠️ البريد الإلكتروني غير صحيح'); return;
-  }
+  if (!/^01[0-9]{9}$/.test(phone)) { showMsg(registerMsg, '⚠️ رقم الهاتف غير صحيح'); return; }
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { showMsg(registerMsg, '⚠️ البريد غير صحيح'); return; }
   if (!currentGender) { showMsg(registerMsg, '⚠️ اختر النوع'); return; }
   if (!birth) { showMsg(registerMsg, '⚠️ تاريخ الميلاد مطلوب'); return; }
-  const passErr = validatePassword(pass);
-  if (passErr) { showMsg(registerMsg, '⚠️ ' + passErr); return; }
+  const pErr = validatePassword(pass);
+  if (pErr) { showMsg(registerMsg, '⚠️ ' + pErr); return; }
   if (pass !== pass2) { showMsg(registerMsg, '⚠️ كلمتا السر غير متطابقتين'); return; }
   if (captcha.toUpperCase() !== captchaText) {
-    showMsg(registerMsg, '⚠️ رمز التحقق غير صحيح');
+    showMsg(registerMsg, '⚠️ رمز التحقق غلط');
     generateCaptcha();
     regCaptcha.value = '';
     return;
   }
 
   registerBtn.disabled = true;
-  registerBtn.innerHTML = 'جارٍ إنشاء الحساب...<span class="loader"></span>';
+  registerBtn.innerHTML = 'جارٍ الإنشاء...<span class="loader"></span>';
 
   try {
     const cred = await createUserWithEmailAndPassword(auth, email, pass);
@@ -1082,24 +869,20 @@ registerBtn.onclick = async () => {
     const userData = {
       uid, fullName: full, username: user, phone, email,
       gender: currentGender, birthdate: birth,
-      provider: 'local',
-      password: pass
+      provider: 'local', password: pass
     };
     await saveUserDoc(uid, userData);
-
-    // ★ حفظ الجلسة في الاثنين
     saveSession(userData, uid);
 
-    showMsg(registerMsg, '✅ تم إنشاء الحساب — جارٍ التحويل...', 'ok');
+    showMsg(registerMsg, '✅ تم! جارٍ التحويل...', 'ok');
     setTimeout(() => window.location.replace('index.html'), 1000);
   } catch (err) {
     console.error(err);
-    let m = 'فشل إنشاء الحساب';
+    let m = 'فشل الإنشاء';
     const code = err.code || '';
-    if (code.includes('email-already-in-use')) m = '⚠️ البريد الإلكتروني مستخدم بالفعل';
-    else if (code.includes('weak-password')) m = '⚠️ كلمة السر ضعيفة';
-    else if (code.includes('invalid-email')) m = '⚠️ البريد الإلكتروني غير صحيح';
-    else if (code.includes('network')) m = '⚠️ تحقق من الإنترنت';
+    if (code.includes('email-already-in-use')) m = '⚠️ البريد مستخدم';
+    else if (code.includes('weak-password')) m = '⚠️ كلمة ضعيفة';
+    else if (code.includes('invalid-email')) m = '⚠️ بريد غير صحيح';
     showMsg(registerMsg, m);
     registerBtn.disabled = false;
     registerBtn.textContent = 'إنشاء الحساب';
@@ -1107,19 +890,14 @@ registerBtn.onclick = async () => {
 };
 
 /* =====================================================
-   Login — تسجيل دخول
+   ★★★ Login ★★★
 ===================================================== */
 loginBtn.onclick = async () => {
   loginMsg.className = 'msg'; loginMsg.innerHTML = '';
   const user = loginUser.value.trim().toLowerCase();
   const pass = loginPass.value;
 
-  setFieldError('lf-user', !user);
-  setFieldError('lf-pass', !pass);
-
-  if (!user || !pass) {
-    showMsg(loginMsg, '⚠️ اكتب اسم المستخدم وكلمة السر'); return;
-  }
+  if (!user || !pass) { showMsg(loginMsg, '⚠️ اكتب اسم المستخدم وكلمة السر'); return; }
 
   loginBtn.disabled = true;
   loginBtn.innerHTML = 'جارٍ التحقق...<span class="loader"></span>';
@@ -1140,7 +918,7 @@ loginBtn.onclick = async () => {
     const status = (userDoc.status || 'active').toLowerCase();
 
     if (status === 'disabled') {
-      showMsg(loginMsg, '🔒 تم تعطيل حسابك — تواصل مع الدعم');
+      showMsg(loginMsg, '🔒 تم تعطيل حسابك');
       loginBtn.disabled = false;
       loginBtn.textContent = 'تسجيل الدخول';
       return;
@@ -1158,7 +936,7 @@ loginBtn.onclick = async () => {
       return;
     }
     if (userDoc.provider === 'google') {
-      showMsg(loginMsg, 'ℹ️ هذا الحساب مسجّل بـ Google — استخدم زر Google');
+      showMsg(loginMsg, 'ℹ️ سجّل بـ Google');
       loginBtn.disabled = false;
       loginBtn.textContent = 'تسجيل الدخول';
       return;
@@ -1166,23 +944,19 @@ loginBtn.onclick = async () => {
 
     await signInWithEmailAndPassword(auth, userDoc.email, pass);
 
-    // تحديث كلمة السر لو مش محفوظة
     if (!userDoc.password) {
       await updateDoc(doc(db, USERS_COLLECTION, uid), { password: pass }).catch(() => {});
     }
 
-    // ★ حفظ الجلسة في الاثنين
     saveSession(userDoc, uid);
-
-    showMsg(loginMsg, '✅ تم تسجيل الدخول — جارٍ التحويل...', 'ok');
+    showMsg(loginMsg, '✅ جارٍ التحويل...', 'ok');
     setTimeout(() => window.location.replace('index.html'), 800);
   } catch (err) {
     console.error(err);
     let m = 'فشل تسجيل الدخول';
     const code = err.code || '';
-    if (code.includes('wrong-password') || code.includes('invalid-credential')) m = '❌ كلمة السر غير صحيحة';
-    else if (code.includes('too-many-requests')) m = '⚠️ محاولات كثيرة — جرب لاحقًا';
-    else if (code.includes('network')) m = '⚠️ تحقق من الإنترنت';
+    if (code.includes('wrong-password') || code.includes('invalid-credential')) m = '❌ كلمة السر غلط';
+    else if (code.includes('too-many-requests')) m = '⚠️ حاول لاحقًا';
     showMsg(loginMsg, m);
     loginBtn.disabled = false;
     loginBtn.textContent = 'تسجيل الدخول';
@@ -1190,7 +964,7 @@ loginBtn.onclick = async () => {
 };
 
 /* =====================================================
-   Google Sign-In
+   ★★★ Google Sign-In — Popup ★★★
 ===================================================== */
 const provider = new GoogleAuthProvider();
 provider.setCustomParameters({ prompt: 'select_account' });
@@ -1205,40 +979,49 @@ async function processGoogleUser(user) {
       const data = userSnap.data();
       const status = (data.status || 'active').toLowerCase();
 
-      if (status === 'disabled') {
-        await signOut(auth);
-        showMsg(loginMsg, '🔒 تم تعطيل حسابك');
-        return;
-      }
-      if (status === 'banned') {
-        await signOut(auth);
-        showMsg(loginMsg, '🚫 تم حظر حسابك');
-        return;
-      }
-      if (status === 'deleted') {
-        await signOut(auth);
-        showMsg(loginMsg, '🗑️ تم حذف حسابك');
+      if (status === 'disabled') { await signOut(auth); showMsg(loginMsg, '🔒 حسابك معطّل'); return; }
+      if (status === 'banned')   { await signOut(auth); showMsg(loginMsg, '🚫 حسابك محظور'); return; }
+      if (status === 'deleted')  { await signOut(auth); showMsg(loginMsg, '🗑️ حسابك محذوف'); return; }
+
+      const hasFullData = data.fullName && data.username && data.phone && data.birthdate && data.gender;
+
+      if (!hasFullData) {
+        // ناقص → افتح المودال
+        pendingGoogleUser = { uid, email: user.email, displayName: user.displayName || data.fullName || '' };
+
+        gmFull.value = data.fullName || user.displayName || '';
+        gmUser.value = data.username || '';
+        gmPhone.value = data.phone || '';
+        gmBirth.value = data.birthdate || '';
+
+        if (data.gender) {
+          currentGmGender = data.gender;
+          document.querySelectorAll('.gender-opt[data-gm-gender]').forEach(el => {
+            el.classList.toggle('selected', el.dataset.gmGender === data.gender);
+          });
+        }
+
+        if (!gmUser.value) {
+          let s = (user.email || '').split('@')[0].replace(/[^a-zA-Z0-9_]/g, '');
+          if (s.length < 3) s = 'user' + Math.floor(Math.random() * 9999);
+          gmUser.value = s.toLowerCase();
+        }
+
+        googleModal.classList.add('open');
         return;
       }
 
-      // ★ حفظ الجلسة
       saveSession(data, uid);
-
       window.location.replace('index.html');
       return;
     }
 
-    // مستخدم جديد → افتح Modal
-    pendingGoogleUser = {
-      uid,
-      email: user.email,
-      displayName: user.displayName || ''
-    };
-
+    // مستخدم جديد
+    pendingGoogleUser = { uid, email: user.email, displayName: user.displayName || '' };
     gmFull.value = user.displayName || '';
-    let suggested = (user.email || '').split('@')[0].replace(/[^a-zA-Z0-9_]/g, '');
-    if (suggested.length < 3) suggested = 'user' + Math.floor(Math.random() * 9999);
-    gmUser.value = suggested.toLowerCase();
+    let s = (user.email || '').split('@')[0].replace(/[^a-zA-Z0-9_]/g, '');
+    if (s.length < 3) s = 'user' + Math.floor(Math.random() * 9999);
+    gmUser.value = s.toLowerCase();
 
     googleModal.classList.add('open');
   } catch (e) {
@@ -1248,20 +1031,34 @@ async function processGoogleUser(user) {
 }
 
 async function handleGoogleAuth() {
-  showMsg(loginMsg, '⏳ جارٍ تحويلك إلى Google...', 'ok');
+  showMsg(loginMsg, '⏳ جارٍ فتح Google...', 'ok');
   googleLoginBtn.disabled = true;
   googleRegisterBtn.disabled = true;
 
   try {
-    await signInWithRedirect(auth, provider);
+    const result = await signInWithPopup(auth, provider);
+
+    if (result && result.user) {
+      await processGoogleUser(result.user);
+    } else {
+      showMsg(loginMsg, '❌ لم يتم استقبال بيانات');
+      googleLoginBtn.disabled = false;
+      googleRegisterBtn.disabled = false;
+    }
   } catch (err) {
     console.error(err);
     googleLoginBtn.disabled = false;
     googleRegisterBtn.disabled = false;
-    let m = 'فشل تسجيل الدخول بـ Google';
+
+    let m = 'فشل تسجيل Google';
     const code = err.code || '';
-    if (code.includes('unauthorized-domain')) m = '❌ الدومين غير مصرح في Firebase';
-    else if (code.includes('operation-not-allowed')) m = '❌ Google Sign-In غير مفعّل';
+    if (code.includes('popup-blocked')) m = '❌ المتصفح منع النافذة';
+    else if (code.includes('popup-closed-by-user')) m = '⚠️ أغلقت النافذة';
+    else if (code.includes('unauthorized-domain')) m = '❌ الدومين غير مصرح';
+    else if (code.includes('operation-not-allowed')) m = '❌ Google غير مفعّل';
+    else if (code.includes('network-request-failed')) m = '❌ تحقق من الإنترنت';
+    else m = '❌ فشل: ' + code;
+
     showMsg(loginMsg, m);
   }
 }
@@ -1269,22 +1066,7 @@ async function handleGoogleAuth() {
 googleLoginBtn.onclick = handleGoogleAuth;
 googleRegisterBtn.onclick = handleGoogleAuth;
 
-/* ★ معالجة العودة من Google */
-(async () => {
-  try {
-    const result = await getRedirectResult(auth);
-    if (result && result.user) {
-      await processGoogleUser(result.user);
-    }
-  } catch (err) {
-    console.warn('redirect result error:', err);
-    if (err.code === 'auth/unauthorized-domain') {
-      showMsg(loginMsg, '❌ الدومين غير مصرح — تواصل مع الإدارة');
-    }
-  }
-})();
-
-/* ========== Google Modal ========== */
+/* ========== Modal — إكمال بيانات Google ========== */
 gmCancelBtn.onclick = async () => {
   googleModal.classList.remove('open');
   if (pendingGoogleUser) await signOut(auth).catch(() => {});
@@ -1299,9 +1081,7 @@ gmSaveBtn.onclick = async () => {
   const birth = gmBirth.value;
 
   if (!full) { alert('الاسم الكامل مطلوب'); return; }
-  if (!user || !gmUsernameVerified || gmVerifiedUsername !== user) {
-    alert('اضغط "تحقق" لتأكيد اسم المستخدم'); return;
-  }
+  if (!user || !gmUsernameVerified || gmVerifiedUsername !== user) { alert('اضغط "تحقق"'); return; }
   if (!/^01[0-9]{9}$/.test(phone)) { alert('رقم الهاتف غير صحيح'); return; }
   if (!currentGmGender) { alert('اختر النوع'); return; }
   if (!birth) { alert('تاريخ الميلاد مطلوب'); return; }
@@ -1322,8 +1102,6 @@ gmSaveBtn.onclick = async () => {
       password: '(Google)'
     };
     await saveUserDoc(pendingGoogleUser.uid, userData);
-
-    // ★ حفظ الجلسة
     saveSession(userData, pendingGoogleUser.uid);
 
     googleModal.classList.remove('open');
