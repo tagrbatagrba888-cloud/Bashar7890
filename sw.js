@@ -1,8 +1,10 @@
 /* =====================================================
-   BORSA CLUP - Service Worker
+   sw.js — Service Worker
+   BORSA CLUP
+   ★ يستثني Google APIs و Firebase
 ===================================================== */
 
-const CACHE_NAME = 'borsa-clup-v2';
+const CACHE_NAME = 'borsa-clup-v5';
 
 const STATIC_ASSETS = [
   './manifest.json',
@@ -34,47 +36,92 @@ self.addEventListener('activate', (event) => {
   );
 });
 
+/* ★ قائمة النطاقات اللي ممنوع نتدخّل فيها ★ */
+const SKIP_DOMAINS = [
+  // Google APIs (أهم حاجة!)
+  'apis.google.com',
+  'accounts.google.com',
+  'www.googleapis.com',
+  'googleapis.com',
+  'gstatic.com',
+  'google.com',
+  'googleusercontent.com',
+  'firebaseapp.com',
+  'firebaseio.com',
+  'cloudfunctions.net',
+  // خدمات خارجية
+  'tradingview.com',
+  'twelvedata.com',
+  'clearbit.com',
+  'i.ibb.co',
+  'fonts.googleapis.com',
+  'fonts.gstatic.com'
+];
+
 /* Fetch */
 self.addEventListener('fetch', (event) => {
   const req = event.request;
+
+  // ★ نتجاهل غير GET
   if (req.method !== 'GET') return;
 
   const url = new URL(req.url);
 
-  // تجاهل الـ APIs والموارد الخارجية
-  const skipDomains = [
-    'firebaseio.com', 'googleapis.com', 'gstatic.com',
-    'tradingview.com', 'twelvedata.com', 'clearbit.com',
-    'i.ibb.co', 'fonts.googleapis.com', 'fonts.gstatic.com'
-  ];
-  if (skipDomains.some((d) => url.hostname.includes(d))) return;
+  // ★★ مهم جدًا: نتجاهل كل الطلبات الخارجية ★★
+  if (SKIP_DOMAINS.some(d => url.hostname.includes(d))) {
+    return; // نتركها تمر عادي بدون اعتراض
+  }
 
-  // ⚠️ مهم: لا تخزّن HTML — عشان التحديثات تظهر فورًا
-  const isHTML = req.mode === 'navigate' || (req.headers.get('accept') || '').includes('text/html');
+  // ★ نتجاهل أي طلب مش من نفس الدومين
+  if (url.origin !== self.location.origin) {
+    return;
+  }
+
+  // ★ للصفحات (HTML) → Network First
+  const isHTML = req.mode === 'navigate' 
+              || (req.headers.get('accept') || '').includes('text/html');
 
   if (isHTML) {
     event.respondWith(
-      fetch(req).catch(() => caches.match(req) || caches.match('./login.html'))
+      fetch(req).catch(() => {
+        return caches.match(req).then((cached) => {
+          if (cached) return cached;
+          return caches.match('./login.html').then((fallback) => {
+            if (fallback) return fallback;
+            return new Response('Offline', {
+              status: 503,
+              headers: { 'Content-Type': 'text/plain; charset=utf-8' }
+            });
+          });
+        });
+      })
     );
     return;
   }
 
-  // الأصول الثابتة: Cache First
+  // ★ للأصول الثابتة → Cache First
   event.respondWith(
     caches.match(req).then((cached) => {
       if (cached) return cached;
       return fetch(req).then((res) => {
+        // ★ نتأكد إن الاستجابة صحيحة قبل ما نخزّنها
         if (res && res.status === 200 && res.type === 'basic') {
-          const resClone = res.clone();
-          caches.open(CACHE_NAME).then((cache) => cache.put(req, resClone));
+          const clone = res.clone();
+          caches.open(CACHE_NAME).then(c => c.put(req, clone)).catch(() => {});
         }
         return res;
-      }).catch(() => cached);
+      }).catch(() => {
+        // ★ نرجع Response صالح دايماً
+        return new Response('Not found', {
+          status: 404,
+          headers: { 'Content-Type': 'text/plain; charset=utf-8' }
+        });
+      });
     })
   );
 });
 
-/* رسائل من الصفحة */
+/* Message */
 self.addEventListener('message', (event) => {
   if (event.data && event.data.type === 'SKIP_WAITING') {
     self.skipWaiting();
