@@ -1,0 +1,957 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0" />
+<meta name="theme-color" content="#0a1929" />
+<meta name="description" content="الأسهم المصرية - BORSA CLUP" />
+<title>BORSA CLUP - الأسهم</title>
+
+<link rel="manifest" href="manifest.json" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+<meta name="apple-mobile-web-app-title" content="BORSA CLUP" />
+<meta name="mobile-web-app-capable" content="yes" />
+<link rel="icon" id="siteFavicon" href="https://i.ibb.co/PzcMFkpR/FB-IMG-1789241464654.jpg" />
+<link rel="apple-touch-icon" id="siteAppleIcon" href="https://i.ibb.co/PzcMFkpR/FB-IMG-1789241464654.jpg" />
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet" />
+
+<script src="auth-guard.js"></script>
+
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+  html, body { min-height:100%; font-family:'Cairo', sans-serif; background:#000; overflow-x:hidden; }
+  body {
+    min-height:100vh;
+    display:flex; justify-content:center; align-items:flex-start;
+    background:radial-gradient(circle at 50% 0%, #0f2f4a 0%, #0a1929 40%, #000 100%);
+  }
+
+  /* Loading */
+  .loading-screen {
+    position:fixed; inset:0; z-index:9999;
+    background:radial-gradient(circle at 50% 30%, #0f2f4a 0%, #0a1929 40%, #000 100%);
+    display:flex; flex-direction:column;
+    align-items:center; justify-content:center;
+    transition:opacity .6s ease, visibility .6s ease;
+    overflow:hidden;
+  }
+  .loading-screen.hide { opacity:0; visibility:hidden; pointer-events:none; }
+  .loading-screen::before {
+    content:''; position:absolute; inset:0;
+    background-image:
+      radial-gradient(2px 2px at 20% 30%, rgba(30,144,255,.6), transparent),
+      radial-gradient(2px 2px at 60% 70%, rgba(30,144,255,.4), transparent),
+      radial-gradient(1px 1px at 50% 50%, rgba(255,255,255,.5), transparent),
+      radial-gradient(1px 1px at 80% 10%, rgba(255,255,255,.3), transparent);
+    animation:starsMove 20s linear infinite;
+  }
+  @keyframes starsMove { to { transform:translateY(-100vh); } }
+  .loading-content {
+    position:relative; z-index:2;
+    display:flex; flex-direction:column;
+    align-items:center; gap:22px;
+    animation:fadeInScale .8s ease;
+  }
+  @keyframes fadeInScale {
+    from { opacity:0; transform:scale(.9); } to { opacity:1; transform:scale(1); }
+  }
+  .logo-loader {
+    position:relative; width:160px; height:160px;
+    display:flex; align-items:center; justify-content:center;
+  }
+  .logo-loader::before {
+    content:''; position:absolute; inset:0;
+    border-radius:50%; border:3px solid transparent;
+    border-top-color:#1e90ff; border-right-color:#1e90ff;
+    animation:spinRing 1.5s linear infinite;
+    box-shadow:0 0 20px rgba(30,144,255,.5);
+  }
+  @keyframes spinRing { to { transform:rotate(360deg); } }
+  .loading-logo {
+    width:110px; height:110px; border-radius:50%; object-fit:cover;
+    border:3px solid rgba(30,144,255,.4);
+    box-shadow:0 0 30px rgba(30,144,255,.6);
+    animation:pulseLogo 2s ease-in-out infinite;
+  }
+  @keyframes pulseLogo { 0%,100%{transform:scale(1);} 50%{transform:scale(1.05);} }
+  .loading-brand {
+    font-size:28px; font-weight:900; letter-spacing:2px; color:#fff;
+    text-shadow:0 0 20px rgba(30,144,255,.8);
+  }
+  .loading-brand span { color:#1e90ff; }
+  .loading-sub { color:#8fb3d9; font-size:13px; font-weight:600; }
+  .loading-bar {
+    width:220px; height:4px; background:rgba(255,255,255,.08);
+    border-radius:2px; overflow:hidden;
+  }
+  .loading-bar-fill {
+    height:100%;
+    background:linear-gradient(90deg, #0066cc, #1e90ff, #6bb7ff);
+    background-size:200% 100%; width:0%; transition:width .4s ease;
+    animation:barShine 2s linear infinite; border-radius:2px;
+    box-shadow:0 0 12px rgba(30,144,255,.8);
+  }
+  @keyframes barShine { 0%{background-position:0% 0%;} 100%{background-position:200% 0%;} }
+  .loading-footer {
+    position:absolute; bottom:30px; color:#4d6d8f;
+    font-size:11px; letter-spacing:1px; font-weight:600; z-index:2;
+  }
+
+  .phone {
+    width:100%; max-width:430px; min-height:100vh;
+    background:linear-gradient(180deg,#0a1929 0%,#06121e 100%);
+    display:flex; flex-direction:column;
+    box-shadow:0 0 60px rgba(30,144,255,.25);
+    position:relative; overflow:hidden;
+    opacity:0; transition:opacity .5s ease;
+  }
+  .phone.show { opacity:1; }
+
+  /* Topbar */
+  .topbar {
+    display:flex; align-items:center; justify-content:space-between;
+    padding:14px 16px;
+    background:rgba(255,255,255,.03);
+    border-bottom:1px solid rgba(30,144,255,.25);
+    position:sticky; top:0; z-index:20;
+    backdrop-filter:blur(12px); -webkit-backdrop-filter:blur(12px);
+    gap:8px;
+  }
+  .topbar .title { display:flex; align-items:center; gap:8px; flex-shrink:0; }
+  .topbar img {
+    width:36px; height:36px; border-radius:50%;
+    border:2px solid #1e90ff; object-fit:cover;
+  }
+  .topbar .name { font-size:14px; font-weight:900; color:#fff; }
+  .topbar .name span { color:#1e90ff; }
+  .top-btn {
+    padding:8px 12px; border:none; border-radius:9px;
+    font-family:'Cairo',sans-serif;
+    font-size:12px; font-weight:700;
+    cursor:pointer; transition:.25s;
+    text-decoration:none;
+    display:flex; align-items:center; gap:4px;
+    background:rgba(255,255,255,.06);
+    color:#a8c8e8;
+    border:1px solid rgba(255,255,255,.1);
+  }
+  .top-btn:hover { background:rgba(255,255,255,.12); color:#fff; }
+
+  .content { flex:1; padding:16px; overflow-y:auto; }
+
+  .page-title {
+    display:flex; align-items:center; justify-content:space-between;
+    margin-bottom:14px;
+  }
+  .page-title h1 { color:#fff; font-size:19px; font-weight:900; }
+  .page-title h1 span { color:#1e90ff; }
+  .page-title .count {
+    background:rgba(30,144,255,.15); color:#6bb7ff;
+    padding:5px 12px; border-radius:20px;
+    font-size:12px; font-weight:700;
+    border:1px solid rgba(30,144,255,.3);
+  }
+
+  /* Index Tabs */
+  .index-tabs {
+    display:flex; gap:6px; margin-bottom:12px;
+    overflow-x:auto; padding-bottom:4px; scrollbar-width:none;
+  }
+  .index-tabs::-webkit-scrollbar { display:none; }
+  .idx-tab {
+    padding:7px 12px; border-radius:20px;
+    background:rgba(255,255,255,.04);
+    border:1.5px solid rgba(30,144,255,.2);
+    color:#8fb3d9;
+    font-family:'Cairo',sans-serif;
+    font-size:11px; font-weight:700;
+    cursor:pointer; transition:.2s; white-space:nowrap;
+    display:flex; align-items:center; gap:4px;
+  }
+  .idx-tab:hover { border-color:rgba(30,144,255,.5); }
+  .idx-tab.active {
+    background:linear-gradient(135deg,#1e90ff,#0066cc);
+    color:#fff; border-color:#1e90ff;
+  }
+
+  /* Search */
+  .search-box { position:relative; margin-bottom:10px; }
+  .search-box input {
+    width:100%; padding:11px 42px 11px 14px;
+    background:#0d2033; border:1.5px solid #1b3a5c; border-radius:12px;
+    color:#fff; font-size:14px;
+    font-family:'Cairo',sans-serif; outline:none;
+  }
+  .search-box input:focus { border-color:#1e90ff; box-shadow:0 0 0 3px rgba(30,144,255,.15); }
+  .search-box input::placeholder { color:#4d6d8f; }
+  .search-box .icon {
+    position:absolute; right:14px; top:50%;
+    transform:translateY(-50%); font-size:15px; color:#6b8fb0;
+  }
+  .search-box .clear {
+    position:absolute; left:12px; top:50%;
+    transform:translateY(-50%);
+    width:22px; height:22px; border-radius:50%;
+    background:rgba(255,60,60,.7); color:#fff; border:none;
+    cursor:pointer; font-size:13px; font-weight:900;
+    display:none; align-items:center; justify-content:center;
+  }
+  .search-box.has-value .clear { display:flex; }
+
+  /* Filters */
+  .filters {
+    display:flex; gap:6px; margin-bottom:14px;
+    overflow-x:auto; padding-bottom:4px; scrollbar-width:none;
+  }
+  .filters::-webkit-scrollbar { display:none; }
+  .filter-chip {
+    padding:7px 12px; border-radius:20px;
+    background:rgba(255,255,255,.04);
+    border:1px solid rgba(30,144,255,.2);
+    color:#8fb3d9;
+    font-family:'Cairo',sans-serif;
+    font-size:11px; font-weight:700;
+    cursor:pointer; transition:.2s; white-space:nowrap;
+  }
+  .filter-chip:hover { border-color:rgba(30,144,255,.5); }
+  .filter-chip.active {
+    background:linear-gradient(135deg,#1e90ff,#0066cc);
+    color:#fff; border-color:#1e90ff;
+  }
+
+  /* Stock cards */
+  .stocks-list { display:flex; flex-direction:column; gap:10px; }
+  .stock-card {
+    padding:12px;
+    background:rgba(255,255,255,.04);
+    border:1px solid rgba(30,144,255,.22);
+    border-radius:14px;
+    transition:.25s; animation:fadeUp .35s ease;
+    cursor:pointer; display:flex;
+    gap:12px; align-items:flex-start;
+  }
+  .stock-card:hover {
+    border-color:rgba(30,144,255,.5);
+    box-shadow:0 8px 20px rgba(30,144,255,.15);
+    transform:translateY(-2px);
+  }
+  .stock-logo {
+    width:52px; height:52px; border-radius:12px;
+    background:linear-gradient(135deg,#1e90ff,#0066cc);
+    display:flex; align-items:center; justify-content:center;
+    color:#fff; font-size:10px; font-weight:900;
+    flex-shrink:0; padding:4px;
+    text-align:center; line-height:1.1;
+    word-break:break-all; overflow:hidden; position:relative;
+  }
+  .stock-logo img {
+    width:100%; height:100%; object-fit:contain;
+    background:#fff; border-radius:10px; padding:4px;
+  }
+  .stock-info { flex:1; min-width:0; }
+  .stock-info .name {
+    color:#fff; font-size:13.5px; font-weight:900;
+    margin-bottom:3px; word-break:break-word; line-height:1.3;
+  }
+  .stock-info .symbol-line {
+    color:#6bb7ff; font-size:11px; font-weight:700;
+    margin-bottom:6px;
+  }
+  .meta-row { display:flex; flex-wrap:wrap; gap:4px; margin-top:5px; }
+  .badge {
+    display:inline-flex; align-items:center; gap:3px;
+    padding:2px 7px; border-radius:20px;
+    font-size:9px; font-weight:700;
+  }
+  .badge.halal   { background:rgba(40,200,120,.15); color:#3ddc84; border:1px solid rgba(40,200,120,.3); }
+  .badge.haram   { background:rgba(255,60,60,.15); color:#ff6b6b; border:1px solid rgba(255,60,60,.3); }
+  .badge.mixed   { background:rgba(255,180,0,.15); color:#ffc800; border:1px solid rgba(255,180,0,.3); }
+  .badge.unknown { background:rgba(255,255,255,.06); color:#8fb3d9; border:1px solid rgba(255,255,255,.1); }
+  .badge.purify  { background:rgba(200,100,255,.15); color:#c864ff; border:1px solid rgba(200,100,255,.3); }
+  .badge.sector  { background:rgba(30,144,255,.1); color:#6bb7ff; border:1px solid rgba(30,144,255,.2); }
+  .badge.idx     { background:rgba(255,200,0,.12); color:#ffc800; border:1px solid rgba(255,200,0,.3); }
+  .badge.source  { background:rgba(100,200,255,.1); color:#7cb8e0; border:1px solid rgba(100,200,255,.25); font-size:8.5px; }
+  .badge.fair    { background:rgba(40,200,120,.15); color:#3ddc84; border:1px solid rgba(40,200,120,.3); }
+
+  .stock-arrow {
+    color:#6b8fb0;
+    font-size:20px;
+    flex-shrink:0;
+    align-self:center;
+    transition:.2s;
+  }
+  .stock-card:hover .stock-arrow { color:#1e90ff; transform:translateX(-3px); }
+
+  /* Pagination */
+  .pagination {
+    display:flex; align-items:center; justify-content:center;
+    gap:5px; margin-top:20px; flex-wrap:wrap; padding:14px 0;
+  }
+  .page-btn {
+    min-width:34px; height:34px; padding:0 9px;
+    background:rgba(255,255,255,.05);
+    border:1px solid rgba(30,144,255,.25);
+    border-radius:9px; color:#a8c8e8;
+    font-family:'Cairo',sans-serif;
+    font-size:12px; font-weight:700;
+    cursor:pointer; transition:.2s;
+    display:flex; align-items:center; justify-content:center;
+  }
+  .page-btn:hover:not(:disabled):not(.active) { background:rgba(30,144,255,.15); color:#fff; }
+  .page-btn.active { background:linear-gradient(135deg,#1e90ff,#0066cc); color:#fff; border-color:#1e90ff; }
+  .page-btn:disabled { opacity:.35; cursor:not-allowed; }
+  .page-info { width:100%; text-align:center; color:#6b8fb0; font-size:11px; font-weight:600; margin-top:8px; }
+
+  /* Modal */
+  .modal-overlay {
+    position:fixed; inset:0;
+    background:rgba(0,0,0,.8);
+    backdrop-filter:blur(8px); -webkit-backdrop-filter:blur(8px);
+    display:none; align-items:center; justify-content:center;
+    padding:16px; z-index:100; overflow-y:auto;
+    animation:fadeIn .2s ease;
+  }
+  .modal-overlay.open { display:flex; }
+  .modal {
+    width:100%; max-width:680px;
+    background:linear-gradient(180deg,#0d1f33,#0a1929);
+    border:1px solid rgba(30,144,255,.35);
+    border-radius:22px; padding:22px 20px;
+    box-shadow:0 30px 80px rgba(0,0,0,.7);
+    animation:popIn .3s ease;
+    max-height:92vh; overflow-y:auto; margin:auto;
+  }
+  .modal h3 {
+    color:#fff; font-size:18px; font-weight:900;
+    margin-bottom:6px; text-align:center;
+  }
+  .modal-sub {
+    color:#8fb3d9; font-size:12px;
+    text-align:center; margin-bottom:16px; font-weight:600;
+  }
+  .tv-widget {
+    background:rgba(0,0,0,.35);
+    border:1px solid rgba(30,144,255,.2);
+    border-radius:14px; overflow:hidden;
+    margin-bottom:14px; min-height:420px; position:relative;
+  }
+  .no-data {
+    position:absolute; inset:0;
+    display:none; align-items:center; justify-content:center;
+    flex-direction:column; gap:8px;
+    color:#6b8fb0; font-size:13px; font-weight:600;
+    background:rgba(0,0,0,.5);
+    text-align:center; padding:20px;
+  }
+  .no-data.show { display:flex; }
+
+  .info-grid {
+    display:grid; grid-template-columns:repeat(2,1fr);
+    gap:8px; margin-bottom:14px;
+  }
+  .info-item {
+    padding:10px 12px;
+    background:rgba(255,255,255,.04);
+    border:1px solid rgba(30,144,255,.2);
+    border-radius:10px;
+  }
+  .info-item .lbl { color:#8fb3d9; font-size:10.5px; font-weight:600; margin-bottom:3px; }
+  .info-item .val { color:#fff; font-size:13px; font-weight:900; word-break:break-word; }
+
+  .modal-actions { display:flex; gap:10px; margin-top:20px; }
+  .modal-btn {
+    flex:1; padding:13px; border:none; border-radius:11px;
+    font-family:'Cairo',sans-serif; font-size:14px; font-weight:700;
+    cursor:pointer; transition:.25s;
+    display:flex; align-items:center; justify-content:center; gap:6px;
+  }
+  .modal-btn.cancel {
+    background:rgba(255,255,255,.06); color:#a8c8e8;
+    border:1px solid rgba(255,255,255,.1);
+  }
+  .modal-btn.cancel:hover { background:rgba(255,255,255,.1); }
+
+  @keyframes fadeUp { from{opacity:0;transform:translateY(15px);} to{opacity:1;transform:none;} }
+  @keyframes fadeIn { from{opacity:0;} to{opacity:1;} }
+  @keyframes popIn  { from{opacity:0; transform:scale(.95);} to{opacity:1; transform:scale(1);} }
+  @keyframes spin { to { transform:rotate(360deg); } }
+
+  .loader {
+    display:inline-block; width:14px; height:14px;
+    border:2px solid rgba(255,255,255,.4);
+    border-top-color:#fff; border-radius:50%;
+    animation:spin .7s linear infinite;
+  }
+
+  .empty-state { text-align:center; padding:50px 20px; color:#4d6d8f; font-weight:600; }
+  .empty-state .ico { font-size:56px; margin-bottom:14px; opacity:.5; }
+  .empty-state p { font-size:14px; }
+
+  @media (min-width:768px) {
+    body { padding:30px; }
+    .phone {
+      max-width:720px; min-height:auto; height:auto;
+      border-radius:28px;
+      border:1px solid rgba(30,144,255,.25);
+      box-shadow:0 25px 70px rgba(0,150,255,.3);
+    }
+    .content { padding:22px 24px; }
+    .tv-widget { min-height:520px; }
+    .stock-card { padding:16px; }
+    .stock-logo { width:60px; height:60px; font-size:11px; }
+  }
+  @media (min-width:1024px) {
+    body { padding:40px 30px; }
+    .phone { max-width:1200px; height:auto; min-height:auto; border-radius:26px; }
+    .content { padding:26px 36px; }
+    .stocks-list { display:grid; grid-template-columns:repeat(2,1fr); gap:12px; }
+    .page-title h1 { font-size:22px; }
+    .tv-widget { min-height:560px; }
+  }
+  @media (min-width:1440px) {
+    .phone { max-width:1400px; }
+    .stocks-list { grid-template-columns:repeat(3,1fr); }
+  }
+</style>
+</head>
+<body>
+
+<!-- Loading -->
+<div class="loading-screen" id="loadingScreen">
+  <div class="loading-content">
+    <div class="logo-loader">
+      <img id="loadingLogo" class="loading-logo" src="https://i.ibb.co/PzcMFkpR/FB-IMG-1789241464654.jpg" alt="BORSA CLUP" />
+    </div>
+    <div class="loading-brand" id="loadingBrand">BORSA <span>CLUP</span></div>
+    <div class="loading-sub">البورصة المصرية</div>
+    <div class="loading-bar">
+      <div class="loading-bar-fill" id="loadingBarFill"></div>
+    </div>
+  </div>
+  <div class="loading-footer">© BORSA CLUP</div>
+</div>
+
+<div class="phone" id="phoneApp" style="display:none;">
+
+  <div class="topbar">
+    <div class="title">
+      <img id="topLogo" src="https://i.ibb.co/PzcMFkpR/FB-IMG-1789241464654.jpg" alt="BORSA CLUP" />
+      <div class="name" id="topName">BORSA <span>CLUP</span></div>
+    </div>
+    <a href="index.html" class="top-btn">← الرئيسية</a>
+  </div>
+
+  <div class="content">
+
+    <div class="page-title">
+      <h1>الأسهم <span>المصرية</span></h1>
+      <div class="count" id="stocksCount">0</div>
+    </div>
+
+    <div class="index-tabs" id="indexTabs">
+      <button class="idx-tab active" data-idx="all">📋 الكل</button>
+      <button class="idx-tab" data-idx="egx30">⭐ EGX30</button>
+      <button class="idx-tab" data-idx="egx70">📊 EGX70</button>
+      <button class="idx-tab" data-idx="egx100">💼 EGX100</button>
+      <button class="idx-tab" data-idx="egx33shariah">🕌 EGX33</button>
+    </div>
+
+    <div class="search-box" id="searchBox">
+      <input type="text" id="searchInput" placeholder="ابحث بالاسم أو الرمز..." />
+      <span class="icon">🔍</span>
+      <button class="clear" id="clearBtn">×</button>
+    </div>
+
+    <div class="filters">
+      <button class="filter-chip active" data-filter="all">📋 الكل</button>
+      <button class="filter-chip" data-filter="halal">✅ حلال</button>
+      <button class="filter-chip" data-filter="haram">❌ حرام</button>
+      <button class="filter-chip" data-filter="mixed">🟡 مشتبه</button>
+      <button class="filter-chip" data-filter="unknown">⚪ غير محدد</button>
+    </div>
+
+    <div class="stocks-list" id="stocksList"></div>
+
+    <div class="empty-state" id="emptyState" style="display:none;">
+      <div class="ico">📈</div>
+      <p id="emptyText">لا توجد أسهم</p>
+    </div>
+
+    <div class="pagination" id="pagination"></div>
+
+  </div>
+
+</div>
+
+<!-- Modal تفاصيل السهم -->
+<div class="modal-overlay" id="detailModal">
+  <div class="modal">
+    <h3 id="detailTitle">—</h3>
+    <div class="modal-sub" id="detailSub">—</div>
+
+    <div class="tv-widget">
+      <div id="tvWidgetHost" style="height:420px; width:100%;"></div>
+      <div class="no-data" id="noDataMsg">
+        <div style="font-size:40px;">📉</div>
+        <div>الرمز <b id="noDataSymbol">—</b> غير متوفر</div>
+      </div>
+    </div>
+
+    <div class="info-grid">
+      <div class="info-item"><div class="lbl">الرمز</div><div class="val" id="dSymbol">—</div></div>
+      <div class="info-item"><div class="lbl">القطاع</div><div class="val" id="dSector">—</div></div>
+      <div class="info-item"><div class="lbl">الحكم الشرعي</div><div class="val" id="dHalal">—</div></div>
+      <div class="info-item"><div class="lbl">نسبة التطهير</div><div class="val" id="dPurify">—</div></div>
+      <div class="info-item"><div class="lbl">القيمة العادلة</div><div class="val" id="dFair">—</div></div>
+      <div class="info-item"><div class="lbl">المؤشرات</div><div class="val" id="dIndexes" style="font-size:11px;">—</div></div>
+    </div>
+
+    <div class="info-item" id="dSourceWrap" style="display:none; margin-bottom:14px;">
+      <div class="lbl">مصدر الحكم الشرعي</div>
+      <div class="val" id="dSource" style="font-size:12px; font-weight:600;">—</div>
+    </div>
+
+    <div class="info-item" id="dNotesWrap" style="display:none; margin-bottom:14px;">
+      <div class="lbl">ملاحظات</div>
+      <div class="val" id="dNotes" style="font-size:12px; font-weight:600;">—</div>
+    </div>
+
+    <div class="modal-actions">
+      <button type="button" class="modal-btn cancel" id="detailCloseBtn">إغلاق</button>
+    </div>
+  </div>
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getFirestore, collection, doc, getDoc, getDocs }
+  from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyB36BkwxS0RHWWHSNGA1rZ5EHjtaeynTEA",
+  authDomain: "borsa-b77a3.firebaseapp.com",
+  projectId: "borsa-b77a3",
+  storageBucket: "borsa-b77a3.firebasestorage.app",
+  messagingSenderId: "1029468057087",
+  appId: "1:1029468057087:web:1bafa9ffad7f14d7a2cbca",
+  measurementId: "G-NKBES9QEBK"
+};
+
+const app = initializeApp(firebaseConfig);
+const db  = getFirestore(app);
+
+const STOCKS_COLLECTION = 'stocks';
+const PER_PAGE = 10;
+
+/* ========== Loading ========== */
+const loadingScreen = document.getElementById('loadingScreen');
+const loadingBarFill = document.getElementById('loadingBarFill');
+const phoneApp = document.getElementById('phoneApp');
+
+function setProgress(p) {
+  loadingBarFill.style.width = Math.min(100, Math.max(0, p)) + '%';
+}
+function hideLoadingScreen() {
+  setProgress(100);
+  setTimeout(() => {
+    loadingScreen.classList.add('hide');
+    phoneApp.style.display = 'flex';
+    setTimeout(() => phoneApp.classList.add('show'), 50);
+  }, 400);
+}
+setProgress(20);
+
+/* ========== DOM ========== */
+const stocksList   = document.getElementById('stocksList');
+const emptyState   = document.getElementById('emptyState');
+const emptyText    = document.getElementById('emptyText');
+const stocksCount  = document.getElementById('stocksCount');
+const pagination   = document.getElementById('pagination');
+const searchBox    = document.getElementById('searchBox');
+const searchInput  = document.getElementById('searchInput');
+const clearBtn     = document.getElementById('clearBtn');
+
+const detailModal  = document.getElementById('detailModal');
+const detailTitle  = document.getElementById('detailTitle');
+const detailSub    = document.getElementById('detailSub');
+const tvWidgetHost = document.getElementById('tvWidgetHost');
+const noDataMsg    = document.getElementById('noDataMsg');
+const noDataSymbol = document.getElementById('noDataSymbol');
+const dSymbol      = document.getElementById('dSymbol');
+const dSector      = document.getElementById('dSector');
+const dHalal       = document.getElementById('dHalal');
+const dPurify      = document.getElementById('dPurify');
+const dFair        = document.getElementById('dFair');
+const dIndexes     = document.getElementById('dIndexes');
+const dSourceWrap  = document.getElementById('dSourceWrap');
+const dSource      = document.getElementById('dSource');
+const dNotesWrap   = document.getElementById('dNotesWrap');
+const dNotes       = document.getElementById('dNotes');
+const detailCloseBtn = document.getElementById('detailCloseBtn');
+
+let allStocks = [];
+let filteredStocks = [];
+let currentPage = 1;
+let searchQuery = '';
+let activeFilter = 'all';
+let activeIndex = 'all';
+
+/* ========== أدوات ========== */
+function escapeHtml(s) {
+  return String(s ?? '').replace(/[&<>"']/g, c => ({
+    '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
+  }[c]));
+}
+
+/* ========== الإعدادات ========== */
+async function loadSiteSettings() {
+  try {
+    setProgress(40);
+    const snap = await getDoc(doc(db, 'settings', 'site'));
+    if (!snap.exists()) return;
+    const s = snap.data();
+
+    if (s.logoUrl) {
+      await new Promise((resolve) => {
+        const img = new Image();
+        img.onload = () => {
+          document.getElementById('loadingLogo').src = s.logoUrl;
+          document.getElementById('topLogo').src = s.logoUrl;
+          const fav = document.getElementById('siteFavicon');
+          const apple = document.getElementById('siteAppleIcon');
+          if (fav) fav.href = s.logoUrl;
+          if (apple) apple.href = s.logoUrl;
+          resolve();
+        };
+        img.onerror = () => resolve();
+        img.src = s.logoUrl;
+      });
+    }
+
+    if (s.siteName) {
+      const fullName = s.siteName;
+      const accent = s.siteNameAccent || '';
+      const buildName = (el) => {
+        if (accent && fullName.includes(accent)) {
+          const parts = fullName.split(accent);
+          const before = parts[0].trim();
+          const after = parts.slice(1).join(accent).trim();
+          el.innerHTML = `${escapeHtml(before)} <span>${escapeHtml(accent)}</span>${after ? ' ' + escapeHtml(after) : ''}`;
+        } else {
+          el.textContent = fullName;
+        }
+      };
+      buildName(document.getElementById('loadingBrand'));
+      buildName(document.getElementById('topName'));
+      document.title = fullName + ' - الأسهم';
+    }
+
+    setProgress(60);
+  } catch (e) {
+    console.warn('settings error:', e);
+    setProgress(60);
+  }
+}
+
+/* ========== تحميل الأسهم ========== */
+async function loadStocks() {
+  try {
+    setProgress(70);
+    const snap = await getDocs(collection(db, STOCKS_COLLECTION));
+    allStocks = [];
+    snap.forEach(d => allStocks.push({ id: d.id, ...d.data() }));
+    allStocks = allStocks.filter(s => s.isActive !== false);
+    allStocks.sort((a, b) => (a.name || '').localeCompare(b.name || '', 'ar'));
+    stocksCount.textContent = allStocks.length;
+    setProgress(90);
+    applyFilterAndRender();
+  } catch (e) {
+    console.error(e);
+    emptyState.style.display = 'block';
+    emptyText.textContent = 'فشل تحميل الأسهم — تحقق من الإنترنت';
+  }
+}
+
+function applyFilterAndRender() {
+  const q = searchQuery.trim().toLowerCase();
+  let list = [...allStocks];
+
+  if (activeIndex !== 'all') list = list.filter(s => (s.indexes || []).includes(activeIndex));
+  if (activeFilter !== 'all') list = list.filter(s => (s.halal || 'unknown') === activeFilter);
+  if (q) {
+    list = list.filter(s =>
+      (s.symbol || '').toLowerCase().includes(q) ||
+      (s.name || '').toLowerCase().includes(q) ||
+      (s.sector || '').toLowerCase().includes(q)
+    );
+  }
+
+  filteredStocks = list;
+  const totalPages = Math.max(1, Math.ceil(filteredStocks.length / PER_PAGE));
+  if (currentPage > totalPages) currentPage = totalPages;
+  if (currentPage < 1) currentPage = 1;
+
+  renderPage();
+  renderPagination(totalPages);
+}
+
+function renderPage() {
+  stocksList.innerHTML = '';
+  if (!filteredStocks.length) {
+    emptyState.style.display = 'block';
+    emptyText.textContent = (searchQuery || activeFilter !== 'all' || activeIndex !== 'all')
+      ? 'لا توجد نتائج مطابقة' : 'لا توجد أسهم بعد';
+    return;
+  }
+  emptyState.style.display = 'none';
+
+  const start = (currentPage - 1) * PER_PAGE;
+  filteredStocks.slice(start, start + PER_PAGE).forEach(s =>
+    stocksList.appendChild(renderStockCard(s))
+  );
+}
+
+function renderStockCard(stock) {
+  const card = document.createElement('div');
+  card.className = 'stock-card';
+
+  const halalMap = {
+    halal:   { icon:'✅', text:'حلال' },
+    haram:   { icon:'❌', text:'حرام' },
+    mixed:   { icon:'🟡', text:'مشتبه' },
+    unknown: { icon:'⚪', text:'غير محدد' }
+  };
+  const h = halalMap[stock.halal || 'unknown'];
+  const purify = Number(stock.purificationRatio || 0);
+  const fair = Number(stock.fairValue || 0);
+
+  const idxBadges = (stock.indexes || []).map(i => {
+    const map = { egx30:'⭐30', egx70:'📊70', egx100:'💼100', egx33shariah:'🕌33' };
+    return map[i] ? `<span class="badge idx">${map[i]}</span>` : '';
+  }).join('');
+
+  const logoUrl = stock.symbol
+    ? `https://s3-symbol-logo.tradingview.com/${stock.symbol.toLowerCase()}--big.svg`
+    : null;
+
+  card.innerHTML = `
+    <div class="stock-logo">
+      ${logoUrl
+        ? `<img src="${escapeHtml(logoUrl)}" alt="${escapeHtml(stock.symbol)}"
+              onerror="this.style.display='none'; this.parentElement.textContent='${escapeHtml(stock.symbol)}'" />`
+        : escapeHtml(stock.symbol || '—')}
+    </div>
+    <div class="stock-info">
+      <div class="name">${escapeHtml(stock.name || '—')}</div>
+      <div class="symbol-line">${escapeHtml(stock.symbol || '—')}</div>
+      <div class="meta-row">
+        <span class="badge sector">${escapeHtml(stock.sector || 'غير محدد')}</span>
+        <span class="badge ${stock.halal || 'unknown'}">${h.icon} ${h.text}</span>
+        ${purify > 0 ? `<span class="badge purify">🧼 ${purify.toFixed(1)}%</span>` : ''}
+        ${fair > 0 ? `<span class="badge fair">💰 ${fair.toFixed(2)}</span>` : ''}
+        ${idxBadges}
+        ${stock.halalSource ? `<span class="badge source">📚 ${escapeHtml(stock.halalSource.substring(0,20))}${stock.halalSource.length > 20 ? '…' : ''}</span>` : ''}
+      </div>
+    </div>
+    <div class="stock-arrow">‹</div>
+  `;
+
+  card.onclick = () => openDetailModal(stock);
+  return card;
+}
+
+function renderPagination(totalPages) {
+  pagination.innerHTML = '';
+  if (totalPages <= 1) return;
+
+  const prev = document.createElement('button');
+  prev.className = 'page-btn';
+  prev.textContent = '‹';
+  prev.disabled = currentPage === 1;
+  prev.onclick = () => { currentPage--; applyFilterAndRender(); window.scrollTo({top:0,behavior:'smooth'}); };
+  pagination.appendChild(prev);
+
+  const pages = [];
+  if (totalPages <= 7) {
+    for (let i=1;i<=totalPages;i++) pages.push(i);
+  } else {
+    if (currentPage <= 4) pages.push(1,2,3,4,5,'...',totalPages);
+    else if (currentPage >= totalPages-3) pages.push(1,'...',totalPages-4,totalPages-3,totalPages-2,totalPages-1,totalPages);
+    else pages.push(1,'...',currentPage-1,currentPage,currentPage+1,'...',totalPages);
+  }
+
+  pages.forEach(p => {
+    if (p === '...') {
+      const span = document.createElement('span');
+      span.className = 'page-btn';
+      span.style.cursor = 'default'; span.style.opacity = '.5';
+      span.textContent = '…';
+      pagination.appendChild(span);
+    } else {
+      const btn = document.createElement('button');
+      btn.className = 'page-btn' + (p === currentPage ? ' active' : '');
+      btn.textContent = p;
+      btn.onclick = () => { currentPage = p; applyFilterAndRender(); window.scrollTo({top:0,behavior:'smooth'}); };
+      pagination.appendChild(btn);
+    }
+  });
+
+  const next = document.createElement('button');
+  next.className = 'page-btn';
+  next.textContent = '›';
+  next.disabled = currentPage === totalPages;
+  next.onclick = () => { currentPage++; applyFilterAndRender(); window.scrollTo({top:0,behavior:'smooth'}); };
+  pagination.appendChild(next);
+
+  const info = document.createElement('div');
+  info.className = 'page-info';
+  info.textContent = `عرض ${(currentPage-1)*PER_PAGE + 1} - ${Math.min(currentPage*PER_PAGE, filteredStocks.length)} من ${filteredStocks.length}`;
+  pagination.appendChild(info);
+}
+
+/* ========== تفاصيل ========== */
+function openDetailModal(stock) {
+  detailTitle.textContent = stock.name || '—';
+  detailSub.textContent = (stock.symbol || '') + ' — ' + (stock.sector || '');
+  dSymbol.textContent = stock.symbol || '—';
+  dSector.textContent = stock.sector || '—';
+
+  const halalMap = {
+    halal:   '✅ حلال',
+    haram:   '❌ حرام',
+    mixed:   '🟡 مشتبه',
+    unknown: '⚪ غير محدد'
+  };
+  dHalal.textContent = halalMap[stock.halal || 'unknown'];
+  const purify = Number(stock.purificationRatio || 0);
+  dPurify.textContent = purify > 0 ? `${purify.toFixed(2)}%` : '—';
+
+  const fair = Number(stock.fairValue || 0);
+  dFair.textContent = fair > 0 ? `${fair.toFixed(2)} EGP` : '—';
+
+  const tvSym = stock.tvSymbol || ('EGX:' + (stock.symbol || ''));
+  const idxLabels = (stock.indexes || []).map(i => {
+    const m = { egx30:'EGX30', egx70:'EGX70', egx100:'EGX100', egx33shariah:'EGX33 شريعة' };
+    return m[i] || i;
+  });
+  dIndexes.textContent = idxLabels.length ? idxLabels.join(' · ') : '—';
+
+  if (stock.halalSource) {
+    dSource.textContent = stock.halalSource;
+    dSourceWrap.style.display = 'block';
+  } else dSourceWrap.style.display = 'none';
+
+  if (stock.halalNotes) {
+    dNotes.textContent = stock.halalNotes;
+    dNotesWrap.style.display = 'block';
+  } else dNotesWrap.style.display = 'none';
+
+  loadTradingViewWidget(tvSym);
+  detailModal.classList.add('open');
+}
+
+function loadTradingViewWidget(symbolFull) {
+  tvWidgetHost.innerHTML = '';
+  noDataMsg.classList.remove('show');
+  noDataSymbol.textContent = symbolFull;
+
+  const containerId = 'tv_chart_' + Date.now();
+  const container = document.createElement('div');
+  container.id = containerId;
+  container.style.height = '420px';
+  container.style.width = '100%';
+  tvWidgetHost.appendChild(container);
+
+  const script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src = 'https://s3.tradingview.com/tv.js';
+  script.onload = () => {
+    if (typeof TradingView !== 'undefined') {
+      try {
+        new TradingView.widget({
+          container_id: containerId, autosize: true,
+          symbol: symbolFull, interval: 'D',
+          timezone: 'Africa/Cairo', theme: 'dark',
+          style: '1', locale: 'ar_AE',
+          toolbar_bg: '#0a1929', enable_publishing: false,
+          hide_side_toolbar: true, allow_symbol_change: false,
+          save_image: false, hide_top_toolbar: false,
+          withdateranges: true
+        });
+
+        setTimeout(() => {
+          const iframe = container.querySelector('iframe');
+          if (!iframe) noDataMsg.classList.add('show');
+        }, 4500);
+      } catch (e) { console.error(e); noDataMsg.classList.add('show'); }
+    } else noDataMsg.classList.add('show');
+  };
+  script.onerror = () => noDataMsg.classList.add('show');
+  document.body.appendChild(script);
+}
+
+detailCloseBtn.onclick = () => {
+  detailModal.classList.remove('open');
+  tvWidgetHost.innerHTML = '';
+};
+detailModal.onclick = (e) => {
+  if (e.target === detailModal) {
+    detailModal.classList.remove('open');
+    tvWidgetHost.innerHTML = '';
+  }
+};
+
+/* ========== الفلاتر والبحث ========== */
+document.querySelectorAll('.idx-tab').forEach(tab => {
+  tab.onclick = () => {
+    document.querySelectorAll('.idx-tab').forEach(t => t.classList.remove('active'));
+    tab.classList.add('active');
+    activeIndex = tab.dataset.idx;
+    currentPage = 1;
+    applyFilterAndRender();
+  };
+});
+
+document.querySelectorAll('.filter-chip').forEach(chip => {
+  chip.onclick = () => {
+    document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
+    chip.classList.add('active');
+    activeFilter = chip.dataset.filter;
+    currentPage = 1;
+    applyFilterAndRender();
+  };
+});
+
+searchInput.addEventListener('input', (e) => {
+  searchQuery = e.target.value;
+  currentPage = 1;
+  searchBox.classList.toggle('has-value', !!searchQuery.trim());
+  applyFilterAndRender();
+});
+
+clearBtn.onclick = () => {
+  searchInput.value = '';
+  searchQuery = '';
+  currentPage = 1;
+  searchBox.classList.remove('has-value');
+  applyFilterAndRender();
+  searchInput.focus();
+};
+
+/* ========== بدء ========== */
+(async () => {
+  await loadSiteSettings();
+  await loadStocks();
+  setTimeout(hideLoadingScreen, 400);
+})();
+
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('sw.js').catch(() => {});
+  });
+}
+</script>
+
+</body>
+</html>

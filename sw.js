@@ -1,55 +1,82 @@
-const CACHE_NAME = 'rasaelna-v1';
-const urlsToCache = [
-  'login.html',
-  'index.html',
-  'chat.html',
-  'user.html',
-  'admin.html',
-  'rasal.html',
-  'asharat.html',
-  'zaqaa.html',
-  'setting.html',
-  'manifest.json',
-  'icon-192.png',
-  'icon-512.png'
+/* =====================================================
+   BORSA CLUP - Service Worker
+===================================================== */
+
+const CACHE_NAME = 'borsa-clup-v2';
+
+const STATIC_ASSETS = [
+  './manifest.json',
+  './auth-guard.js',
+  './logout.js'
 ];
 
-// تثبيت Service Worker
-self.addEventListener('install', event => {
+/* Install */
+self.addEventListener('install', (event) => {
+  console.log('[SW] Install');
   event.waitUntil(
-    caches.open(CACHE_NAME)
-      .then(cache => {
-        console.log('✅ تم فتح الكاش');
-        return cache.addAll(urlsToCache);
-      })
+    caches.open(CACHE_NAME).then((cache) => {
+      return cache.addAll(STATIC_ASSETS).catch((err) => {
+        console.warn('[SW] Some assets failed', err);
+      });
+    }).then(() => self.skipWaiting())
   );
 });
 
-// استرجاع الملفات من الكاش
-self.addEventListener('fetch', event => {
-  event.respondWith(
-    caches.match(event.request)
-      .then(response => {
-        if (response) {
-          return response;
-        }
-        return fetch(event.request);
-      })
-  );
-});
-
-// تحديث Service Worker
-self.addEventListener('activate', event => {
-  const cacheWhitelist = [CACHE_NAME];
+/* Activate */
+self.addEventListener('activate', (event) => {
+  console.log('[SW] Activate');
   event.waitUntil(
-    caches.keys().then(cacheNames => {
+    caches.keys().then((keys) => {
       return Promise.all(
-        cacheNames.map(cacheName => {
-          if (cacheWhitelist.indexOf(cacheName) === -1) {
-            return caches.delete(cacheName);
-          }
-        })
+        keys.filter((k) => k !== CACHE_NAME).map((k) => caches.delete(k))
       );
+    }).then(() => self.clients.claim())
+  );
+});
+
+/* Fetch */
+self.addEventListener('fetch', (event) => {
+  const req = event.request;
+  if (req.method !== 'GET') return;
+
+  const url = new URL(req.url);
+
+  // تجاهل الـ APIs والموارد الخارجية
+  const skipDomains = [
+    'firebaseio.com', 'googleapis.com', 'gstatic.com',
+    'tradingview.com', 'twelvedata.com', 'clearbit.com',
+    'i.ibb.co', 'fonts.googleapis.com', 'fonts.gstatic.com'
+  ];
+  if (skipDomains.some((d) => url.hostname.includes(d))) return;
+
+  // ⚠️ مهم: لا تخزّن HTML — عشان التحديثات تظهر فورًا
+  const isHTML = req.mode === 'navigate' || (req.headers.get('accept') || '').includes('text/html');
+
+  if (isHTML) {
+    event.respondWith(
+      fetch(req).catch(() => caches.match(req) || caches.match('./login.html'))
+    );
+    return;
+  }
+
+  // الأصول الثابتة: Cache First
+  event.respondWith(
+    caches.match(req).then((cached) => {
+      if (cached) return cached;
+      return fetch(req).then((res) => {
+        if (res && res.status === 200 && res.type === 'basic') {
+          const resClone = res.clone();
+          caches.open(CACHE_NAME).then((cache) => cache.put(req, resClone));
+        }
+        return res;
+      }).catch(() => cached);
     })
   );
+});
+
+/* رسائل من الصفحة */
+self.addEventListener('message', (event) => {
+  if (event.data && event.data.type === 'SKIP_WAITING') {
+    self.skipWaiting();
+  }
 });

@@ -1,0 +1,40 @@
+{
+  "name": "BORSA CLUP - البورصة المصرية",
+  "short_name": "BORSA CLUP",
+  "description": "منصة البورصة المصرية - أسهم، توصيات، مجتمع",
+  "start_url": "login.html",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#0a1929",
+  "theme_color": "#0a1929",
+  "lang": "ar",
+  "dir": "rtl",
+  "categories": ["finance", "business", "news"],
+  "icons": [
+    { "src": "https://i.ibb.co/PzcMFkpR/FB-IMG-1789241464654.jpg", "sizes": "192x192", "type": "image/jpeg", "purpose": "any" },
+    { "src": "https://i.ibb.co/PzcMFkpR/FB-IMG-1789241464654.jpg", "sizes": "512x512", "type": "image/jpeg", "purpose": "any" },
+    { "src": "https://i.ibb.co/PzcMFkpR/FB-IMG-1789241464654.jpg", "sizes": "192x192", "type": "image/jpeg", "purpose": "maskable" },
+    { "src": "https://i.ibb.co/PzcMFkpR/FB-IMG-1789241464654.jpg", "sizes": "512x512", "type": "image/jpeg", "purpose": "maskable" }
+  ],
+  "shortcuts": [
+    {
+      "name": "الأسهم",
+      "short_name": "الأسهم",
+      "url": "/ashom.html",
+      "icons": [{ "src": "https://i.ibb.co/PzcMFkpR/FB-IMG-1789241464654.jpg", "sizes": "192x192" }]
+    },
+    {
+      "name": "التوصيات",
+      "short_name": "التوصيات",
+      "url": "/tawseat.html",
+      "icons": [{ "src": "https://i.ibb.co/PzcMFkpR/FB-IMG-1789241464654.jpg", "sizes": "192x192" }]
+    },
+    {
+      "name": "المجتمع",
+      "short_name": "المجتمع",
+      "url": "/community.html",
+      "icons": [{ "src": "https://i.ibb.co/PzcMFkpR/FB-IMG-1789241464654.jpg", "sizes": "192x192" }]
+    }
+  ]
+}
