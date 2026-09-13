@@ -1,13 +1,18 @@
 /* =====================================================
-   auth-guard.js — حماية مبسطة
+   auth-guard.js — الحماية والصلاحيات
    BORSA CLUP
+   ★ يقرأ من sessionStorage + localStorage
 ===================================================== */
 
 (function () {
+
+  /* ========== الصفحة الحالية ========== */
   const path = window.location.pathname.split('/').pop().toLowerCase() || '';
   const current = path || 'index.html';
 
-  /* ========== الصفحات العامة (بدون تسجيل) ========== */
+  /* =====================================================
+     1) الصفحات العامة (بدون تسجيل دخول)
+  ===================================================== */
   const PUBLIC_PAGES = [
     'login.html',
     'daam.html',
@@ -19,27 +24,47 @@
     return; // ✅ مسموح بدون فحص
   }
 
-  /* ========== فحص الجلسة ========== */
-  const userName = sessionStorage.getItem('borsa_admin');
+  /* =====================================================
+     2) فحص الجلسة (في الاثنين)
+  ===================================================== */
+  const userName = sessionStorage.getItem('borsa_admin') 
+                || localStorage.getItem('borsa_admin');
+
+  const userType = (
+    sessionStorage.getItem('borsa_admin_type') 
+    || localStorage.getItem('borsa_admin_type') 
+    || ''
+  ).toLowerCase();
 
   if (!userName) {
-    // ❌ مفيش جلسة → روح لـ login
+    // ❌ مفيش جلسة → login
     window.location.replace('login.html');
     return;
   }
 
   /* =====================================================
-     ✅ أي مستخدم مسجّل يقدر يفتح أي صفحة
-     (حتى لو كانت خاصة بالأدمن — يمكنك تعديلها)
+     3) ✅ مزامنة بين الاثنين (عشان ما يحصلش تعارض)
   ===================================================== */
+  if (!sessionStorage.getItem('borsa_admin') && localStorage.getItem('borsa_admin')) {
+    // لو موجود في localStorage بس → انقله لـ sessionStorage
+    const keys = ['borsa_admin', 'borsa_admin_id', 'borsa_admin_type', 'borsa_admin_email', 'borsa_admin_role'];
+    keys.forEach(k => {
+      const v = localStorage.getItem(k);
+      if (v) sessionStorage.setItem(k, v);
+    });
+  }
 
-  /* ========== منع الرجوع للخلف ========== */
+  /* =====================================================
+     4) منع الرجوع للخلف
+  ===================================================== */
   window.history.pushState(null, '', window.location.href);
   window.addEventListener('popstate', function () {
     window.history.pushState(null, '', window.location.href);
   });
 
-  /* ========== منع Backspace من الرجوع ========== */
+  /* =====================================================
+     5) منع Backspace من الرجوع
+  ===================================================== */
   document.addEventListener('keydown', function (e) {
     if (e.key === 'Backspace'
         && e.target.tagName !== 'INPUT'
