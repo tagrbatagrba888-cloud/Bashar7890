@@ -4,7 +4,6 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0" />
 <meta name="theme-color" content="#0a1929" />
-<meta name="description" content="تسجيل الدخول - BORSA CLUP" />
 <title>BORSA CLUP - الدخول</title>
 
 <link rel="manifest" href="manifest.json" />
@@ -25,7 +24,7 @@
     background:radial-gradient(circle at 50% 0%, #0f2f4a 0%, #0a1929 40%, #000 100%);
   }
 
-  /* Loading Screen */
+  /* Loading */
   .loading-screen {
     position:fixed; inset:0; z-index:9999;
     background:radial-gradient(circle at 50% 30%, #0f2f4a 0%, #0a1929 40%, #000 100%);
@@ -40,7 +39,8 @@
     background-image:
       radial-gradient(2px 2px at 20% 30%, rgba(30,144,255,.6), transparent),
       radial-gradient(2px 2px at 60% 70%, rgba(30,144,255,.4), transparent),
-      radial-gradient(1px 1px at 50% 50%, rgba(255,255,255,.5), transparent);
+      radial-gradient(1px 1px at 50% 50%, rgba(255,255,255,.5), transparent),
+      radial-gradient(1px 1px at 80% 10%, rgba(255,255,255,.3), transparent);
     animation:starsMove 20s linear infinite;
   }
   @keyframes starsMove { to { transform:translateY(-100vh); } }
@@ -86,26 +86,26 @@
     height:100%;
     background:linear-gradient(90deg, #0066cc, #1e90ff, #6bb7ff);
     background-size:200% 100%; width:0%; transition:width .4s ease;
-    animation:barShine 2s linear infinite; border-radius:2px;
+    border-radius:2px;
     box-shadow:0 0 12px rgba(30,144,255,.8);
   }
-  @keyframes barShine { 0%{background-position:0% 0%;} 100%{background-position:200% 0%;} }
   .loading-footer {
     position:absolute; bottom:30px; color:#4d6d8f;
     font-size:11px; letter-spacing:1px; font-weight:600; z-index:2;
   }
 
-  /* Main */
+  /* Phone */
   .phone {
-    position:relative; width:100%; max-width:430px; min-height:100vh;
+    position:relative;
+    width:100%; max-width:430px; min-height:100vh;
     background:linear-gradient(180deg,#0a1929 0%,#06121e 100%);
     display:flex; flex-direction:column; overflow:hidden;
     box-shadow:0 0 60px rgba(30,144,255,.25);
-    opacity:0; transition:opacity .6s ease;
+    opacity:0; transition:opacity .5s ease;
   }
   .phone.show { opacity:1; }
 
-  .logo-wrap { padding:24px 20px 8px; text-align:center; animation:fadeDown .7s ease; }
+  .logo-wrap { padding:24px 20px 8px; text-align:center; }
   .logo-wrap img {
     width:86px; height:86px; border-radius:50%; object-fit:cover;
     border:3px solid #1e90ff; box-shadow:0 0 25px rgba(30,144,255,.6);
@@ -138,6 +138,7 @@
   .content { flex:1; padding:16px; overflow-y:auto; }
   .form-view { display:none; }
   .form-view.active { display:block; animation:fadeUp .3s ease; }
+  @keyframes fadeUp { from{opacity:0;transform:translateY(20px);} to{opacity:1;transform:none;} }
 
   .card {
     padding:22px 20px;
@@ -158,14 +159,14 @@
     font-size:12px; margin-bottom:5px; font-weight:600;
   }
   .field .input-wrap { position:relative; }
-  .field input, .field select {
+  .field input {
     width:100%; padding:12px 42px 12px 14px;
     background:#0d2033; border:1.5px solid #1b3a5c;
     border-radius:11px; color:#fff; font-size:14px;
     font-family:'Cairo',sans-serif;
     outline:none; transition:.2s;
   }
-  .field input:focus, .field select:focus {
+  .field input:focus {
     border-color:#1e90ff;
     box-shadow:0 0 0 3px rgba(30,144,255,.15);
   }
@@ -184,7 +185,7 @@
   }
   .field .eye:hover { opacity:1; }
   .field .eye svg { width:100%; height:100%; fill:#8fb3d9; }
-  .field.error input, .field.error select {
+  .field.error input {
     border-color:#ff3b3b;
     box-shadow:0 0 0 3px rgba(255,60,60,.15);
   }
@@ -194,6 +195,7 @@
   }
   .field .help.err { color:#ff6b6b; }
   .field .help.ok { color:#3ddc84; }
+
   .verify-row { display:flex; gap:6px; }
   .verify-row .input-wrap { flex:1; }
   .verify-sm-btn {
@@ -204,10 +206,8 @@
     font-family:'Cairo',sans-serif;
     font-size:12px; font-weight:700;
     cursor:pointer; white-space:nowrap;
-    transition:.2s;
   }
-  .verify-sm-btn:hover { transform:translateY(-1px); }
-  .verify-sm-btn:disabled { opacity:.5; cursor:not-allowed; }
+
   .gender-grid { display:grid; grid-template-columns:1fr 1fr; gap:8px; }
   .gender-opt {
     padding:11px 8px;
@@ -218,11 +218,11 @@
     font-size:13px; font-weight:700;
     color:#8fb3d9;
   }
-  .gender-opt:hover { border-color:rgba(30,144,255,.5); }
   .gender-opt.selected {
     color:#fff; border-color:#1e90ff;
     background:rgba(30,144,255,.15);
   }
+
   .captcha-row { display:flex; gap:8px; align-items:stretch; }
   .captcha-canvas-wrap {
     flex:1; height:52px;
@@ -230,7 +230,6 @@
     border:1.5px solid #1b3a5c;
     border-radius:11px;
     overflow:hidden;
-    position:relative;
   }
   .captcha-canvas-wrap canvas { width:100%; height:100%; display:block; }
   .captcha-refresh {
@@ -239,10 +238,10 @@
     border:1.5px solid rgba(30,144,255,.3);
     border-radius:11px;
     color:#6bb7ff; font-size:20px;
-    cursor:pointer; transition:.2s;
+    cursor:pointer;
     display:flex; align-items:center; justify-content:center;
   }
-  .captcha-refresh:hover { background:rgba(30,144,255,.3); color:#fff; }
+
   .btn {
     width:100%; padding:14px;
     border:none; border-radius:12px;
@@ -264,10 +263,8 @@
     box-shadow:0 6px 16px rgba(0,0,0,.25);
     margin-top:10px; font-weight:700;
   }
-  .btn.google:hover { transform:translateY(-2px); }
   .btn.google img { width:20px; height:20px; }
 
-  /* ★ زر نسيت كلمة المرور */
   .forgot-btn {
     width:100%; padding:11px;
     background:transparent;
@@ -276,7 +273,7 @@
     border-radius:11px;
     font-family:'Cairo',sans-serif;
     font-size:13px; font-weight:700;
-    cursor:pointer; transition:.25s;
+    cursor:pointer;
     display:flex; align-items:center; justify-content:center; gap:6px;
     margin-top:12px;
     text-decoration:none;
@@ -286,7 +283,6 @@
     border-style:solid;
     border-color:#1e90ff;
     color:#fff;
-    transform:translateY(-1px);
   }
 
   .divider {
@@ -316,8 +312,6 @@
     vertical-align:middle; margin-left:6px;
   }
   @keyframes spin { to { transform:rotate(360deg); } }
-  @keyframes fadeDown { from{opacity:0;transform:translateY(-20px);} to{opacity:1;transform:none;} }
-  @keyframes fadeUp { from{opacity:0;transform:translateY(20px);} to{opacity:1;transform:none;} }
 
   .footer { text-align:center; padding:14px; font-size:11px; color:#4d6d8f; }
 
@@ -325,21 +319,23 @@
   .modal-overlay {
     position:fixed; inset:0;
     background:rgba(0,0,0,.8);
-    backdrop-filter:blur(8px); -webkit-backdrop-filter:blur(8px);
+    backdrop-filter:blur(8px);
     display:none; align-items:center; justify-content:center;
     padding:16px; z-index:100; overflow-y:auto;
-    animation:fadeIn .2s ease;
   }
   .modal-overlay.open { display:flex; }
   .modal {
     width:100%; max-width:480px;
     background:linear-gradient(180deg,#0d1f33,#0a1929);
     border:1px solid rgba(30,144,255,.35);
-    border-radius:22px; padding:22px 20px;
+    border-radius:22px;
+    padding:22px 20px;
     box-shadow:0 30px 80px rgba(0,0,0,.7);
     animation:popIn .3s ease;
-    max-height:92vh; overflow-y:auto; margin:auto;
+    max-height:92vh; overflow-y:auto;
+    margin:auto;
   }
+  @keyframes popIn { from{opacity:0;transform:scale(.95);} to{opacity:1;transform:scale(1);} }
   .modal h3 {
     color:#fff; font-size:18px; font-weight:900;
     margin-bottom:6px; text-align:center;
@@ -355,20 +351,17 @@
     border:none; border-radius:11px;
     font-family:'Cairo',sans-serif;
     font-size:14px; font-weight:700;
-    cursor:pointer; transition:.2s;
+    cursor:pointer;
   }
   .modal-btn.primary {
     background:linear-gradient(135deg,#1e90ff,#0066cc);
     color:#fff;
   }
-  .modal-btn.primary:hover { transform:translateY(-2px); }
   .modal-btn.cancel {
     background:rgba(255,255,255,.06);
     color:#a8c8e8;
     border:1px solid rgba(255,255,255,.1);
   }
-  @keyframes fadeIn { from{opacity:0;} to{opacity:1;} }
-  @keyframes popIn { from{opacity:0; transform:scale(.95);} to{opacity:1; transform:scale(1);} }
 
   @media (min-width:768px) {
     body { padding:30px; }
@@ -419,7 +412,7 @@
 
   <div class="content">
 
-    <!-- ============ Login ============ -->
+    <!-- Login View -->
     <div class="form-view active" id="view-login">
       <div class="card">
         <h2>تسجيل <span>دخول</span></h2>
@@ -446,7 +439,6 @@
 
         <button class="btn primary" id="loginBtn">تسجيل الدخول</button>
 
-        <!-- ★ زر نسيت كلمة المرور -->
         <a href="daam.html" class="forgot-btn">
           🔑 نسيت كلمة المرور؟
         </a>
@@ -462,7 +454,7 @@
       </div>
     </div>
 
-    <!-- ============ Register ============ -->
+    <!-- Register View -->
     <div class="form-view" id="view-register">
       <div class="card">
         <h2>إنشاء <span>حساب جديد</span></h2>
@@ -479,7 +471,7 @@
           <label>اسم المستخدم * (فريد)</label>
           <div class="verify-row">
             <div class="input-wrap">
-              <input type="text" id="regUser" placeholder="مثال: ahmed77" maxlength="30" autocomplete="username" />
+              <input type="text" id="regUser" placeholder="مثال: ahmed77" maxlength="30" />
               <span class="icon-inp">👤</span>
             </div>
             <button class="verify-sm-btn" id="verifyUserBtn" type="button">تحقق</button>
@@ -550,7 +542,7 @@
             <div class="captcha-canvas-wrap">
               <canvas id="captchaCanvas" width="240" height="52"></canvas>
             </div>
-            <button class="captcha-refresh" id="captchaRefresh" type="button" title="رمز جديد">🔄</button>
+            <button class="captcha-refresh" id="captchaRefresh" type="button">🔄</button>
           </div>
           <div class="input-wrap" style="margin-top:8px;">
             <input type="text" id="regCaptcha" placeholder="اكتب الرمز الظاهر" maxlength="8" autocomplete="off" />
@@ -577,7 +569,7 @@
   <div class="footer">© BORSA CLUP — جميع الحقوق محفوظة</div>
 </div>
 
-<!-- Modal: إكمال بيانات جوجل -->
+<!-- Google Modal -->
 <div class="modal-overlay" id="googleModal">
   <div class="modal">
     <h3>إكمال البيانات</h3>
@@ -586,7 +578,7 @@
     <div class="field" id="gmf-phone">
       <label>رقم الهاتف (واتساب) *</label>
       <div class="input-wrap">
-        <input type="tel" id="gmPhone" placeholder="مثال: 01012345678" maxlength="15" />
+        <input type="tel" id="gmPhone" placeholder="01xxxxxxxxx" maxlength="15" />
         <span class="icon-inp">📱</span>
       </div>
     </div>
@@ -633,6 +625,8 @@
   </div>
 </div>
 
+<!-- ⚠️ الجزء 2 (JavaScript) في الرد التالي -->
+
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword,
@@ -659,6 +653,28 @@ const db   = getFirestore(app);
 
 const USERS_COLLECTION = 'users';
 
+/* =====================================================
+   ★ حفظ الجلسة في الاثنين (sessionStorage + localStorage)
+===================================================== */
+function saveSession(data, uid) {
+  const sessionData = {
+    borsa_admin: data.username || data.fullName || 'مستخدم',
+    borsa_admin_id: uid,
+    borsa_admin_type: (data.type || 'user').toLowerCase(),
+    borsa_admin_email: data.email || '',
+    borsa_admin_role: data.fullName || data.username || 'مستخدم'
+  };
+
+  Object.keys(sessionData).forEach(key => {
+    try {
+      sessionStorage.setItem(key, sessionData[key]);
+      localStorage.setItem(key, sessionData[key]);
+    } catch (e) {}
+  });
+
+  console.log('✅ تم حفظ الجلسة:', sessionData);
+}
+
 /* ========== Loading ========== */
 const loadingScreen = document.getElementById('loadingScreen');
 const loadingBarFill = document.getElementById('loadingBarFill');
@@ -667,7 +683,7 @@ const mainApp = document.getElementById('mainApp');
 function setProgress(p) {
   loadingBarFill.style.width = Math.min(100, Math.max(0, p)) + '%';
 }
-function hideLoadingScreen() {
+function hideLoading() {
   setProgress(100);
   setTimeout(() => {
     loadingScreen.classList.add('hide');
@@ -675,6 +691,16 @@ function hideLoadingScreen() {
   }, 400);
 }
 setProgress(20);
+
+/* ★ لو فيه جلسة موجودة → حوّل فورًا لـ index */
+(function checkExistingSession() {
+  const existing = sessionStorage.getItem('borsa_admin') || localStorage.getItem('borsa_admin');
+  if (existing) {
+    console.log('✅ جلسة موجودة - تحويل لـ index:', existing);
+    setProgress(60);
+    window.location.replace('index.html');
+  }
+})();
 
 /* ========== الحالة ========== */
 let usernameVerified = false;
@@ -999,7 +1025,7 @@ async function saveUserDoc(uid, data) {
 }
 
 /* =====================================================
-   ★★★ Register (مع حفظ كلمة السر) ★★★
+   Register — تسجيل جديد
 ===================================================== */
 registerBtn.onclick = async () => {
   registerMsg.className = 'msg'; registerMsg.innerHTML = '';
@@ -1053,19 +1079,16 @@ registerBtn.onclick = async () => {
     const uid = cred.user.uid;
     await updateProfile(cred.user, { displayName: full }).catch(() => {});
 
-    // ★ حفظ كلمة السر في Firestore
     const userData = {
       uid, fullName: full, username: user, phone, email,
-      gender: currentGender, birthdate: birth, provider: 'local',
+      gender: currentGender, birthdate: birth,
+      provider: 'local',
       password: pass
     };
     await saveUserDoc(uid, userData);
 
-    sessionStorage.setItem('borsa_admin', user);
-    sessionStorage.setItem('borsa_admin_id', uid);
-    sessionStorage.setItem('borsa_admin_type', 'user');
-    sessionStorage.setItem('borsa_admin_email', email);
-    sessionStorage.setItem('borsa_admin_role', full);
+    // ★ حفظ الجلسة في الاثنين
+    saveSession(userData, uid);
 
     showMsg(registerMsg, '✅ تم إنشاء الحساب — جارٍ التحويل...', 'ok');
     setTimeout(() => window.location.replace('index.html'), 1000);
@@ -1084,7 +1107,7 @@ registerBtn.onclick = async () => {
 };
 
 /* =====================================================
-   ★★★ Login (مع تحديث كلمة السر للمستخدمين القدام) ★★★
+   Login — تسجيل دخول
 ===================================================== */
 loginBtn.onclick = async () => {
   loginMsg.className = 'msg'; loginMsg.innerHTML = '';
@@ -1143,18 +1166,13 @@ loginBtn.onclick = async () => {
 
     await signInWithEmailAndPassword(auth, userDoc.email, pass);
 
-    // ★ لو كلمة السر مش محفوظة في Firestore → احفظها (للمستخدمين القدام)
+    // تحديث كلمة السر لو مش محفوظة
     if (!userDoc.password) {
-      await updateDoc(doc(db, USERS_COLLECTION, uid), {
-        password: pass
-      }).catch(() => {});
+      await updateDoc(doc(db, USERS_COLLECTION, uid), { password: pass }).catch(() => {});
     }
 
-    sessionStorage.setItem('borsa_admin', userDoc.username || 'مستخدم');
-    sessionStorage.setItem('borsa_admin_id', uid);
-    sessionStorage.setItem('borsa_admin_type', 'user');
-    sessionStorage.setItem('borsa_admin_email', userDoc.email || '');
-    sessionStorage.setItem('borsa_admin_role', userDoc.fullName || '');
+    // ★ حفظ الجلسة في الاثنين
+    saveSession(userDoc, uid);
 
     showMsg(loginMsg, '✅ تم تسجيل الدخول — جارٍ التحويل...', 'ok');
     setTimeout(() => window.location.replace('index.html'), 800);
@@ -1172,7 +1190,7 @@ loginBtn.onclick = async () => {
 };
 
 /* =====================================================
-   ★★★ Google Sign-In ★★★
+   Google Sign-In
 ===================================================== */
 const provider = new GoogleAuthProvider();
 provider.setCustomParameters({ prompt: 'select_account' });
@@ -1203,17 +1221,14 @@ async function processGoogleUser(user) {
         return;
       }
 
-      sessionStorage.setItem('borsa_admin', data.username || data.fullName || 'مستخدم');
-      sessionStorage.setItem('borsa_admin_id', uid);
-      sessionStorage.setItem('borsa_admin_type', 'user');
-      sessionStorage.setItem('borsa_admin_email', data.email || '');
-      sessionStorage.setItem('borsa_admin_role', data.fullName || '');
+      // ★ حفظ الجلسة
+      saveSession(data, uid);
 
       window.location.replace('index.html');
       return;
     }
 
-    // مستخدم جديد
+    // مستخدم جديد → افتح Modal
     pendingGoogleUser = {
       uid,
       email: user.email,
@@ -1226,15 +1241,13 @@ async function processGoogleUser(user) {
     gmUser.value = suggested.toLowerCase();
 
     googleModal.classList.add('open');
-
   } catch (e) {
     console.error(e);
-    showMsg(loginMsg, '❌ فشل تحميل بيانات المستخدم');
+    showMsg(loginMsg, '❌ فشل تحميل البيانات');
   }
 }
 
 async function handleGoogleAuth() {
-  // ★ استخدم Redirect بدل Popup
   showMsg(loginMsg, '⏳ جارٍ تحويلك إلى Google...', 'ok');
   googleLoginBtn.disabled = true;
   googleRegisterBtn.disabled = true;
@@ -1256,7 +1269,7 @@ async function handleGoogleAuth() {
 googleLoginBtn.onclick = handleGoogleAuth;
 googleRegisterBtn.onclick = handleGoogleAuth;
 
-/* معالجة العودة من Google */
+/* ★ معالجة العودة من Google */
 (async () => {
   try {
     const result = await getRedirectResult(auth);
@@ -1271,6 +1284,7 @@ googleRegisterBtn.onclick = handleGoogleAuth;
   }
 })();
 
+/* ========== Google Modal ========== */
 gmCancelBtn.onclick = async () => {
   googleModal.classList.remove('open');
   if (pendingGoogleUser) await signOut(auth).catch(() => {});
@@ -1285,7 +1299,9 @@ gmSaveBtn.onclick = async () => {
   const birth = gmBirth.value;
 
   if (!full) { alert('الاسم الكامل مطلوب'); return; }
-  if (!user || !gmUsernameVerified || gmVerifiedUsername !== user) { alert('اضغط "تحقق" لتأكيد اسم المستخدم'); return; }
+  if (!user || !gmUsernameVerified || gmVerifiedUsername !== user) {
+    alert('اضغط "تحقق" لتأكيد اسم المستخدم'); return;
+  }
   if (!/^01[0-9]{9}$/.test(phone)) { alert('رقم الهاتف غير صحيح'); return; }
   if (!currentGmGender) { alert('اختر النوع'); return; }
   if (!birth) { alert('تاريخ الميلاد مطلوب'); return; }
@@ -1296,18 +1312,19 @@ gmSaveBtn.onclick = async () => {
   try {
     const userData = {
       uid: pendingGoogleUser.uid,
-      fullName: full, username: user, phone,
+      fullName: full,
+      username: user,
+      phone,
       email: pendingGoogleUser.email,
-      gender: currentGmGender, birthdate: birth, provider: 'google',
+      gender: currentGmGender,
+      birthdate: birth,
+      provider: 'google',
       password: '(Google)'
     };
     await saveUserDoc(pendingGoogleUser.uid, userData);
 
-    sessionStorage.setItem('borsa_admin', user);
-    sessionStorage.setItem('borsa_admin_id', pendingGoogleUser.uid);
-    sessionStorage.setItem('borsa_admin_type', 'user');
-    sessionStorage.setItem('borsa_admin_email', pendingGoogleUser.email);
-    sessionStorage.setItem('borsa_admin_role', full);
+    // ★ حفظ الجلسة
+    saveSession(userData, pendingGoogleUser.uid);
 
     googleModal.classList.remove('open');
     window.location.replace('index.html');
@@ -1322,7 +1339,7 @@ gmSaveBtn.onclick = async () => {
 /* ========== بدء ========== */
 (async () => {
   await loadSiteSettings();
-  setTimeout(hideLoadingScreen, 400);
+  setTimeout(hideLoading, 400);
 })();
 
 /* PWA */
