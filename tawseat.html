@@ -1,0 +1,713 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0" />
+<meta name="theme-color" content="#0a1929" />
+<title>BORSA CLUP - التوصيات</title>
+<link rel="manifest" href="manifest.json" />
+<link rel="icon" id="siteFavicon" href="https://i.ibb.co/PzcMFkpR/FB-IMG-1789241464654.jpg" />
+<link rel="apple-touch-icon" id="siteAppleIcon" href="https://i.ibb.co/PzcMFkpR/FB-IMG-1789241464654.jpg" />
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet" />
+<script src="auth-guard.js"></script>
+
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+  html, body {
+    min-height:100%; font-family:'Cairo', sans-serif;
+    background:radial-gradient(circle at 50% 0%, #0f2f4a 0%, #0a1929 40%, #000 100%);
+    color:#fff; overflow-x:hidden;
+  }
+  body { min-height:100vh; display:flex; justify-content:center; align-items:flex-start; }
+
+  /* Loading */
+  .loading-screen {
+    position:fixed; inset:0; z-index:9999;
+    background:radial-gradient(circle at 50% 30%, #0f2f4a 0%, #0a1929 40%, #000 100%);
+    display:flex; flex-direction:column;
+    align-items:center; justify-content:center;
+    transition:opacity .6s ease, visibility .6s ease;
+    overflow:hidden;
+  }
+  .loading-screen.hide { opacity:0; visibility:hidden; pointer-events:none; }
+  .loading-screen::before {
+    content:''; position:absolute; inset:0;
+    background-image:
+      radial-gradient(2px 2px at 20% 30%, rgba(30,144,255,.6), transparent),
+      radial-gradient(2px 2px at 60% 70%, rgba(30,144,255,.4), transparent),
+      radial-gradient(1px 1px at 50% 50%, rgba(255,255,255,.5), transparent);
+    animation:starsMove 20s linear infinite;
+  }
+  @keyframes starsMove { to { transform:translateY(-100vh); } }
+  .loading-content {
+    position:relative; z-index:2;
+    display:flex; flex-direction:column;
+    align-items:center; gap:22px;
+  }
+  .logo-loader {
+    position:relative; width:160px; height:160px;
+    display:flex; align-items:center; justify-content:center;
+  }
+  .logo-loader::before {
+    content:''; position:absolute; inset:0;
+    border-radius:50%; border:3px solid transparent;
+    border-top-color:#1e90ff; border-right-color:#1e90ff;
+    animation:spinRing 1.5s linear infinite;
+    box-shadow:0 0 20px rgba(30,144,255,.5);
+  }
+  @keyframes spinRing { to { transform:rotate(360deg); } }
+  .loading-logo {
+    width:110px; height:110px; border-radius:50%; object-fit:cover;
+    border:3px solid rgba(30,144,255,.4);
+    box-shadow:0 0 30px rgba(30,144,255,.6);
+    animation:pulseLogo 2s ease-in-out infinite;
+  }
+  @keyframes pulseLogo { 0%,100%{transform:scale(1);} 50%{transform:scale(1.05);} }
+  .loading-brand {
+    font-size:28px; font-weight:900; letter-spacing:2px; color:#fff;
+    text-shadow:0 0 20px rgba(30,144,255,.8);
+  }
+  .loading-brand span { color:#1e90ff; }
+  .loading-sub { color:#8fb3d9; font-size:13px; font-weight:600; }
+  .loading-bar {
+    width:220px; height:4px; background:rgba(255,255,255,.08);
+    border-radius:2px; overflow:hidden;
+  }
+  .loading-bar-fill {
+    height:100%;
+    background:linear-gradient(90deg, #0066cc, #1e90ff, #6bb7ff);
+    background-size:200% 100%; width:0%;
+    transition:width .4s ease; border-radius:2px;
+    box-shadow:0 0 12px rgba(30,144,255,.8);
+  }
+  .loading-footer {
+    position:absolute; bottom:30px; color:#4d6d8f;
+    font-size:11px; letter-spacing:1px; font-weight:600; z-index:2;
+  }
+
+  /* App */
+  .app {
+    width:100%; max-width:480px; min-height:100vh;
+    background:linear-gradient(180deg,#0a1929 0%,#06121e 100%);
+    display:flex; flex-direction:column;
+    box-shadow:0 0 60px rgba(30,144,255,.25);
+    position:relative; overflow:hidden;
+  }
+
+  /* Topbar */
+  .topbar {
+    display:flex; align-items:center; justify-content:space-between;
+    padding:14px 16px;
+    background:rgba(255,255,255,.03);
+    border-bottom:1px solid rgba(30,144,255,.25);
+    position:sticky; top:0; z-index:20;
+    backdrop-filter:blur(12px);
+    gap:8px;
+  }
+  .topbar .title { display:flex; align-items:center; gap:8px; flex-shrink:0; }
+  .topbar img { width:36px; height:36px; border-radius:50%; border:2px solid #1e90ff; object-fit:cover; }
+  .topbar .name { font-size:14px; font-weight:900; color:#fff; }
+  .topbar .name span { color:#1e90ff; }
+  .top-btn {
+    padding:8px 12px; border:none; border-radius:9px;
+    font-family:'Cairo',sans-serif;
+    font-size:12px; font-weight:700;
+    cursor:pointer; transition:.25s;
+    text-decoration:none;
+    display:flex; align-items:center; gap:4px;
+    background:rgba(255,255,255,.06);
+    color:#a8c8e8;
+    border:1px solid rgba(255,255,255,.1);
+  }
+  .top-btn:hover { background:rgba(255,255,255,.12); color:#fff; }
+
+  /* Content */
+  .content { flex:1; padding:16px; overflow-y:auto; }
+
+  .page-title {
+    display:flex; align-items:center; justify-content:space-between;
+    margin-bottom:14px;
+  }
+  .page-title h1 { color:#fff; font-size:19px; font-weight:900; }
+  .page-title h1 span { color:#1e90ff; }
+  .page-title .count {
+    background:rgba(30,144,255,.15); color:#6bb7ff;
+    padding:5px 12px; border-radius:20px;
+    font-size:12px; font-weight:700;
+    border:1px solid rgba(30,144,255,.3);
+  }
+
+  /* Info bar */
+  .info-bar {
+    padding:11px 14px;
+    background:rgba(255,200,0,.08);
+    border:1px solid rgba(255,200,0,.25);
+    border-radius:11px;
+    color:#ffc800;
+    font-size:11.5px;
+    font-weight:600;
+    margin-bottom:14px;
+    line-height:1.6;
+    display:flex;
+    align-items:center;
+    gap:8px;
+  }
+
+  /* Search */
+  .search-box { position:relative; margin-bottom:14px; }
+  .search-box input {
+    width:100%; padding:11px 42px 11px 14px;
+    background:#0d2033; border:1.5px solid #1b3a5c; border-radius:12px;
+    color:#fff; font-size:14px;
+    font-family:'Cairo',sans-serif; outline:none;
+    transition:.25s;
+  }
+  .search-box input:focus { border-color:#1e90ff; box-shadow:0 0 0 3px rgba(30,144,255,.15); }
+  .search-box input::placeholder { color:#4d6d8f; }
+  .search-box .icon {
+    position:absolute; right:14px; top:50%;
+    transform:translateY(-50%); font-size:15px; color:#6b8fb0;
+    pointer-events:none;
+  }
+
+  /* Cards */
+  .list { display:flex; flex-direction:column; gap:12px; }
+  .rec-card {
+    padding:16px;
+    background:rgba(255,255,255,.04);
+    border:1px solid rgba(30,144,255,.22);
+    border-radius:16px;
+    transition:.25s;
+    animation:fadeUp .35s ease;
+  }
+  .rec-card:hover {
+    border-color:rgba(30,144,255,.5);
+    box-shadow:0 8px 20px rgba(30,144,255,.15);
+    transform:translateY(-2px);
+  }
+
+  .rec-head {
+    display:flex; align-items:flex-start; gap:12px;
+    margin-bottom:12px;
+  }
+  .stock-logo {
+    width:52px; height:52px;
+    border-radius:12px;
+    background:linear-gradient(135deg,#1e90ff,#0066cc);
+    display:flex; align-items:center; justify-content:center;
+    color:#fff; font-size:10px; font-weight:900;
+    flex-shrink:0; padding:4px;
+    text-align:center; line-height:1.1;
+    overflow:hidden;
+  }
+  .stock-logo img {
+    width:100%; height:100%;
+    object-fit:contain;
+    background:#fff;
+    border-radius:10px;
+    padding:4px;
+  }
+  .rec-info { flex:1; min-width:0; }
+  .rec-info .name {
+    color:#fff; font-size:14px; font-weight:900;
+    margin-bottom:3px;
+    word-break:break-word;
+  }
+  .rec-info .symbol {
+    color:#6bb7ff; font-size:11px; font-weight:700;
+  }
+
+  .rec-prices {
+    display:grid;
+    grid-template-columns:repeat(2,1fr);
+    gap:8px;
+    margin-bottom:12px;
+  }
+  .price-item {
+    padding:10px;
+    background:rgba(0,0,0,.25);
+    border:1px solid rgba(30,144,255,.18);
+    border-radius:10px;
+    text-align:center;
+  }
+  .price-item .lbl {
+    color:#8fb3d9; font-size:10.5px; font-weight:600;
+    margin-bottom:5px;
+  }
+  .price-item .val {
+    color:#fff; font-size:13px; font-weight:900;
+    line-height:1.5; word-break:break-word;
+  }
+  .price-item.buy .val { color:#3ddc84; }
+  .price-item.sell .val { color:#ff6b6b; }
+  .price-item.stop .val { color:#ffc800; }
+  .price-item.fair .val { color:#c864ff; }
+
+  .rec-meta {
+    display:flex; flex-wrap:wrap; gap:5px;
+    margin-bottom:12px;
+    padding-top:10px;
+    border-top:1px solid rgba(255,255,255,.06);
+  }
+  .badge {
+    padding:3px 9px; border-radius:20px;
+    font-size:10px; font-weight:700;
+    display:inline-flex; align-items:center; gap:4px;
+  }
+  .badge.duration { background:rgba(30,144,255,.15); color:#6bb7ff; border:1px solid rgba(30,144,255,.3); }
+  .badge.date { background:rgba(255,255,255,.06); color:#8fb3d9; border:1px solid rgba(255,255,255,.1); }
+
+  .rec-notes {
+    padding:10px 12px;
+    background:rgba(30,144,255,.06);
+    border:1px solid rgba(30,144,255,.18);
+    border-radius:10px;
+    color:#c8d8e8; font-size:12px;
+    line-height:1.6; font-weight:600;
+    word-break:break-word;
+  }
+  .rec-notes.empty { color:#6b8fb0; font-style:italic; }
+
+  /* Empty */
+  .empty {
+    text-align:center; padding:50px 20px;
+    color:#4d6d8f; font-weight:600;
+  }
+  .empty .ico { font-size:56px; margin-bottom:14px; opacity:.5; }
+  .empty p { font-size:14px; margin-bottom:6px; }
+  .empty .sub { font-size:12px; color:#6b8fb0; }
+
+  /* Pagination */
+  .pagination {
+    display:flex; align-items:center; justify-content:center;
+    gap:5px; margin-top:20px; flex-wrap:wrap; padding:14px 0;
+  }
+  .page-btn {
+    min-width:34px; height:34px; padding:0 9px;
+    background:rgba(255,255,255,.05);
+    border:1px solid rgba(30,144,255,.25);
+    border-radius:9px; color:#a8c8e8;
+    font-family:'Cairo',sans-serif;
+    font-size:12px; font-weight:700;
+    cursor:pointer; transition:.2s;
+    display:flex; align-items:center; justify-content:center;
+  }
+  .page-btn.active {
+    background:linear-gradient(135deg,#1e90ff,#0066cc);
+    color:#fff; border-color:#1e90ff;
+  }
+  .page-btn:disabled { opacity:.35; cursor:not-allowed; }
+  .page-info { width:100%; text-align:center; color:#6b8fb0; font-size:11px; font-weight:600; margin-top:8px; }
+
+  /* Toast */
+  .toast-wrap {
+    position:fixed; top:20px; left:50%;
+    transform:translateX(-50%);
+    z-index:9999;
+    display:flex; flex-direction:column; gap:8px;
+    pointer-events:none;
+    width:calc(100% - 32px); max-width:400px;
+  }
+  .toast {
+    padding:12px 16px; border-radius:12px;
+    color:#fff; font-family:'Cairo',sans-serif;
+    font-size:13.5px; font-weight:700;
+    box-shadow:0 10px 30px rgba(0,0,0,.4);
+    animation:toastIn .35s ease;
+    word-break:break-word;
+  }
+  .toast.ok { background:linear-gradient(135deg,#28c878,#1a9e5a); }
+  .toast.err { background:linear-gradient(135deg,#ff3b3b,#b00000); }
+  .toast.info { background:linear-gradient(135deg,#1e90ff,#0066cc); }
+  @keyframes toastIn {
+    from{opacity:0;transform:translateY(-20px);}
+    to{opacity:1;transform:translateY(0);}
+  }
+
+  @keyframes fadeUp {
+    from{opacity:0;transform:translateY(15px);}
+    to{opacity:1;transform:none;}
+  }
+
+  /* Responsive */
+  @media (min-width:768px) {
+    body { padding:30px; }
+    .app {
+      max-width:720px; min-height:auto; height:auto;
+      border-radius:28px;
+      border:1px solid rgba(30,144,255,.25);
+      box-shadow:0 25px 70px rgba(0,150,255,.3);
+    }
+    .content { padding:22px 24px; }
+    .rec-prices { grid-template-columns:repeat(4,1fr); }
+  }
+  @media (min-width:1024px) {
+    body { padding:40px 30px; }
+    .app { max-width:1100px; }
+    .content { padding:26px 36px; }
+    .list { display:grid; grid-template-columns:repeat(2,1fr); gap:14px; }
+    .page-title h1 { font-size:22px; }
+  }
+  @media (min-width:1440px) {
+    .app { max-width:1400px; }
+    .list { grid-template-columns:repeat(3,1fr); }
+  }
+</style>
+</head>
+<body>
+
+<!-- Loading -->
+<div class="loading-screen" id="loadingScreen">
+  <div class="loading-content">
+    <div class="logo-loader">
+      <img id="loadingLogo" class="loading-logo" src="https://i.ibb.co/PzcMFkpR/FB-IMG-1789241464654.jpg" alt="BORSA CLUP" />
+    </div>
+    <div class="loading-brand" id="loadingBrand">BORSA <span>CLUP</span></div>
+    <div class="loading-sub">التوصيات</div>
+    <div class="loading-bar">
+      <div class="loading-bar-fill" id="loadingBarFill"></div>
+    </div>
+  </div>
+  <div class="loading-footer">© BORSA CLUP</div>
+</div>
+
+<!-- App -->
+<div class="app" id="app" style="display:none;">
+
+  <div class="topbar">
+    <div class="title">
+      <img id="topLogo" src="https://i.ibb.co/PzcMFkpR/FB-IMG-1789241464654.jpg" />
+      <div class="name" id="topName">BORSA <span>CLUP</span></div>
+    </div>
+    <a href="index.html" class="top-btn">← الرئيسية</a>
+  </div>
+
+  <div class="content">
+
+    <div class="page-title">
+      <h1>التوصيات <span>الاستثمارية</span></h1>
+      <div class="count" id="recCount">0</div>
+    </div>
+
+    <div class="info-bar">
+      <span>💡</span>
+      <span>التوصيات دي مقدمة من فريق BORSA CLUP — استخدمها كمرجع ومش قرار نهائي.</span>
+    </div>
+
+    <div class="search-box">
+      <input type="text" id="searchInput" placeholder="ابحث باسم السهم أو الرمز..." />
+      <span class="icon">🔍</span>
+    </div>
+
+    <div class="list" id="list"></div>
+
+    <div class="empty" id="empty" style="display:none;">
+      <div class="ico">💡</div>
+      <p>لا توجد توصيات حالياً</p>
+      <div class="sub">تعال لاحقًا لمشاهدة التوصيات الجديدة</div>
+    </div>
+
+    <div class="pagination" id="pagination"></div>
+
+  </div>
+</div>
+
+<div class="toast-wrap" id="toastWrap"></div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getFirestore, collection, doc, getDoc, getDocs, query, orderBy, onSnapshot }
+  from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyB36BkwxS0RHWWHSNGA1rZ5EHjtaeynTEA",
+  authDomain: "borsa-b77a3.firebaseapp.com",
+  projectId: "borsa-b77a3",
+  storageBucket: "borsa-b77a3.firebasestorage.app",
+  messagingSenderId: "1029468057087",
+  appId: "1:1029468057087:web:1bafa9ffad7f14d7a2cbca",
+  measurementId: "G-NKBES9QEBK"
+};
+
+const app = initializeApp(firebaseConfig);
+const db  = getFirestore(app);
+
+const REC_COLLECTION = 'recommendations';
+const PER_PAGE = 10;
+
+/* ========== Loading ========== */
+const loadingScreen = document.getElementById('loadingScreen');
+const loadingBarFill = document.getElementById('loadingBarFill');
+const appEl = document.getElementById('app');
+
+function setProgress(p) {
+  loadingBarFill.style.width = Math.min(100, Math.max(0, p)) + '%';
+}
+function hideLoading() {
+  setProgress(100);
+  setTimeout(() => {
+    loadingScreen.classList.add('hide');
+    appEl.style.display = 'flex';
+  }, 300);
+}
+setProgress(20);
+
+/* ========== DOM ========== */
+const listEl = document.getElementById('list');
+const emptyEl = document.getElementById('empty');
+const recCount = document.getElementById('recCount');
+const searchInput = document.getElementById('searchInput');
+const pagination = document.getElementById('pagination');
+
+/* ========== الحالة ========== */
+let allRecs = [];
+let filteredRecs = [];
+let currentPage = 1;
+let searchQuery = '';
+
+/* ========== أدوات ========== */
+function esc(s) {
+  return String(s ?? '').replace(/[&<>"']/g, c => ({
+    '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
+  }[c]));
+}
+
+function formatDate(ts) {
+  if (!ts) return '';
+  const d = ts.toDate ? ts.toDate() : new Date(ts);
+  const day = String(d.getDate()).padStart(2,'0');
+  const m = String(d.getMonth()+1).padStart(2,'0');
+  return `${day}/${m}/${d.getFullYear()}`;
+}
+
+function getLogoUrl(symbol) {
+  if (!symbol) return null;
+  return `https://s3-symbol-logo.tradingview.com/${symbol.toLowerCase()}--big.svg`;
+}
+
+/* ========== إعدادات الموقع ========== */
+async function loadSiteSettings() {
+  try {
+    setProgress(35);
+    const snap = await getDoc(doc(db, 'settings', 'site'));
+    if (!snap.exists()) return;
+    const s = snap.data();
+
+    if (s.logoUrl) {
+      const img = new Image();
+      img.src = s.logoUrl;
+      await new Promise(r => { img.onload = r; img.onerror = r; });
+      document.getElementById('loadingLogo').src = s.logoUrl;
+      document.getElementById('topLogo').src = s.logoUrl;
+      const fav = document.getElementById('siteFavicon');
+      const apple = document.getElementById('siteAppleIcon');
+      if (fav) fav.href = s.logoUrl;
+      if (apple) apple.href = s.logoUrl;
+    }
+
+    if (s.siteName) {
+      const full = s.siteName;
+      const accent = s.siteNameAccent || '';
+      const build = (el) => {
+        if (accent && full.includes(accent)) {
+          const parts = full.split(accent);
+          const before = parts[0].trim();
+          const after = parts.slice(1).join(accent).trim();
+          el.innerHTML = `${esc(before)} <span>${esc(accent)}</span>${after ? ' ' + esc(after) : ''}`;
+        } else {
+          el.textContent = full;
+        }
+      };
+      build(document.getElementById('loadingBrand'));
+      build(document.getElementById('topName'));
+      document.title = full + ' - التوصيات';
+    }
+    setProgress(50);
+  } catch (e) { console.warn(e); setProgress(50); }
+}
+
+/* =====================================================
+   تحميل التوصيات (Realtime)
+===================================================== */
+function listenRecs() {
+  try {
+    const q = query(
+      collection(db, REC_COLLECTION),
+      orderBy('createdAt', 'desc')
+    );
+
+    onSnapshot(q, (snap) => {
+      allRecs = [];
+      snap.forEach(d => allRecs.push({ id: d.id, ...d.data() }));
+      recCount.textContent = allRecs.length;
+      applyFilter();
+    }, (err) => {
+      console.warn('recs listen failed:', err);
+      // fallback: بدون orderBy
+      getDocs(collection(db, REC_COLLECTION)).then(snap => {
+        allRecs = [];
+        snap.forEach(d => allRecs.push({ id: d.id, ...d.data() }));
+        allRecs.sort((a, b) => {
+          const ta = a.createdAt?.toDate ? a.createdAt.toDate().getTime() : 0;
+          const tb = b.createdAt?.toDate ? b.createdAt.toDate().getTime() : 0;
+          return tb - ta;
+        });
+        recCount.textContent = allRecs.length;
+        applyFilter();
+      });
+    });
+  } catch (e) {
+    console.warn(e);
+  }
+}
+
+function applyFilter() {
+  const q = searchQuery.trim().toLowerCase();
+  let list = [...allRecs];
+  if (q) {
+    list = list.filter(r =>
+      (r.stockName || '').toLowerCase().includes(q) ||
+      (r.stockSymbol || '').toLowerCase().includes(q)
+    );
+  }
+  filteredRecs = list;
+  const totalPages = Math.max(1, Math.ceil(filteredRecs.length / PER_PAGE));
+  if (currentPage > totalPages) currentPage = totalPages;
+  if (currentPage < 1) currentPage = 1;
+  render();
+  renderPagination(totalPages);
+}
+
+/* ========== رسم الكروت ========== */
+function render() {
+  listEl.innerHTML = '';
+
+  if (!filteredRecs.length) {
+    emptyEl.style.display = 'block';
+    return;
+  }
+  emptyEl.style.display = 'none';
+
+  const start = (currentPage - 1) * PER_PAGE;
+  filteredRecs.slice(start, start + PER_PAGE).forEach(r => {
+    listEl.appendChild(renderCard(r));
+  });
+}
+
+function renderCard(r) {
+  const card = document.createElement('div');
+  card.className = 'rec-card';
+
+  const logo = getLogoUrl(r.stockSymbol);
+
+  card.innerHTML = `
+    <div class="rec-head">
+      <div class="stock-logo">
+        ${logo
+          ? `<img src="${esc(logo)}" onerror="this.style.display='none';this.parentElement.textContent='${esc(r.stockSymbol || '')}'" />`
+          : esc(r.stockSymbol || '—')}
+      </div>
+      <div class="rec-info">
+        <div class="name">${esc(r.stockName || '—')}</div>
+        <div class="symbol">${esc(r.stockSymbol || '—')}</div>
+      </div>
+    </div>
+
+    <div class="rec-prices">
+      <div class="price-item buy">
+        <div class="lbl">🟢 شراء</div>
+        <div class="val">${esc(r.buyPrice) || '—'}</div>
+      </div>
+      <div class="price-item sell">
+        <div class="lbl">🔴 بيع</div>
+        <div class="val">${esc(r.sellPrice) || '—'}</div>
+      </div>
+      <div class="price-item stop">
+        <div class="lbl">⚠️ وقف خسارة</div>
+        <div class="val">${esc(r.stopLoss) || '—'}</div>
+      </div>
+      <div class="price-item fair">
+        <div class="lbl">💰 قيمة عادلة</div>
+        <div class="val">${esc(r.fairValue) || '—'}</div>
+      </div>
+    </div>
+
+    <div class="rec-meta">
+      ${r.duration ? `<span class="badge duration">⏱️ ${esc(r.duration)}</span>` : ''}
+      ${r.createdAt ? `<span class="badge date">📅 ${formatDate(r.createdAt)}</span>` : ''}
+    </div>
+
+    ${r.notes
+      ? `<div class="rec-notes">${esc(r.notes).replace(/\n/g,'<br>')}</div>`
+      : `<div class="rec-notes empty">لا ملاحظات</div>`}
+  `;
+
+  return card;
+}
+
+/* ========== Pagination ========== */
+function renderPagination(totalPages) {
+  pagination.innerHTML = '';
+  if (totalPages <= 1) return;
+
+  const prev = document.createElement('button');
+  prev.className = 'page-btn';
+  prev.textContent = '‹';
+  prev.disabled = currentPage === 1;
+  prev.onclick = () => { currentPage--; applyFilter(); window.scrollTo({top:0,behavior:'smooth'}); };
+  pagination.appendChild(prev);
+
+  for (let i = 1; i <= totalPages; i++) {
+    if (totalPages > 7 && i > 2 && i < totalPages - 1 && Math.abs(i - currentPage) > 1) {
+      if (i === 3) {
+        const dots = document.createElement('span');
+        dots.className = 'page-btn';
+        dots.textContent = '…';
+        dots.style.cursor = 'default';
+        dots.style.opacity = '.5';
+        pagination.appendChild(dots);
+      }
+      continue;
+    }
+    const btn = document.createElement('button');
+    btn.className = 'page-btn' + (i === currentPage ? ' active' : '');
+    btn.textContent = i;
+    btn.onclick = () => { currentPage = i; applyFilter(); window.scrollTo({top:0,behavior:'smooth'}); };
+    pagination.appendChild(btn);
+  }
+
+  const next = document.createElement('button');
+  next.className = 'page-btn';
+  next.textContent = '›';
+  next.disabled = currentPage === totalPages;
+  next.onclick = () => { currentPage++; applyFilter(); window.scrollTo({top:0,behavior:'smooth'}); };
+  pagination.appendChild(next);
+
+  const info = document.createElement('div');
+  info.className = 'page-info';
+  info.textContent = `عرض ${(currentPage-1)*PER_PAGE + 1} - ${Math.min(currentPage*PER_PAGE, filteredRecs.length)} من ${filteredRecs.length}`;
+  pagination.appendChild(info);
+}
+
+searchInput.addEventListener('input', (e) => {
+  searchQuery = e.target.value;
+  currentPage = 1;
+  applyFilter();
+});
+
+/* ========== بدء ========== */
+(async () => {
+  await loadSiteSettings();
+  listenRecs();
+  setTimeout(hideLoading, 500);
+})();
+
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('sw.js').catch(() => {});
+  });
+}
+</script>
+
+</body>
+</html>

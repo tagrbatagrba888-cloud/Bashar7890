@@ -1,0 +1,1383 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0" />
+<meta name="theme-color" content="#0a1929" />
+<title>BORSA CLUP - مجتمع المستخدمين</title>
+<link rel="manifest" href="manifest.json" />
+<link rel="icon" id="siteFavicon" href="https://i.ibb.co/PzcMFkpR/FB-IMG-1789241464654.jpg" />
+<link rel="apple-touch-icon" id="siteAppleIcon" href="https://i.ibb.co/PzcMFkpR/FB-IMG-1789241464654.jpg" />
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet" />
+
+
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+  html, body {
+    min-height:100%; font-family:'Cairo', sans-serif;
+    background:radial-gradient(circle at 50% 0%, #0f2f4a 0%, #0a1929 40%, #000 100%);
+    color:#fff; overflow-x:hidden;
+  }
+  body { min-height:100vh; display:flex; justify-content:center; align-items:flex-start; }
+
+  /* Loading */
+  .loading-screen {
+    position:fixed; inset:0; z-index:9999;
+    background:radial-gradient(circle at 50% 30%, #0f2f4a 0%, #0a1929 40%, #000 100%);
+    display:flex; flex-direction:column;
+    align-items:center; justify-content:center;
+    transition:opacity .6s ease, visibility .6s ease;
+    overflow:hidden;
+  }
+  .loading-screen.hide { opacity:0; visibility:hidden; pointer-events:none; }
+  .loading-screen::before {
+    content:''; position:absolute; inset:0;
+    background-image:
+      radial-gradient(2px 2px at 20% 30%, rgba(30,144,255,.6), transparent),
+      radial-gradient(2px 2px at 60% 70%, rgba(30,144,255,.4), transparent);
+    animation:starsMove 20s linear infinite;
+  }
+  @keyframes starsMove { to { transform:translateY(-100vh); } }
+  .loading-content {
+    position:relative; z-index:2;
+    display:flex; flex-direction:column;
+    align-items:center; gap:22px;
+  }
+  .logo-loader {
+    position:relative; width:160px; height:160px;
+    display:flex; align-items:center; justify-content:center;
+  }
+  .logo-loader::before {
+    content:''; position:absolute; inset:0;
+    border-radius:50%; border:3px solid transparent;
+    border-top-color:#1e90ff; border-right-color:#1e90ff;
+    animation:spinRing 1.5s linear infinite;
+    box-shadow:0 0 20px rgba(30,144,255,.5);
+  }
+  @keyframes spinRing { to { transform:rotate(360deg); } }
+  .loading-logo {
+    width:110px; height:110px; border-radius:50%; object-fit:cover;
+    border:3px solid rgba(30,144,255,.4);
+    box-shadow:0 0 30px rgba(30,144,255,.6);
+    animation:pulseLogo 2s ease-in-out infinite;
+  }
+  @keyframes pulseLogo { 0%,100%{transform:scale(1);} 50%{transform:scale(1.05);} }
+  .loading-brand {
+    font-size:28px; font-weight:900; letter-spacing:2px; color:#fff;
+    text-shadow:0 0 20px rgba(30,144,255,.8);
+  }
+  .loading-brand span { color:#1e90ff; }
+  .loading-sub { color:#8fb3d9; font-size:13px; font-weight:600; }
+  .loading-bar {
+    width:220px; height:4px; background:rgba(255,255,255,.08);
+    border-radius:2px; overflow:hidden;
+  }
+  .loading-bar-fill {
+    height:100%;
+    background:linear-gradient(90deg, #0066cc, #1e90ff, #6bb7ff);
+    background-size:200% 100%; width:0%;
+    transition:width .4s ease; border-radius:2px;
+    box-shadow:0 0 12px rgba(30,144,255,.8);
+  }
+  .loading-footer {
+    position:absolute; bottom:30px; color:#4d6d8f;
+    font-size:11px; letter-spacing:1px; font-weight:600; z-index:2;
+  }
+
+  /* App */
+  .app {
+    width:100%; max-width:480px; min-height:100vh;
+    background:linear-gradient(180deg,#0a1929 0%,#06121e 100%);
+    display:flex; flex-direction:column;
+    box-shadow:0 0 60px rgba(30,144,255,.25);
+    position:relative; overflow:hidden;
+  }
+
+  /* Topbar */
+  .topbar {
+    display:flex; align-items:center; justify-content:space-between;
+    padding:14px 16px;
+    background:rgba(255,255,255,.03);
+    border-bottom:1px solid rgba(30,144,255,.25);
+    position:sticky; top:0; z-index:20;
+    backdrop-filter:blur(12px);
+    gap:8px;
+  }
+  .topbar .title { display:flex; align-items:center; gap:8px; flex-shrink:0; }
+  .topbar img { width:36px; height:36px; border-radius:50%; border:2px solid #1e90ff; object-fit:cover; }
+  .topbar .name { font-size:14px; font-weight:900; color:#fff; }
+  .topbar .name span { color:#1e90ff; }
+  .top-btn {
+    padding:8px 12px; border:none; border-radius:9px;
+    font-family:'Cairo',sans-serif;
+    font-size:12px; font-weight:700;
+    cursor:pointer; transition:.25s;
+    text-decoration:none;
+    display:flex; align-items:center; gap:4px;
+    background:rgba(255,255,255,.06);
+    color:#a8c8e8;
+    border:1px solid rgba(255,255,255,.1);
+  }
+  .top-btn:hover { background:rgba(255,255,255,.12); color:#fff; }
+
+  /* Content */
+  .content { flex:1; padding:16px; overflow-y:auto; }
+
+  .page-title {
+    display:flex; align-items:center; justify-content:space-between;
+    margin-bottom:14px;
+  }
+  .page-title h1 { color:#fff; font-size:19px; font-weight:900; }
+  .page-title h1 span { color:#28c878; }
+  .page-title .count {
+    background:rgba(40,200,120,.15); color:#3ddc84;
+    padding:5px 12px; border-radius:20px;
+    font-size:12px; font-weight:700;
+    border:1px solid rgba(40,200,120,.3);
+  }
+
+  /* Info bar */
+  .info-bar {
+    padding:11px 14px;
+    background:rgba(40,200,120,.08);
+    border:1px solid rgba(40,200,120,.25);
+    border-radius:11px;
+    color:#3ddc84;
+    font-size:11.5px;
+    font-weight:600;
+    margin-bottom:14px;
+    line-height:1.6;
+    display:flex;
+    align-items:center;
+    gap:8px;
+  }
+
+  /* Search */
+  .search-box { position:relative; margin-bottom:14px; }
+  .search-box input {
+    width:100%; padding:11px 42px 11px 14px;
+    background:#0d2033; border:1.5px solid #1b3a5c; border-radius:12px;
+    color:#fff; font-size:14px;
+    font-family:'Cairo',sans-serif; outline:none;
+    transition:.25s;
+  }
+  .search-box input:focus { border-color:#1e90ff; box-shadow:0 0 0 3px rgba(30,144,255,.15); }
+  .search-box input::placeholder { color:#4d6d8f; }
+  .search-box .icon {
+    position:absolute; right:14px; top:50%;
+    transform:translateY(-50%); font-size:15px; color:#6b8fb0;
+    pointer-events:none;
+  }
+
+  /* Cards */
+  .list { display:flex; flex-direction:column; gap:12px; }
+  .comm-card {
+    padding:16px;
+    background:rgba(255,255,255,.04);
+    border:1px solid rgba(40,200,120,.22);
+    border-radius:16px;
+    transition:.25s;
+    cursor:pointer;
+    animation:fadeUp .35s ease;
+  }
+  .comm-card:hover {
+    border-color:rgba(40,200,120,.55);
+    box-shadow:0 10px 26px rgba(40,200,120,.18);
+    transform:translateY(-2px);
+  }
+  .comm-card.closed { opacity:.6; border-style:dashed; }
+
+  .comm-head {
+    display:flex; align-items:flex-start; gap:12px;
+    margin-bottom:10px;
+  }
+  .comm-avatar {
+    width:46px; height:46px;
+    border-radius:12px;
+    background:linear-gradient(135deg,#28c878,#1a9e5a);
+    display:flex; align-items:center; justify-content:center;
+    font-size:22px;
+    flex-shrink:0;
+  }
+  .comm-head .info { flex:1; min-width:0; }
+  .comm-head .name {
+    color:#fff; font-size:15px; font-weight:900;
+    margin-bottom:4px; word-break:break-word;
+  }
+  .comm-head .desc {
+    color:#8fb3d9; font-size:12px; font-weight:600;
+    line-height:1.5; word-break:break-word;
+  }
+  .comm-meta { display:flex; flex-wrap:wrap; gap:6px; margin-bottom:10px; }
+  .badge {
+    display:inline-flex; align-items:center; gap:4px;
+    padding:3px 9px; border-radius:20px;
+    font-size:10.5px; font-weight:700;
+  }
+  .badge.open   { background:rgba(40,200,120,.15); color:#3ddc84; border:1px solid rgba(40,200,120,.3); }
+  .badge.closed { background:rgba(255,60,60,.15); color:#ff6b6b; border:1px solid rgba(255,60,60,.3); }
+  .badge.creator { background:rgba(255,255,255,.06); color:#8fb3d9; border:1px solid rgba(255,255,255,.1); }
+
+  .comm-actions {
+    display:flex; gap:6px;
+    padding-top:10px;
+    border-top:1px solid rgba(255,255,255,.06);
+  }
+  .comm-actions button {
+    flex:1;
+    padding:9px;
+    border:none; border-radius:9px;
+    font-family:'Cairo',sans-serif;
+    font-size:12px; font-weight:700;
+    cursor:pointer; transition:.2s;
+    background:rgba(40,200,120,.15);
+    color:#3ddc84;
+    border:1px solid rgba(40,200,120,.3);
+  }
+  .comm-actions button:hover {
+    background:rgba(40,200,120,.3);
+    color:#fff;
+  }
+
+  /* Pagination */
+  .pagination {
+    display:flex; align-items:center; justify-content:center;
+    gap:5px; margin-top:20px; flex-wrap:wrap; padding:14px 0;
+  }
+  .page-btn {
+    min-width:34px; height:34px; padding:0 9px;
+    background:rgba(255,255,255,.05);
+    border:1px solid rgba(40,200,120,.25);
+    border-radius:9px; color:#a8c8e8;
+    font-family:'Cairo',sans-serif;
+    font-size:12px; font-weight:700;
+    cursor:pointer; transition:.2s;
+    display:flex; align-items:center; justify-content:center;
+  }
+  .page-btn.active {
+    background:linear-gradient(135deg,#28c878,#1a9e5a);
+    color:#fff; border-color:#28c878;
+  }
+  .page-btn:disabled { opacity:.35; cursor:not-allowed; }
+  .page-info { width:100%; text-align:center; color:#6b8fb0; font-size:11px; font-weight:600; margin-top:8px; }
+
+  /* Chat View */
+  .chat-view {
+    position:fixed; inset:0;
+    background:linear-gradient(180deg,#0a1929 0%,#06121e 100%);
+    display:none; flex-direction:column;
+    z-index:100;
+  }
+  .chat-view.open { display:flex; }
+
+  .chat-header {
+    display:flex; align-items:center; gap:10px;
+    padding:12px 14px;
+    background:rgba(255,255,255,.05);
+    border-bottom:1px solid rgba(40,200,120,.25);
+    backdrop-filter:blur(12px);
+  }
+  .chat-header .back {
+    width:38px; height:38px; border-radius:10px;
+    background:rgba(255,255,255,.06);
+    border:1px solid rgba(255,255,255,.1);
+    color:#a8c8e8; cursor:pointer;
+    font-size:18px; font-weight:900;
+    display:flex; align-items:center; justify-content:center;
+    transition:.2s;
+  }
+  .chat-header .back:hover { background:rgba(255,255,255,.12); color:#fff; }
+  .chat-header .info2 { flex:1; min-width:0; }
+  .chat-header .info2 .n {
+    color:#fff; font-size:14px; font-weight:900;
+    margin-bottom:2px; word-break:break-word;
+  }
+  .chat-header .info2 .s {
+    color:#8fb3d9; font-size:11px; font-weight:600;
+  }
+
+  .messages-area {
+    flex:1; overflow-y:auto;
+    padding:14px;
+    display:flex; flex-direction:column; gap:10px;
+    background:rgba(0,0,0,.2);
+  }
+  .messages-area::-webkit-scrollbar { width:6px; }
+  .messages-area::-webkit-scrollbar-thumb {
+    background:rgba(40,200,120,.4); border-radius:3px;
+  }
+
+  .msg {
+    padding:10px 12px;
+    background:rgba(255,255,255,.05);
+    border:1px solid rgba(40,200,120,.18);
+    border-radius:14px;
+    max-width:88%;
+    position:relative;
+    animation:fadeUp .3s ease;
+    word-wrap:break-word;
+  }
+  .msg.mine {
+    background:linear-gradient(135deg, rgba(40,200,120,.22), rgba(20,120,60,.3));
+    border-color:rgba(40,200,120,.5);
+    align-self:flex-end;
+  }
+  .msg.super-msg {
+    background:linear-gradient(135deg, rgba(255,200,0,.12), rgba(255,150,0,.08));
+    border:1.5px solid rgba(255,200,0,.5);
+    box-shadow:0 4px 14px rgba(255,180,0,.2);
+    align-self:flex-end;
+  }
+  .msg.super-msg::before {
+    content:'⭐ مشرف أساسي';
+    position:absolute; top:-9px; right:12px;
+    background:linear-gradient(135deg,#ffc800,#ff9800);
+    color:#000; font-size:9px; font-weight:900;
+    padding:2px 8px; border-radius:8px;
+  }
+  .msg.admin-msg {
+    background:linear-gradient(135deg, rgba(200,100,255,.12), rgba(150,50,200,.08));
+    border:1.5px solid rgba(200,100,255,.4);
+    align-self:flex-end;
+  }
+  .msg.admin-msg .msg-head .sender { color:#c864ff; }
+  .msg.deleted {
+    background:rgba(255,60,60,.06);
+    border:1.5px dashed rgba(255,60,60,.4);
+  }
+
+  .msg-head {
+    display:flex; align-items:center; gap:6px;
+    margin-bottom:6px; font-size:11px;
+  }
+  .msg-head .sender { font-weight:900; color:#6bb7ff; }
+  .msg.mine .msg-head .sender { color:#fff; }
+  .msg.super-msg .msg-head .sender { color:#ffc800; }
+  .msg-head .time {
+    color:#6b8fb0; font-size:10px;
+    margin-right:auto;
+  }
+  .msg-body {
+    color:#e8f0f8; font-size:13.5px;
+    line-height:1.6; word-break:break-word;
+    white-space:pre-wrap;
+  }
+  .msg.mine .msg-body { color:#fff; }
+
+  .msg-deleted-tag {
+    display:inline-block;
+    padding:2px 8px;
+    background:rgba(255,60,60,.2);
+    border:1px solid rgba(255,60,60,.4);
+    color:#ff6b6b; font-size:10px;
+    font-weight:700; border-radius:8px;
+    margin-bottom:6px;
+  }
+
+  .msg-meta {
+    display:flex; gap:6px; align-items:center;
+    margin-top:8px; padding-top:6px;
+    border-top:1px solid rgba(255,255,255,.06);
+    font-size:10px; flex-wrap:wrap;
+  }
+  .msg-meta .edited { color:#ffc800; font-weight:700; }
+  .msg-meta .view-orig {
+    color:#6bb7ff; cursor:pointer;
+    text-decoration:underline; font-weight:700;
+  }
+  .msg-meta .view-orig:hover { color:#fff; }
+  .msg-meta .actions {
+    margin-right:auto;
+    display:flex; gap:4px;
+  }
+  .msg-meta .actions button {
+    width:24px; height:24px; border-radius:50%;
+    border:none; cursor:pointer;
+    font-size:11px; font-weight:900;
+    color:#fff;
+    display:flex; align-items:center; justify-content:center;
+  }
+  .msg-meta .actions .edit { background:rgba(40,200,120,.75); }
+  .msg-meta .actions .edit:hover { background:#28c878; }
+  .msg-meta .actions .del  { background:rgba(255,60,60,.75); }
+  .msg-meta .actions .del:hover { background:#ff3b3b; }
+
+  .send-bar {
+    display:flex; gap:8px; align-items:flex-end;
+    padding:10px 14px;
+    background:rgba(0,0,0,.4);
+    border-top:1px solid rgba(40,200,120,.25);
+  }
+  .send-bar textarea {
+    flex:1;
+    min-height:42px; max-height:120px;
+    padding:11px 14px;
+    background:#0d2033; border:1.5px solid #1b3a5c;
+    border-radius:14px; color:#fff; font-size:14px;
+    font-family:'Cairo',sans-serif; outline:none;
+    resize:none; line-height:1.4;
+    transition:.25s;
+  }
+  .send-bar textarea:focus { border-color:#28c878; }
+  .send-bar textarea::placeholder { color:#4d6d8f; }
+  .send-bar .send-btn {
+    width:46px; height:46px;
+    background:linear-gradient(135deg,#28c878,#1a9e5a);
+    border:none; border-radius:14px;
+    color:#fff; cursor:pointer; font-size:20px;
+    display:flex; align-items:center; justify-content:center;
+    flex-shrink:0;
+    transition:.2s;
+    box-shadow:0 6px 16px rgba(40,200,120,.4);
+  }
+  .send-bar .send-btn:hover { transform:translateY(-2px); }
+  .send-bar .send-btn:disabled { opacity:.4; cursor:not-allowed; }
+
+  .closed-notice {
+    padding:12px;
+    background:rgba(255,60,60,.08);
+    border:1px solid rgba(255,60,60,.25);
+    border-radius:10px;
+    text-align:center;
+    color:#ff6b6b; font-size:12.5px;
+    font-weight:700;
+    margin:10px 14px;
+  }
+
+  /* Modal */
+  .modal-bg {
+    position:fixed; inset:0;
+    background:rgba(0,0,0,.8);
+    backdrop-filter:blur(8px);
+    display:none; align-items:center; justify-content:center;
+    padding:16px; z-index:200;
+    overflow-y:auto;
+  }
+  .modal-bg.open { display:flex; }
+  .modal {
+    width:100%; max-width:480px;
+    background:linear-gradient(180deg,#0d1f33,#0a1929);
+    border:1px solid rgba(40,200,120,.35);
+    border-radius:22px;
+    padding:22px 20px;
+    box-shadow:0 30px 80px rgba(0,0,0,.7);
+    animation:popIn .3s ease;
+    max-height:92vh; overflow-y:auto;
+    margin:auto;
+  }
+  @keyframes popIn {
+    from { opacity:0; transform:scale(.95); }
+    to { opacity:1; transform:scale(1); }
+  }
+  .modal h3 {
+    color:#fff; font-size:18px; font-weight:900;
+    margin-bottom:16px; text-align:center;
+  }
+  .modal .field { margin-bottom:14px; }
+  .modal label {
+    display:block; color:#9fc1e3;
+    font-size:12.5px; margin-bottom:6px; font-weight:600;
+  }
+  .modal textarea {
+    width:100%; padding:12px 14px;
+    background:#0d2033; border:1.5px solid #1b3a5c;
+    border-radius:11px; color:#fff; font-size:14.5px;
+    font-family:'Cairo',sans-serif;
+    outline:none; transition:.25s;
+  }
+  .modal textarea:focus {
+    border-color:#28c878;
+    box-shadow:0 0 0 3px rgba(40,200,120,.15);
+  }
+  .modal textarea { resize:vertical; min-height:100px; line-height:1.6; }
+
+  .modal-actions { display:flex; gap:10px; margin-top:18px; }
+  .modal-btn {
+    flex:1; padding:13px;
+    border:none; border-radius:11px;
+    font-family:'Cairo',sans-serif;
+    font-size:14px; font-weight:700;
+    cursor:pointer; transition:.25s;
+    display:flex; align-items:center; justify-content:center; gap:6px;
+  }
+  .modal-btn.primary {
+    background:linear-gradient(135deg,#28c878,#1a9e5a);
+    color:#fff;
+    box-shadow:0 8px 20px rgba(40,200,120,.35);
+  }
+  .modal-btn.primary:hover { transform:translateY(-2px); }
+  .modal-btn.danger {
+    background:linear-gradient(135deg,#ff3b3b,#b00000);
+    color:#fff;
+  }
+  .modal-btn.cancel {
+    background:rgba(255,255,255,.06);
+    color:#a8c8e8;
+    border:1px solid rgba(255,255,255,.1);
+  }
+
+  /* Toast */
+  .toast-wrap {
+    position:fixed; top:20px; left:50%;
+    transform:translateX(-50%);
+    z-index:9999;
+    display:flex; flex-direction:column; gap:8px;
+    pointer-events:none;
+    width:calc(100% - 32px); max-width:400px;
+  }
+  .toast {
+    padding:12px 16px; border-radius:12px;
+    color:#fff; font-family:'Cairo',sans-serif;
+    font-size:13.5px; font-weight:700;
+    box-shadow:0 10px 30px rgba(0,0,0,.4);
+    animation:toastIn .35s ease;
+    word-break:break-word;
+  }
+  .toast.ok { background:linear-gradient(135deg,#28c878,#1a9e5a); }
+  .toast.err { background:linear-gradient(135deg,#ff3b3b,#b00000); }
+  .toast.info { background:linear-gradient(135deg,#1e90ff,#0066cc); }
+  @keyframes toastIn {
+    from{opacity:0;transform:translateY(-20px);}
+    to{opacity:1;transform:translateY(0);}
+  }
+
+  .loader {
+    display:inline-block; width:14px; height:14px;
+    border:2px solid rgba(255,255,255,.4);
+    border-top-color:#fff; border-radius:50%;
+    animation:spin .7s linear infinite;
+    vertical-align:middle;
+  }
+  @keyframes spin { to { transform:rotate(360deg); } }
+
+  @keyframes fadeUp {
+    from{opacity:0;transform:translateY(15px);}
+    to{opacity:1;transform:none;}
+  }
+
+  /* Responsive */
+  @media (min-width:768px) {
+    body { padding:30px; }
+    .app {
+      max-width:720px; min-height:auto; height:auto;
+      border-radius:28px;
+      border:1px solid rgba(40,200,120,.25);
+      box-shadow:0 25px 70px rgba(40,200,120,.3);
+    }
+    .content { padding:22px 24px; }
+    .list { display:grid; grid-template-columns:repeat(2,1fr); gap:14px; }
+    .chat-view { border-radius:28px; margin:auto; max-width:720px; inset:30px 10%; }
+  }
+  @media (min-width:1024px) {
+    body { padding:40px 30px; }
+    .app { max-width:1100px; }
+    .content { padding:26px 36px; }
+    .chat-view { border-radius:26px; max-width:900px; inset:40px 15%; }
+    .page-title h1 { font-size:22px; }
+  }
+  @media (min-width:1440px) {
+    .app { max-width:1400px; }
+    .list { grid-template-columns:repeat(3,1fr); }
+  }
+</style>
+</head>
+<body>
+
+<!-- Loading -->
+<div class="loading-screen" id="loadingScreen">
+  <div class="loading-content">
+    <div class="logo-loader">
+      <img id="loadingLogo" class="loading-logo" src="https://i.ibb.co/PzcMFkpR/FB-IMG-1789241464654.jpg" alt="BORSA CLUP" />
+    </div>
+    <div class="loading-brand" id="loadingBrand">BORSA <span>CLUP</span></div>
+    <div class="loading-sub">مجتمع المستخدمين</div>
+    <div class="loading-bar">
+      <div class="loading-bar-fill" id="loadingBarFill"></div>
+    </div>
+  </div>
+  <div class="loading-footer">© BORSA CLUP</div>
+</div>
+
+<!-- App -->
+<div class="app" id="app" style="display:none;">
+
+  <div class="topbar">
+    <div class="title">
+      <img id="topLogo" src="https://i.ibb.co/PzcMFkpR/FB-IMG-1789241464654.jpg" />
+      <div class="name" id="topName">BORSA <span>CLUP</span></div>
+    </div>
+    <a href="index.html" class="top-btn">← الرئيسية</a>
+  </div>
+
+  <div class="content">
+
+    <div class="page-title">
+      <h1>مجتمع <span>المستخدمين</span></h1>
+      <div class="count" id="commCount">0</div>
+    </div>
+
+    <div class="info-bar">
+      <span>👥</span>
+      <span>انضم للمجتمعات وشارك رأيك مع باقي المستخدمين.</span>
+    </div>
+
+    <div class="search-box">
+      <input type="text" id="searchInput" placeholder="ابحث في المجتمعات..." />
+      <span class="icon">🔍</span>
+    </div>
+
+    <div class="list" id="list"></div>
+
+    <div id="empty" style="text-align:center;padding:50px 20px;color:#4d6d8f;display:none;">
+      <div style="font-size:56px;opacity:.5;margin-bottom:14px;">👥</div>
+      <p style="font-size:14px;font-weight:600;">لا توجد مجتمعات بعد</p>
+      <p style="font-size:12px;color:#6b8fb0;margin-top:6px;">تعال لاحقًا</p>
+    </div>
+
+    <div class="pagination" id="pagination"></div>
+
+  </div>
+</div>
+
+<!-- Chat View -->
+<div class="chat-view" id="chatView">
+  <div class="chat-header">
+    <button class="back" id="chatBack">→</button>
+    <div class="info2">
+      <div class="n" id="chatName">—</div>
+      <div class="s" id="chatDesc">—</div>
+    </div>
+  </div>
+
+  <div class="messages-area" id="messagesArea"></div>
+
+  <div id="closedNotice" class="closed-notice" style="display:none;"></div>
+
+  <div class="send-bar" id="sendBar">
+    <textarea id="msgInput" placeholder="اكتب رسالتك..." rows="1"></textarea>
+    <button class="send-btn" id="sendBtn">➤</button>
+  </div>
+</div>
+
+<!-- Edit Message Modal -->
+<div class="modal-bg" id="editMsgModal">
+  <div class="modal">
+    <h3>✎ تعديل الرسالة</h3>
+    <div class="field">
+      <label>النص الجديد</label>
+      <textarea id="editMsgText" placeholder="اكتب النص المعدل..."></textarea>
+    </div>
+    <div class="modal-actions">
+      <button type="button" class="modal-btn cancel" id="editMsgCancel">إلغاء</button>
+      <button type="button" class="modal-btn primary" id="editMsgSave">حفظ</button>
+    </div>
+  </div>
+</div>
+
+<!-- Original Modal -->
+<div class="modal-bg" id="origModal">
+  <div class="modal">
+    <h3>📜 النسخة الأصلية</h3>
+    <div class="field">
+      <label>قبل التعديل:</label>
+      <div id="origText" style="background:rgba(0,0,0,.3);padding:14px;border-radius:11px;color:#e8f0f8;font-size:13.5px;line-height:1.6;border:1px solid rgba(40,200,120,.25);word-break:break-word;white-space:pre-wrap;min-height:60px;">—</div>
+    </div>
+    <div class="modal-actions">
+      <button type="button" class="modal-btn primary" id="origClose">إغلاق</button>
+    </div>
+  </div>
+</div>
+
+<!-- Confirm Modal -->
+<div class="modal-bg" id="confirmModal">
+  <div class="modal" style="text-align:center;">
+    <div style="width:70px;height:70px;border-radius:50%;margin:0 auto 16px;display:flex;align-items:center;justify-content:center;font-size:36px;background:rgba(255,60,60,.15);border:2px solid rgba(255,60,60,.4);" id="confirmIcon">⚠️</div>
+    <h3 id="confirmTitle">تأكيد</h3>
+    <div style="color:#c8d8e8;font-size:14px;line-height:1.7;margin-bottom:6px;word-break:break-word;" id="confirmText">—</div>
+    <div class="modal-actions">
+      <button type="button" class="modal-btn cancel" id="confirmNo">إلغاء</button>
+      <button type="button" class="modal-btn danger" id="confirmYes">تأكيد</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast-wrap" id="toastWrap"></div>
+
+<!-- ⚠️ الجزء 2 (JavaScript) في الرد التالي -->
+ <script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getFirestore, collection, doc, getDoc, getDocs, addDoc, updateDoc, deleteDoc,
+         query, orderBy, onSnapshot, serverTimestamp }
+  from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyB36BkwxS0RHWWHSNGA1rZ5EHjtaeynTEA",
+  authDomain: "borsa-b77a3.firebaseapp.com",
+  projectId: "borsa-b77a3",
+  storageBucket: "borsa-b77a3.firebasestorage.app",
+  messagingSenderId: "1029468057087",
+  appId: "1:1029468057087:web:1bafa9ffad7f14d7a2cbca",
+  measurementId: "G-NKBES9QEBK"
+};
+
+const app = initializeApp(firebaseConfig);
+const db  = getFirestore(app);
+
+/* =====================================================
+   ★ Collection الخاص بمجتمع المستخدمين ★
+===================================================== */
+const COMM_COLLECTION = 'user_communities';
+const MSG_SUBCOLLECTION = 'messages';
+const PER_PAGE = 4;
+
+/* =====================================================
+   بيانات المستخدم الحالي
+===================================================== */
+const SUPER_ADMIN_NAME = 'BasharBahaa77';
+let userName = sessionStorage.getItem('borsa_admin') || '';
+let userRole = sessionStorage.getItem('borsa_admin_role') || '';
+let userType = (sessionStorage.getItem('borsa_admin_type') || '').toLowerCase();
+
+if (userName.toLowerCase() === SUPER_ADMIN_NAME.toLowerCase()) userType = 'admin';
+const isSuperAdmin = (userType === 'admin');
+
+/* =====================================================
+   Loading
+===================================================== */
+const loadingScreen = document.getElementById('loadingScreen');
+const loadingBarFill = document.getElementById('loadingBarFill');
+const appEl = document.getElementById('app');
+
+function setProgress(p) {
+  loadingBarFill.style.width = Math.min(100, Math.max(0, p)) + '%';
+}
+function hideLoading() {
+  setProgress(100);
+  setTimeout(() => {
+    loadingScreen.classList.add('hide');
+    appEl.style.display = 'flex';
+  }, 300);
+}
+setProgress(20);
+
+/* =====================================================
+   DOM
+===================================================== */
+const listEl = document.getElementById('list');
+const emptyEl = document.getElementById('empty');
+const commCount = document.getElementById('commCount');
+const searchInput = document.getElementById('searchInput');
+const pagination = document.getElementById('pagination');
+
+const chatView = document.getElementById('chatView');
+const chatBack = document.getElementById('chatBack');
+const chatName = document.getElementById('chatName');
+const chatDesc = document.getElementById('chatDesc');
+const messagesArea = document.getElementById('messagesArea');
+const msgInput = document.getElementById('msgInput');
+const sendBtn = document.getElementById('sendBtn');
+const sendBar = document.getElementById('sendBar');
+const closedNotice = document.getElementById('closedNotice');
+
+const editMsgModal = document.getElementById('editMsgModal');
+const editMsgText = document.getElementById('editMsgText');
+const editMsgCancel = document.getElementById('editMsgCancel');
+const editMsgSave = document.getElementById('editMsgSave');
+
+const origModal = document.getElementById('origModal');
+const origText = document.getElementById('origText');
+const origClose = document.getElementById('origClose');
+
+const confirmModal = document.getElementById('confirmModal');
+const confirmIcon = document.getElementById('confirmIcon');
+const confirmTitle = document.getElementById('confirmTitle');
+const confirmText = document.getElementById('confirmText');
+const confirmNo = document.getElementById('confirmNo');
+const confirmYes = document.getElementById('confirmYes');
+
+const toastWrap = document.getElementById('toastWrap');
+
+/* =====================================================
+   الحالة
+===================================================== */
+let allComms = [];
+let filteredComms = [];
+let currentPage = 1;
+let searchQuery = '';
+let currentChatId = null;
+let currentChatData = null;
+let msgUnsub = null;
+let editingMessage = null;
+
+/* =====================================================
+   أدوات
+===================================================== */
+function esc(s) {
+  return String(s ?? '').replace(/[&<>"']/g, c => ({
+    '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
+  }[c]));
+}
+
+function showToast(text, type = 'info') {
+  const icons = { success:'✅', error:'❌', info:'ℹ️', warning:'⚠️' };
+  const t = document.createElement('div');
+  t.className = 'toast ' + (type === 'success' ? 'ok' : type === 'error' ? 'err' : 'info');
+  t.textContent = (icons[type] || 'ℹ️') + ' ' + text;
+  toastWrap.appendChild(t);
+  setTimeout(() => t.remove(), 3000);
+}
+
+function formatTime(ts) {
+  if (!ts) return '';
+  const d = ts.toDate ? ts.toDate() : new Date(ts);
+  const now = new Date();
+  const diff = (now - d) / 1000;
+  if (diff < 60) return 'الآن';
+  if (diff < 3600) return Math.floor(diff/60) + ' د';
+  if (diff < 86400) return Math.floor(diff/3600) + ' س';
+  const day = String(d.getDate()).padStart(2,'0');
+  const m = String(d.getMonth()+1).padStart(2,'0');
+  const hh = String(d.getHours()).padStart(2,'0');
+  const mm = String(d.getMinutes()).padStart(2,'0');
+  return `${day}/${m} ${hh}:${mm}`;
+}
+
+/* =====================================================
+   Confirm
+===================================================== */
+function showConfirm(text, title = 'تأكيد', type = 'danger', okText = 'تأكيد') {
+  return new Promise(resolve => {
+    confirmIcon.textContent = type === 'danger' ? '⚠️' : '❓';
+    confirmTitle.textContent = title;
+    confirmText.innerHTML = text;
+    confirmYes.textContent = okText;
+    confirmYes.className = 'modal-btn ' + (type === 'danger' ? 'danger' : 'primary');
+    confirmModal.classList.add('open');
+
+    const cleanup = () => {
+      confirmModal.classList.remove('open');
+      confirmYes.removeEventListener('click', onOk);
+      confirmNo.removeEventListener('click', onCancel);
+    };
+    const onOk = () => { cleanup(); resolve(true); };
+    const onCancel = () => { cleanup(); resolve(false); };
+
+    confirmYes.addEventListener('click', onOk);
+    confirmNo.addEventListener('click', onCancel);
+  });
+}
+
+/* =====================================================
+   إعدادات الموقع
+===================================================== */
+async function loadSiteSettings() {
+  try {
+    setProgress(30);
+    const snap = await getDoc(doc(db, 'settings', 'site'));
+    if (!snap.exists()) return;
+    const s = snap.data();
+
+    if (s.logoUrl) {
+      const img = new Image();
+      img.src = s.logoUrl;
+      await new Promise(r => { img.onload = r; img.onerror = r; });
+      document.getElementById('loadingLogo').src = s.logoUrl;
+      document.getElementById('topLogo').src = s.logoUrl;
+      const fav = document.getElementById('siteFavicon');
+      const apple = document.getElementById('siteAppleIcon');
+      if (fav) fav.href = s.logoUrl;
+      if (apple) apple.href = s.logoUrl;
+    }
+
+    if (s.siteName) {
+      const full = s.siteName;
+      const accent = s.siteNameAccent || '';
+      const build = (el) => {
+        if (accent && full.includes(accent)) {
+          const parts = full.split(accent);
+          const before = parts[0].trim();
+          const after = parts.slice(1).join(accent).trim();
+          el.innerHTML = `${esc(before)} <span>${esc(accent)}</span>${after ? ' ' + esc(after) : ''}`;
+        } else {
+          el.textContent = full;
+        }
+      };
+      build(document.getElementById('loadingBrand'));
+      build(document.getElementById('topName'));
+      document.title = full + ' - مجتمع المستخدمين';
+    }
+    setProgress(50);
+  } catch (e) { console.warn(e); setProgress(50); }
+}
+
+/* =====================================================
+   تحميل المجتمعات (Realtime)
+===================================================== */
+function listenCommunities() {
+  onSnapshot(collection(db, COMM_COLLECTION), (snap) => {
+    allComms = [];
+    snap.forEach(d => allComms.push({ id: d.id, ...d.data() }));
+
+    allComms.sort((a, b) => {
+      const ta = a.createdAt?.toDate ? a.createdAt.toDate().getTime() : 0;
+      const tb = b.createdAt?.toDate ? b.createdAt.toDate().getTime() : 0;
+      return tb - ta;
+    });
+
+    commCount.textContent = allComms.length;
+    applyFilter();
+  }, (err) => {
+    console.warn('listen comms failed:', err);
+    listEl.innerHTML = `<div style="text-align:center;padding:30px;color:#ff6b6b;">فشل تحميل المجتمعات</div>`;
+  });
+}
+
+function applyFilter() {
+  const q = searchQuery.trim().toLowerCase();
+  let list = [...allComms];
+  if (q) {
+    list = list.filter(c =>
+      (c.name || '').toLowerCase().includes(q) ||
+      (c.desc || '').toLowerCase().includes(q)
+    );
+  }
+  filteredComms = list;
+  const total = Math.max(1, Math.ceil(filteredComms.length / PER_PAGE));
+  if (currentPage > total) currentPage = total;
+  if (currentPage < 1) currentPage = 1;
+  render();
+  renderPagination(total);
+}
+
+/* =====================================================
+   Render
+===================================================== */
+function render() {
+  listEl.innerHTML = '';
+  if (!filteredComms.length) {
+    emptyEl.style.display = 'block';
+    return;
+  }
+  emptyEl.style.display = 'none';
+
+  const start = (currentPage - 1) * PER_PAGE;
+  filteredComms.slice(start, start + PER_PAGE).forEach(c => {
+    listEl.appendChild(renderCard(c));
+  });
+}
+
+function renderCard(comm) {
+  const card = document.createElement('div');
+  card.className = 'comm-card';
+
+  const isClosed = (comm.status || 'open') === 'closed';
+  if (isClosed) card.classList.add('closed');
+
+  const name = comm.name || 'بدون اسم';
+  const desc = comm.desc || 'لا يوجد وصف';
+  const createdBy = comm.createdBy || '—';
+
+  card.innerHTML = `
+    <div class="comm-head">
+      <div class="comm-avatar">👥</div>
+      <div class="info">
+        <div class="name">${esc(name)}</div>
+        <div class="desc">${esc(desc)}</div>
+      </div>
+    </div>
+    <div class="comm-meta">
+      <span class="badge ${isClosed ? 'closed' : 'open'}">${isClosed ? '🔒 مغلق' : '● مفتوح'}</span>
+      <span class="badge creator">👤 ${esc(createdBy)}</span>
+    </div>
+    <div class="comm-actions">
+      <button data-act="open">💬 فتح المجتمع</button>
+    </div>
+  `;
+
+  card.querySelector('[data-act="open"]').onclick = (e) => {
+    e.stopPropagation();
+    openChat(comm);
+  };
+  card.onclick = () => openChat(comm);
+
+  return card;
+}
+
+/* =====================================================
+   Pagination
+===================================================== */
+function renderPagination(total) {
+  pagination.innerHTML = '';
+  if (total <= 1) return;
+
+  const prev = document.createElement('button');
+  prev.className = 'page-btn';
+  prev.textContent = '‹';
+  prev.disabled = currentPage === 1;
+  prev.onclick = () => { currentPage--; applyFilter(); window.scrollTo({top:0,behavior:'smooth'}); };
+  pagination.appendChild(prev);
+
+  for (let i = 1; i <= total; i++) {
+    if (total > 7 && i > 2 && i < total - 1 && Math.abs(i - currentPage) > 1) {
+      if (i === 3) {
+        const dots = document.createElement('span');
+        dots.className = 'page-btn';
+        dots.textContent = '…';
+        dots.style.cursor = 'default';
+        dots.style.opacity = '.5';
+        pagination.appendChild(dots);
+      }
+      continue;
+    }
+    const btn = document.createElement('button');
+    btn.className = 'page-btn' + (i === currentPage ? ' active' : '');
+    btn.textContent = i;
+    btn.onclick = () => { currentPage = i; applyFilter(); window.scrollTo({top:0,behavior:'smooth'}); };
+    pagination.appendChild(btn);
+  }
+
+  const next = document.createElement('button');
+  next.className = 'page-btn';
+  next.textContent = '›';
+  next.disabled = currentPage === total;
+  next.onclick = () => { currentPage++; applyFilter(); window.scrollTo({top:0,behavior:'smooth'}); };
+  pagination.appendChild(next);
+
+  const info = document.createElement('div');
+  info.className = 'page-info';
+  info.textContent = `عرض ${(currentPage-1)*PER_PAGE + 1} - ${Math.min(currentPage*PER_PAGE, filteredComms.length)} من ${filteredComms.length}`;
+  pagination.appendChild(info);
+}
+
+searchInput.addEventListener('input', (e) => {
+  searchQuery = e.target.value;
+  currentPage = 1;
+  applyFilter();
+});
+
+/* =====================================================
+   Open Chat
+===================================================== */
+function openChat(comm) {
+  currentChatId = comm.id;
+  currentChatData = comm;
+
+  chatName.textContent = comm.name || '—';
+  chatDesc.textContent = comm.desc || 'مجتمع المستخدمين';
+
+  const isClosed = (comm.status || 'open') === 'closed';
+
+  if (isClosed) {
+    if (isSuperAdmin) {
+      sendBar.style.display = 'flex';
+      closedNotice.style.display = 'block';
+      closedNotice.style.background = 'rgba(255,200,0,.08)';
+      closedNotice.style.borderColor = 'rgba(255,200,0,.3)';
+      closedNotice.style.color = '#ffc800';
+      closedNotice.textContent = '🔒 المجتمع مغلق — المشرفون الأساسيون فقط يمكنهم الإرسال';
+    } else {
+      sendBar.style.display = 'none';
+      closedNotice.style.display = 'block';
+      closedNotice.style.background = 'rgba(255,60,60,.08)';
+      closedNotice.style.borderColor = 'rgba(255,60,60,.25)';
+      closedNotice.style.color = '#ff6b6b';
+      closedNotice.textContent = '🔒 هذا المجتمع مغلق — لا يمكن إرسال رسائل';
+    }
+  } else {
+    sendBar.style.display = 'flex';
+    closedNotice.style.display = 'none';
+  }
+
+  messagesArea.innerHTML = '<div style="text-align:center;color:#6b8fb0;padding:20px;">جارٍ تحميل الرسائل...</div>';
+
+  chatView.classList.add('open');
+  listenMessages();
+}
+
+chatBack.onclick = () => {
+  if (msgUnsub) { msgUnsub(); msgUnsub = null; }
+  chatView.classList.remove('open');
+  currentChatId = null;
+  currentChatData = null;
+};
+
+/* =====================================================
+   Listen Messages
+===================================================== */
+function listenMessages() {
+  if (msgUnsub) msgUnsub();
+  if (!currentChatId) return;
+
+  const q = query(
+    collection(db, COMM_COLLECTION, currentChatId, MSG_SUBCOLLECTION),
+    orderBy('createdAt', 'asc')
+  );
+
+  msgUnsub = onSnapshot(q, (snap) => {
+    const msgs = [];
+    snap.forEach(d => msgs.push({ id: d.id, ...d.data() }));
+    renderMessages(msgs);
+  }, (err) => {
+    console.warn('listen msgs:', err);
+    messagesArea.innerHTML = '<div style="text-align:center;color:#ff6b6b;padding:20px;">فشل التحميل</div>';
+  });
+}
+
+/* =====================================================
+   Render Messages
+===================================================== */
+function renderMessages(msgs) {
+  messagesArea.innerHTML = '';
+
+  // ★ فلترة: الرسائل المحذوفة تظهر فقط لصاحبها أو للمشرف الأساسي
+  const list = msgs.filter(m => {
+    if (m.deleted !== true) return true;
+    const isMine = (m.sender || '').toLowerCase() === userName.toLowerCase();
+    return isMine || isSuperAdmin;
+  });
+
+  if (!list.length) {
+    messagesArea.innerHTML = '<div style="text-align:center;color:#6b8fb0;padding:20px;">لا توجد رسائل بعد — ابدأ المحادثة</div>';
+    return;
+  }
+
+  list.forEach(m => messagesArea.appendChild(renderMessage(m)));
+
+  setTimeout(() => {
+    messagesArea.scrollTop = messagesArea.scrollHeight;
+  }, 100);
+}
+
+function renderMessage(msg) {
+  const el = document.createElement('div');
+  el.className = 'msg';
+
+  const isMine = (msg.sender || '').toLowerCase() === userName.toLowerCase();
+  const isSuperMsg = msg.isSuper === true || (msg.sender || '').toLowerCase() === SUPER_ADMIN_NAME.toLowerCase();
+  const isDeleted = msg.deleted === true;
+
+  if (isMine) el.classList.add('mine');
+  if (isSuperMsg) el.classList.add('super-msg');
+  if (isDeleted) el.classList.add('deleted');
+
+  const sender = esc(msg.sender || '—');
+  const time = formatTime(msg.createdAt);
+  const edited = msg.edited === true;
+
+  const displayText = isDeleted
+    ? esc(msg.originalText || msg.text || '')
+    : esc(msg.text || '');
+
+  // ★ أزرار التحكم: صاحب الرسالة فقط (أو المشرف الأساسي)
+  let controlsHTML = '';
+
+  if (!isDeleted) {
+    if (isMine || isSuperAdmin) {
+      controlsHTML += `<button class="edit" title="تعديل" data-act="edit">✎</button>`;
+      controlsHTML += `<button class="del" title="حذف" data-act="delete">×</button>`;
+    }
+  }
+
+  el.innerHTML = `
+    <div class="msg-head">
+      <span class="sender">${sender}</span>
+      <span class="time">${time}</span>
+    </div>
+    ${isDeleted ? `<div class="msg-deleted-tag">🚫 رسالة محذوفة (تظهر لك فقط)</div>` : ''}
+    <div class="msg-body">${displayText}</div>
+    ${(edited || isDeleted || controlsHTML) ? `
+      <div class="msg-meta">
+        ${edited ? `<span class="edited">✎ معدّلة</span>` : ''}
+        ${edited && isSuperAdmin && msg.originalText ? `<span class="view-orig" data-act="orig">👁 انظر للتعديل</span>` : ''}
+        ${controlsHTML ? `<div class="actions">${controlsHTML}</div>` : ''}
+      </div>
+    ` : ''}
+  `;
+
+  const editBtn = el.querySelector('[data-act="edit"]');
+  if (editBtn) editBtn.onclick = () => editMessage(msg);
+
+  const delBtn = el.querySelector('[data-act="delete"]');
+  if (delBtn) delBtn.onclick = () => deleteMessage(msg);
+
+  const origBtn = el.querySelector('[data-act="orig"]');
+  if (origBtn) origBtn.onclick = () => {
+    origText.textContent = msg.originalText || '(لا يوجد نص أصلي)';
+    origModal.classList.add('open');
+  };
+
+  return el;
+}
+
+/* =====================================================
+   Send Message
+===================================================== */
+async function sendMessage() {
+  const text = msgInput.value.trim();
+  if (!text || !currentChatId) return;
+
+  const isClosed = (currentChatData?.status || 'open') === 'closed';
+  if (isClosed && !isSuperAdmin) {
+    showToast('هذا المجتمع مغلق', 'warning');
+    return;
+  }
+
+  sendBtn.disabled = true;
+  msgInput.disabled = true;
+
+  try {
+    await addDoc(collection(db, COMM_COLLECTION, currentChatId, MSG_SUBCOLLECTION), {
+      text,
+      sender: userName || 'مستخدم',
+      isSuper: isSuperAdmin,
+      createdAt: serverTimestamp(),
+      deleted: false
+    });
+
+    await updateDoc(doc(db, COMM_COLLECTION, currentChatId), {
+      lastMessage: text.substring(0, 100),
+      lastMessageAt: serverTimestamp(),
+      lastSender: userName || 'مستخدم'
+    });
+
+    msgInput.value = '';
+    msgInput.style.height = 'auto';
+  } catch (e) {
+    console.error(e);
+    showToast('فشل الإرسال', 'error');
+  } finally {
+    sendBtn.disabled = false;
+    msgInput.disabled = false;
+    msgInput.focus();
+  }
+}
+
+sendBtn.onclick = sendMessage;
+msgInput.addEventListener('keydown', (e) => {
+  if (e.key === 'Enter' && !e.shiftKey) {
+    e.preventDefault();
+    sendMessage();
+  }
+});
+msgInput.addEventListener('input', () => {
+  msgInput.style.height = 'auto';
+  msgInput.style.height = Math.min(msgInput.scrollHeight, 120) + 'px';
+});
+
+/* =====================================================
+   Edit Message
+===================================================== */
+function editMessage(msg) {
+  editingMessage = msg;
+  editMsgText.value = msg.text || '';
+  editMsgModal.classList.add('open');
+  setTimeout(() => editMsgText.focus(), 100);
+}
+
+editMsgCancel.onclick = () => {
+  editMsgModal.classList.remove('open');
+  editingMessage = null;
+};
+editMsgModal.onclick = (e) => {
+  if (e.target === editMsgModal) {
+    editMsgModal.classList.remove('open');
+    editingMessage = null;
+  }
+};
+
+editMsgSave.onclick = async () => {
+  if (!editingMessage || !currentChatId) return;
+  const newText = editMsgText.value.trim();
+  if (!newText) { showToast('النص مطلوب', 'error'); return; }
+  if (newText === editingMessage.text) {
+    editMsgModal.classList.remove('open');
+    editingMessage = null;
+    return;
+  }
+
+  editMsgSave.disabled = true;
+  editMsgSave.innerHTML = 'جارٍ الحفظ...<span class="loader"></span>';
+
+  try {
+    const updates = {
+      text: newText,
+      edited: true,
+      editedAt: serverTimestamp(),
+      editedBy: userName
+    };
+    if (!editingMessage.originalText && !editingMessage.deleted) {
+      updates.originalText = editingMessage.text || '';
+    }
+
+    await updateDoc(
+      doc(db, COMM_COLLECTION, currentChatId, MSG_SUBCOLLECTION, editingMessage.id),
+      updates
+    );
+
+    showToast('تم التعديل', 'success');
+    editMsgModal.classList.remove('open');
+    editingMessage = null;
+  } catch (e) {
+    console.error(e);
+    showToast('فشل التعديل', 'error');
+  } finally {
+    editMsgSave.disabled = false;
+    editMsgSave.textContent = 'حفظ';
+  }
+};
+
+/* =====================================================
+   Delete Message
+===================================================== */
+async function deleteMessage(msg) {
+  const ok = await showConfirm(
+    'سيتم حذف هذه الرسالة — ستظل مرئية لك فقط.',
+    'حذف الرسالة',
+    'danger',
+    'حذف'
+  );
+  if (!ok) return;
+
+  try {
+    const updates = {
+      deleted: true,
+      deletedAt: serverTimestamp(),
+      deletedBy: userName
+    };
+    if (!msg.originalText) {
+      updates.originalText = msg.text || '';
+    }
+    await updateDoc(
+      doc(db, COMM_COLLECTION, currentChatId, MSG_SUBCOLLECTION, msg.id),
+      updates
+    );
+    showToast('تم الحذف', 'success');
+  } catch (e) {
+    showToast('فشل الحذف', 'error');
+  }
+}
+
+/* =====================================================
+   Original Modal
+===================================================== */
+origClose.onclick = () => origModal.classList.remove('open');
+origModal.onclick = (e) => { if (e.target === origModal) origModal.classList.remove('open'); };
+
+/* =====================================================
+   بدء التشغيل
+===================================================== */
+(async () => {
+  await loadSiteSettings();
+  listenCommunities();
+  setTimeout(hideLoading, 400);
+})();
+
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('sw.js').catch(() => {});
+  });
+}
+</script>
+
+</body>
+</html>

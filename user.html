@@ -1,0 +1,862 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0" />
+<meta name="theme-color" content="#0a1929" />
+<meta name="description" content="حسابي - BORSA CLUP" />
+<title>BORSA CLUP - حسابي</title>
+
+<link rel="manifest" href="manifest.json" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+<meta name="apple-mobile-web-app-title" content="BORSA CLUP" />
+<meta name="mobile-web-app-capable" content="yes" />
+<link rel="icon" id="siteFavicon" href="https://i.ibb.co/PzcMFkpR/FB-IMG-1789241464654.jpg" />
+<link rel="apple-touch-icon" id="siteAppleIcon" href="https://i.ibb.co/PzcMFkpR/FB-IMG-1789241464654.jpg" />
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet" />
+
+<script src="auth-guard.js"></script>
+
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+  html, body { min-height:100%; font-family:'Cairo', sans-serif; background:#000; overflow-x:hidden; }
+  body {
+    min-height:100vh;
+    display:flex; justify-content:center; align-items:flex-start;
+    background:radial-gradient(circle at 50% 0%, #0f2f4a 0%, #0a1929 40%, #000 100%);
+  }
+
+  /* Loading */
+  .loading-screen {
+    position:fixed; inset:0; z-index:9999;
+    background:radial-gradient(circle at 50% 30%, #0f2f4a 0%, #0a1929 40%, #000 100%);
+    display:flex; flex-direction:column;
+    align-items:center; justify-content:center;
+    transition:opacity .6s ease, visibility .6s ease;
+    overflow:hidden;
+  }
+  .loading-screen.hide { opacity:0; visibility:hidden; pointer-events:none; }
+  .loading-screen::before {
+    content:''; position:absolute; inset:0;
+    background-image:
+      radial-gradient(2px 2px at 20% 30%, rgba(30,144,255,.6), transparent),
+      radial-gradient(2px 2px at 60% 70%, rgba(30,144,255,.4), transparent),
+      radial-gradient(1px 1px at 50% 50%, rgba(255,255,255,.5), transparent);
+    animation:starsMove 20s linear infinite;
+  }
+  @keyframes starsMove { to { transform:translateY(-100vh); } }
+  .loading-content {
+    position:relative; z-index:2;
+    display:flex; flex-direction:column;
+    align-items:center; gap:22px;
+    animation:fadeInScale .8s ease;
+  }
+  @keyframes fadeInScale {
+    from { opacity:0; transform:scale(.9); } to { opacity:1; transform:scale(1); }
+  }
+  .logo-loader {
+    position:relative; width:160px; height:160px;
+    display:flex; align-items:center; justify-content:center;
+  }
+  .logo-loader::before {
+    content:''; position:absolute; inset:0;
+    border-radius:50%; border:3px solid transparent;
+    border-top-color:#1e90ff; border-right-color:#1e90ff;
+    animation:spinRing 1.5s linear infinite;
+    box-shadow:0 0 20px rgba(30,144,255,.5);
+  }
+  @keyframes spinRing { to { transform:rotate(360deg); } }
+  .loading-logo {
+    width:110px; height:110px; border-radius:50%; object-fit:cover;
+    border:3px solid rgba(30,144,255,.4);
+    box-shadow:0 0 30px rgba(30,144,255,.6);
+    animation:pulseLogo 2s ease-in-out infinite;
+  }
+  @keyframes pulseLogo { 0%,100%{transform:scale(1);} 50%{transform:scale(1.05);} }
+  .loading-brand {
+    font-size:28px; font-weight:900; letter-spacing:2px; color:#fff;
+    text-shadow:0 0 20px rgba(30,144,255,.8);
+  }
+  .loading-brand span { color:#1e90ff; }
+  .loading-sub { color:#8fb3d9; font-size:13px; font-weight:600; }
+  .loading-bar {
+    width:220px; height:4px; background:rgba(255,255,255,.08);
+    border-radius:2px; overflow:hidden;
+  }
+  .loading-bar-fill {
+    height:100%;
+    background:linear-gradient(90deg, #0066cc, #1e90ff, #6bb7ff);
+    background-size:200% 100%; width:0%; transition:width .4s ease;
+    animation:barShine 2s linear infinite; border-radius:2px;
+    box-shadow:0 0 12px rgba(30,144,255,.8);
+  }
+  @keyframes barShine { 0%{background-position:0% 0%;} 100%{background-position:200% 0%;} }
+  .loading-footer {
+    position:absolute; bottom:30px; color:#4d6d8f;
+    font-size:11px; letter-spacing:1px; font-weight:600; z-index:2;
+  }
+
+  .phone {
+    width:100%; max-width:430px; min-height:100vh;
+    background:linear-gradient(180deg,#0a1929 0%,#06121e 100%);
+    display:flex; flex-direction:column;
+    box-shadow:0 0 60px rgba(30,144,255,.25);
+    position:relative; overflow:hidden;
+    opacity:0; transition:opacity .5s ease;
+  }
+  .phone.show { opacity:1; }
+
+  /* Topbar */
+  .topbar {
+    display:flex; align-items:center; justify-content:space-between;
+    padding:14px 16px;
+    background:rgba(255,255,255,.03);
+    border-bottom:1px solid rgba(30,144,255,.25);
+    position:sticky; top:0; z-index:20;
+    backdrop-filter:blur(12px); -webkit-backdrop-filter:blur(12px);
+    gap:8px;
+  }
+  .topbar .title { display:flex; align-items:center; gap:8px; flex-shrink:0; }
+  .topbar img {
+    width:36px; height:36px; border-radius:50%;
+    border:2px solid #1e90ff; object-fit:cover;
+  }
+  .topbar .name { font-size:14px; font-weight:900; color:#fff; }
+  .topbar .name span { color:#1e90ff; }
+  .top-btn {
+    padding:8px 12px; border:none; border-radius:9px;
+    font-family:'Cairo',sans-serif;
+    font-size:12px; font-weight:700;
+    cursor:pointer; transition:.25s;
+    text-decoration:none;
+    display:flex; align-items:center; gap:4px;
+    background:rgba(255,255,255,.06);
+    color:#a8c8e8;
+    border:1px solid rgba(255,255,255,.1);
+  }
+  .top-btn:hover { background:rgba(255,255,255,.12); color:#fff; }
+
+  .content { flex:1; padding:16px; overflow-y:auto; }
+
+  /* Header card */
+  .header-card {
+    padding:22px;
+    background:linear-gradient(135deg, rgba(30,144,255,.15), rgba(0,60,120,.2));
+    border:1px solid rgba(30,144,255,.3);
+    border-radius:18px;
+    text-align:center;
+    margin-bottom:16px;
+    position:relative;
+    overflow:hidden;
+  }
+  .header-card::before {
+    content:''; position:absolute;
+    top:-40px; left:-40px;
+    width:120px; height:120px;
+    background:radial-gradient(circle, rgba(30,144,255,.3) 0%, transparent 70%);
+    border-radius:50%;
+  }
+  .big-avatar {
+    width:86px; height:86px;
+    border-radius:50%;
+    margin:0 auto 12px;
+    background:linear-gradient(135deg,#1e90ff,#0066cc);
+    display:flex; align-items:center; justify-content:center;
+    font-size:34px; font-weight:900;
+    color:#fff;
+    border:3px solid rgba(30,144,255,.5);
+    box-shadow:0 8px 24px rgba(30,144,255,.4);
+    position:relative; z-index:1;
+  }
+  .header-card.is-female .big-avatar {
+    background:linear-gradient(135deg,#c864ff,#8b3fb8);
+    border-color:rgba(200,100,255,.5);
+  }
+  .header-card .fullname {
+    color:#fff; font-size:19px; font-weight:900;
+    margin-bottom:4px;
+    position:relative; z-index:1;
+  }
+  .header-card .username {
+    color:#6bb7ff; font-size:13px; font-weight:700;
+    margin-bottom:10px;
+    position:relative; z-index:1;
+  }
+  .badges-row {
+    display:flex; justify-content:center; gap:5px; flex-wrap:wrap;
+    position:relative; z-index:1;
+  }
+  .badge {
+    display:inline-flex; align-items:center; gap:4px;
+    padding:4px 10px; border-radius:20px;
+    font-size:10.5px; font-weight:700;
+  }
+  .badge.active   { background:rgba(40,200,120,.15); color:#3ddc84; border:1px solid rgba(40,200,120,.3); }
+  .badge.disabled { background:rgba(255,180,0,.15); color:#ffc800; border:1px solid rgba(255,180,0,.3); }
+  .badge.banned   { background:rgba(255,60,60,.15); color:#ff6b6b; border:1px solid rgba(255,60,60,.3); }
+  .badge.male     { background:rgba(30,144,255,.15); color:#6bb7ff; border:1px solid rgba(30,144,255,.3); }
+  .badge.female   { background:rgba(200,100,255,.15); color:#c864ff; border:1px solid rgba(200,100,255,.3); }
+  .badge.provider { background:rgba(100,200,255,.1); color:#7cb8e0; border:1px solid rgba(100,200,255,.25); }
+
+  /* Section */
+  .section-title {
+    color:#fff; font-size:14.5px; font-weight:700;
+    margin:16px 0 12px;
+    display:flex; align-items:center; gap:8px;
+  }
+  .section-title::before {
+    content:''; width:4px; height:18px;
+    background:#1e90ff; border-radius:2px;
+  }
+
+  /* Form card */
+  .form-card {
+    padding:18px;
+    background:rgba(255,255,255,.04);
+    border:1px solid rgba(30,144,255,.22);
+    border-radius:16px;
+    margin-bottom:14px;
+  }
+
+  .field { position:relative; margin-bottom:14px; }
+  .field label {
+    display:block; color:#9fc1e3;
+    font-size:12.5px; margin-bottom:6px; font-weight:600;
+    display:flex; align-items:center; justify-content:space-between;
+  }
+  .field label .lock-icon {
+    font-size:11px;
+    color:#ffc800;
+    font-weight:700;
+    background:rgba(255,180,0,.15);
+    padding:2px 8px;
+    border-radius:10px;
+    border:1px solid rgba(255,180,0,.3);
+  }
+  .field input, .field select, .field textarea {
+    width:100%; padding:12px 14px;
+    background:#0d2033; border:1.5px solid #1b3a5c;
+    border-radius:11px; color:#fff; font-size:14.5px;
+    font-family:'Cairo',sans-serif; outline:none;
+    transition:.25s;
+  }
+  .field input:focus, .field textarea:focus {
+    border-color:#1e90ff;
+    box-shadow:0 0 0 3px rgba(30,144,255,.15);
+  }
+  .field input[readonly], .field input:disabled {
+    opacity:.6;
+    cursor:not-allowed;
+    background:rgba(0,0,0,.3);
+    border-color:rgba(255,255,255,.05);
+  }
+  .field input::placeholder { color:#4d6d8f; }
+
+  .field .help {
+    font-size:10.5px;
+    margin-top:4px;
+    line-height:1.5;
+  }
+  .field .help.locked {
+    color:#ffc800;
+  }
+  .field .help.normal { color:#6b8fb0; }
+
+  .field.error input { border-color:#ff3b3b; box-shadow:0 0 0 3px rgba(255,60,60,.15); }
+
+  /* Gender picker */
+  .gender-grid {
+    display:grid; grid-template-columns:1fr 1fr; gap:8px;
+  }
+  .gender-opt {
+    padding:11px 8px;
+    background:rgba(255,255,255,.04);
+    border:1.5px solid rgba(30,144,255,.2);
+    border-radius:11px; text-align:center;
+    cursor:pointer; transition:.2s;
+    font-size:13px; font-weight:700;
+    color:#8fb3d9;
+  }
+  .gender-opt:hover { border-color:rgba(30,144,255,.5); }
+  .gender-opt.selected {
+    color:#fff; border-color:#1e90ff;
+    background:rgba(30,144,255,.15);
+  }
+  .gender-opt[data-p-gender="female"].selected {
+    border-color:#c864ff;
+    background:rgba(200,100,255,.15);
+  }
+
+  .btn {
+    width:100%; padding:14px;
+    border:none; border-radius:12px;
+    font-family:'Cairo',sans-serif;
+    font-size:15px; font-weight:700;
+    cursor:pointer; transition:.25s;
+    display:flex; align-items:center; justify-content:center; gap:8px;
+    margin-top:6px;
+  }
+  .btn.primary {
+    background:linear-gradient(135deg,#1e90ff,#0066cc);
+    color:#fff;
+    box-shadow:0 8px 22px rgba(30,144,255,.35);
+  }
+  .btn.primary:hover { transform:translateY(-2px); }
+  .btn.primary:disabled { opacity:.5; cursor:not-allowed; }
+  .btn.danger {
+    background:linear-gradient(135deg,#ff3b3b,#b00000);
+    color:#fff;
+    box-shadow:0 8px 22px rgba(255,60,60,.35);
+  }
+  .btn.danger:hover { transform:translateY(-2px); }
+  .btn.contact {
+    background:rgba(255,180,0,.15);
+    color:#ffc800;
+    border:1px solid rgba(255,180,0,.3);
+  }
+  .btn.contact:hover { background:rgba(255,180,0,.25); color:#fff; }
+
+  .msg {
+    margin-top:14px; padding:11px;
+    border-radius:11px;
+    font-size:13px; text-align:center; font-weight:700;
+    display:none;
+  }
+  .msg.err { display:block; background:rgba(255,60,60,.12); color:#ff6b6b; border:1px solid rgba(255,60,60,.3); }
+  .msg.ok  { display:block; background:rgba(40,200,120,.12); color:#3ddc84; border:1px solid rgba(40,200,120,.3); }
+
+  .loader {
+    display:inline-block; width:14px; height:14px;
+    border:2px solid rgba(255,255,255,.4);
+    border-top-color:#fff; border-radius:50%;
+    animation:spin .7s linear infinite;
+    vertical-align:middle;
+  }
+  @keyframes spin { to { transform:rotate(360deg); } }
+
+  /* Footer */
+  .footer {
+    text-align:center; padding:16px;
+    font-size:11px; color:#4d6d8f;
+  }
+
+  /* Modal تأكيد */
+  .modal-overlay {
+    position:fixed; inset:0;
+    background:rgba(0,0,0,.8);
+    backdrop-filter:blur(8px); -webkit-backdrop-filter:blur(8px);
+    display:none; align-items:center; justify-content:center;
+    padding:16px; z-index:100; overflow-y:auto;
+  }
+  .modal-overlay.open { display:flex; }
+  .modal {
+    width:100%; max-width:440px;
+    background:linear-gradient(180deg,#0d1f33,#0a1929);
+    border:1px solid rgba(30,144,255,.35);
+    border-radius:22px; padding:22px 20px;
+    box-shadow:0 30px 80px rgba(0,0,0,.7);
+    animation:popIn .3s ease;
+    text-align:center;
+  }
+  @keyframes popIn { from{opacity:0;transform:scale(.95);} to{opacity:1;transform:scale(1);} }
+  .modal-icon {
+    width:70px; height:70px; border-radius:50%;
+    margin:0 auto 16px;
+    display:flex; align-items:center; justify-content:center;
+    font-size:36px;
+  }
+  .modal-icon.info { background:rgba(30,144,255,.15); border:2px solid rgba(30,144,255,.4); }
+  .modal-icon.warning { background:rgba(255,180,0,.15); border:2px solid rgba(255,180,0,.4); }
+  .modal-icon.danger { background:rgba(255,60,60,.15); border:2px solid rgba(255,60,60,.4); }
+  .modal h3 {
+    color:#fff; font-size:18px; font-weight:900;
+    margin-bottom:10px;
+  }
+  .modal-text {
+    color:#c8d8e8; font-size:14px;
+    line-height:1.8; margin-bottom:16px;
+    font-weight:600;
+  }
+  .modal-actions { display:flex; gap:10px; margin-top:10px; }
+  .modal-btn {
+    flex:1; padding:12px;
+    border:none; border-radius:11px;
+    font-family:'Cairo',sans-serif;
+    font-size:14px; font-weight:700;
+    cursor:pointer; transition:.25s;
+  }
+  .modal-btn.primary {
+    background:linear-gradient(135deg,#1e90ff,#0066cc);
+    color:#fff;
+  }
+  .modal-btn.primary:hover { transform:translateY(-2px); }
+  .modal-btn.cancel {
+    background:rgba(255,255,255,.06);
+    color:#a8c8e8;
+    border:1px solid rgba(255,255,255,.1);
+  }
+  .modal-btn.contact {
+    background:linear-gradient(135deg,#ffb300,#cc8800);
+    color:#000;
+    font-weight:800;
+  }
+  .modal-btn.contact:hover { transform:translateY(-2px); }
+
+  @media (min-width:768px) {
+    body { padding:30px; }
+    .phone {
+      max-width:720px; min-height:auto; height:auto;
+      border-radius:28px;
+      border:1px solid rgba(30,144,255,.25);
+      box-shadow:0 25px 70px rgba(0,150,255,.3);
+    }
+    .content { padding:22px 24px; }
+  }
+  @media (min-width:1024px) {
+    body { padding:40px 30px; }
+    .phone { max-width:900px; }
+    .content { padding:26px 36px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- Loading -->
+<div class="loading-screen" id="loadingScreen">
+  <div class="loading-content">
+    <div class="logo-loader">
+      <img id="loadingLogo" class="loading-logo" src="https://i.ibb.co/PzcMFkpR/FB-IMG-1789241464654.jpg" alt="BORSA CLUP" />
+    </div>
+    <div class="loading-brand" id="loadingBrand">BORSA <span>CLUP</span></div>
+    <div class="loading-sub">حسابي</div>
+    <div class="loading-bar">
+      <div class="loading-bar-fill" id="loadingBarFill"></div>
+    </div>
+  </div>
+  <div class="loading-footer">© BORSA CLUP</div>
+</div>
+
+<div class="phone" id="phoneApp" style="display:none;">
+
+  <div class="topbar">
+    <div class="title">
+      <img id="topLogo" src="https://i.ibb.co/PzcMFkpR/FB-IMG-1789241464654.jpg" alt="BORSA CLUP" />
+      <div class="name" id="topName">BORSA <span>CLUP</span></div>
+    </div>
+    <a href="index.html" class="top-btn">← الرئيسية</a>
+  </div>
+
+  <div class="content">
+
+    <!-- Header -->
+    <div class="header-card" id="headerCard">
+      <div class="big-avatar" id="bigAvatar">؟</div>
+      <div class="fullname" id="headerName">—</div>
+      <div class="username" id="headerUsername">@—</div>
+      <div class="badges-row" id="headerBadges"></div>
+    </div>
+
+    <!-- معلومات الحساب -->
+    <div class="section-title">📋 معلومات الحساب</div>
+    <div class="form-card">
+
+      <div class="field" id="f-full">
+        <label>الاسم الكامل</label>
+        <input type="text" id="pFullName" maxlength="80" placeholder="الاسم الكامل" />
+      </div>
+
+      <div class="field" id="f-user">
+        <label>اسم المستخدم</label>
+        <input type="text" id="pUsername" maxlength="30" placeholder="اسم المستخدم" readonly />
+        <div class="help normal">اسم المستخدم لا يمكن تغييره</div>
+      </div>
+
+      <div class="field" id="f-phone">
+        <label>رقم الهاتف (واتساب)
+          <span class="lock-icon" id="phoneLock" style="display:none;">🔒 مقفل</span>
+        </label>
+        <input type="tel" id="pPhone" maxlength="15" placeholder="01xxxxxxxxx" />
+        <div class="help" id="phoneHelp"></div>
+      </div>
+
+      <div class="field" id="f-email">
+        <label>البريد الإلكتروني
+          <span class="lock-icon">🔒 مقفل</span>
+        </label>
+        <input type="email" id="pEmail" readonly />
+        <div class="help locked">⚠️ لا يمكن تغيير البريد — تواصل مع الدعم إن لزم</div>
+      </div>
+
+      <div class="field" id="f-birth">
+        <label>تاريخ الميلاد</label>
+        <input type="date" id="pBirthdate" />
+      </div>
+
+      <div class="field" id="f-gender">
+        <label>النوع</label>
+        <div class="gender-grid">
+          <div class="gender-opt" data-p-gender="male">👨 ذكر</div>
+          <div class="gender-opt" data-p-gender="female">👩 أنثى</div>
+        </div>
+      </div>
+
+      <button class="btn primary" id="saveBtn">💾 حفظ التعديلات</button>
+      <div class="msg" id="saveMsg"></div>
+
+    </div>
+
+    <!-- زر التواصل مع الدعم (لو محتاج) -->
+    <div id="supportBox" style="display:none;">
+      <div class="section-title">🛟 الدعم</div>
+      <div class="form-card">
+        <div style="color:#8fb3d9;font-size:12.5px;line-height:1.7;font-weight:600;margin-bottom:12px;">
+          لتعديل البريد الإلكتروني أو رقم الهاتف (لأنك مسجّل بـ Google)،
+          يرجى التواصل مع الدعم الفني.
+        </div>
+        <a href="daam.html" class="btn contact">🛟 التواصل مع الدعم</a>
+      </div>
+    </div>
+
+    <!-- منطقة الخطر -->
+    <div class="section-title">⚠️ إجراءات الحساب</div>
+    <div class="form-card">
+      <div style="color:#8fb3d9;font-size:12.5px;line-height:1.7;font-weight:600;margin-bottom:12px;">
+        تسجيل الخروج من الحساب الحالي.
+      </div>
+      <button class="btn danger" id="logoutBtn">🚪 تسجيل الخروج</button>
+    </div>
+
+  </div>
+
+  <div class="footer">© BORSA CLUP — جميع الحقوق محفوظة</div>
+
+</div>
+
+<!-- Modal تأكيد -->
+<div class="modal-overlay" id="confirmModal">
+  <div class="modal">
+    <div class="modal-icon info" id="modalIcon">❓</div>
+    <h3 id="modalTitle">تأكيد</h3>
+    <div class="modal-text" id="modalText">هل أنت متأكد؟</div>
+    <div class="modal-actions" id="modalActions">
+      <button class="modal-btn cancel" id="modalCancel">إلغاء</button>
+      <button class="modal-btn primary" id="modalOk">تأكيد</button>
+    </div>
+  </div>
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getFirestore, doc, getDoc, updateDoc, serverTimestamp }
+  from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyB36BkwxS0RHWWHSNGA1rZ5EHjtaeynTEA",
+  authDomain: "borsa-b77a3.firebaseapp.com",
+  projectId: "borsa-b77a3",
+  storageBucket: "borsa-b77a3.firebasestorage.app",
+  messagingSenderId: "1029468057087",
+  appId: "1:1029468057087:web:1bafa9ffad7f14d7a2cbca",
+  measurementId: "G-NKBES9QEBK"
+};
+
+const app = initializeApp(firebaseConfig);
+const db  = getFirestore(app);
+
+const USERS_COLLECTION = 'users';
+
+/* ========== Loading ========== */
+const loadingScreen = document.getElementById('loadingScreen');
+const loadingBarFill = document.getElementById('loadingBarFill');
+const phoneApp = document.getElementById('phoneApp');
+
+function setProgress(p) {
+  loadingBarFill.style.width = Math.min(100, Math.max(0, p)) + '%';
+}
+function hideLoadingScreen() {
+  setProgress(100);
+  setTimeout(() => {
+    loadingScreen.classList.add('hide');
+    phoneApp.style.display = 'flex';
+    setTimeout(() => phoneApp.classList.add('show'), 50);
+  }, 400);
+}
+setProgress(20);
+
+/* ========== المستخدم الحالي ========== */
+let userId = sessionStorage.getItem('borsa_admin_id') || '';
+let userEmail = sessionStorage.getItem('borsa_admin_email') || '';
+let userName = sessionStorage.getItem('borsa_admin') || '';
+
+/* ========== DOM ========== */
+const headerCard = document.getElementById('headerCard');
+const bigAvatar = document.getElementById('bigAvatar');
+const headerName = document.getElementById('headerName');
+const headerUsername = document.getElementById('headerUsername');
+const headerBadges = document.getElementById('headerBadges');
+
+const pFullName = document.getElementById('pFullName');
+const pUsername = document.getElementById('pUsername');
+const pPhone = document.getElementById('pPhone');
+const pEmail = document.getElementById('pEmail');
+const pBirthdate = document.getElementById('pBirthdate');
+const phoneLock = document.getElementById('phoneLock');
+const phoneHelp = document.getElementById('phoneHelp');
+const supportBox = document.getElementById('supportBox');
+const saveBtn = document.getElementById('saveBtn');
+const saveMsg = document.getElementById('saveMsg');
+const logoutBtn = document.getElementById('logoutBtn');
+
+const confirmModal = document.getElementById('confirmModal');
+const modalIcon = document.getElementById('modalIcon');
+const modalTitle = document.getElementById('modalTitle');
+const modalText = document.getElementById('modalText');
+const modalCancel = document.getElementById('modalCancel');
+const modalOk = document.getElementById('modalOk');
+
+let userData = null;
+let currentGender = 'male';
+
+/* ========== أدوات ========== */
+function escapeHtml(s) {
+  return String(s ?? '').replace(/[&<>"']/g, c => ({
+    '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
+  }[c]));
+}
+
+function showSaveMsg(text, type = 'err') {
+  saveMsg.innerHTML = text;
+  saveMsg.className = 'msg ' + type;
+  setTimeout(() => { saveMsg.className = 'msg'; saveMsg.innerHTML = ''; }, 4000);
+}
+
+/* ========== إعدادات الموقع ========== */
+async function loadSiteSettings() {
+  try {
+    setProgress(30);
+    const snap = await getDoc(doc(db, 'settings', 'site'));
+    if (!snap.exists()) return;
+    const s = snap.data();
+
+    if (s.logoUrl) {
+      await new Promise((resolve) => {
+        const img = new Image();
+        img.onload = () => {
+          document.getElementById('loadingLogo').src = s.logoUrl;
+          document.getElementById('topLogo').src = s.logoUrl;
+          const fav = document.getElementById('siteFavicon');
+          const apple = document.getElementById('siteAppleIcon');
+          if (fav) fav.href = s.logoUrl;
+          if (apple) apple.href = s.logoUrl;
+          resolve();
+        };
+        img.onerror = () => resolve();
+        img.src = s.logoUrl;
+      });
+    }
+
+    if (s.siteName) {
+      const fullName = s.siteName;
+      const accent = s.siteNameAccent || '';
+      const buildName = (el) => {
+        if (accent && fullName.includes(accent)) {
+          const parts = fullName.split(accent);
+          const before = parts[0].trim();
+          const after = parts.slice(1).join(accent).trim();
+          el.innerHTML = `${escapeHtml(before)} <span>${escapeHtml(accent)}</span>${after ? ' ' + escapeHtml(after) : ''}`;
+        } else {
+          el.textContent = fullName;
+        }
+      };
+      buildName(document.getElementById('loadingBrand'));
+      buildName(document.getElementById('topName'));
+      document.title = fullName + ' - حسابي';
+    }
+
+    setProgress(50);
+  } catch (e) {
+    setProgress(50);
+  }
+}
+
+/* ========== تحميل بيانات المستخدم ========== */
+async function loadProfile() {
+  if (!userId) {
+    showSaveMsg('❌ لا يمكن تحميل البيانات — أعد تسجيل الدخول', 'err');
+    return;
+  }
+
+  try {
+    setProgress(70);
+    const snap = await getDoc(doc(db, USERS_COLLECTION, userId));
+
+    if (!snap.exists()) {
+      showSaveMsg('❌ حسابك غير موجود — أعد تسجيل الدخول', 'err');
+      return;
+    }
+
+    userData = snap.data();
+    renderProfile(userData);
+    setProgress(90);
+  } catch (e) {
+    console.error(e);
+    showSaveMsg('❌ فشل تحميل البيانات', 'err');
+  }
+}
+
+function renderProfile(u) {
+  const isGoogle = u.provider === 'google';
+  const gender = (u.gender || 'male').toLowerCase();
+  currentGender = gender;
+
+  // الهيدر
+  headerCard.classList.toggle('is-female', gender === 'female');
+  bigAvatar.textContent = (u.fullName || u.username || '؟').trim().charAt(0).toUpperCase();
+  headerName.textContent = u.fullName || '—';
+  headerUsername.textContent = '@' + (u.username || '—');
+
+  // Badges
+  const status = (u.status || 'active').toLowerCase();
+  let badgesHtml = '';
+
+  if (status === 'active')   badgesHtml += `<span class="badge active">● نشط</span>`;
+  if (status === 'disabled') badgesHtml += `<span class="badge disabled">⏸️ معطّل</span>`;
+  if (status === 'banned')   badgesHtml += `<span class="badge banned">🚫 محظور</span>`;
+
+  badgesHtml += gender === 'female'
+    ? `<span class="badge female">👩 أنثى</span>`
+    : `<span class="badge male">👨 ذكر</span>`;
+
+  badgesHtml += `<span class="badge provider">${isGoogle ? '🅶 Google' : '✍️ يدوي'}</span>`;
+  headerBadges.innerHTML = badgesHtml;
+
+  // الحقول
+  pFullName.value = u.fullName || '';
+  pUsername.value = u.username || '';
+  pEmail.value = u.email || userEmail || '';
+  pBirthdate.value = u.birthdate || '';
+
+  // الهاتف
+  pPhone.value = u.phone || '';
+
+  if (isGoogle) {
+    // Google → الهاتف مقفول
+    pPhone.setAttribute('readonly', 'true');
+    phoneLock.style.display = 'inline-flex';
+    phoneHelp.textContent = '⚠️ أنت مسجّل بـ Google — لتعديل رقم الهاتف، تواصل مع الدعم';
+    phoneHelp.className = 'help locked';
+    supportBox.style.display = 'block';
+  } else {
+    pPhone.removeAttribute('readonly');
+    phoneLock.style.display = 'none';
+    phoneHelp.textContent = '11 رقم يبدأ بـ 01';
+    phoneHelp.className = 'help normal';
+    supportBox.style.display = 'none';
+  }
+
+  // النوع
+  document.querySelectorAll('[data-p-gender]').forEach(el => {
+    el.classList.toggle('selected', el.dataset.pGender === gender);
+  });
+}
+
+/* ========== Gender Picker ========== */
+document.querySelectorAll('[data-p-gender]').forEach(el => {
+  el.onclick = () => {
+    document.querySelectorAll('[data-p-gender]').forEach(x => x.classList.remove('selected'));
+    el.classList.add('selected');
+    currentGender = el.dataset.pGender;
+  };
+});
+
+/* ========== حفظ التعديلات ========== */
+saveBtn.onclick = async () => {
+  if (!userId || !userData) {
+    showSaveMsg('❌ أعد تسجيل الدخول', 'err');
+    return;
+  }
+
+  const isGoogle = userData.provider === 'google';
+
+  const fullName = pFullName.value.trim();
+  const phone = pPhone.value.trim();
+  const birthdate = pBirthdate.value;
+
+  // فحوصات
+  if (!fullName) { showSaveMsg('⚠️ الاسم الكامل مطلوب'); return; }
+  if (!birthdate) { showSaveMsg('⚠️ تاريخ الميلاد مطلوب'); return; }
+
+  if (!isGoogle) {
+    if (!/^01[0-9]{9}$/.test(phone)) {
+      showSaveMsg('⚠️ رقم الهاتف غير صحيح — 11 رقم يبدأ بـ 01');
+      return;
+    }
+  }
+
+  saveBtn.disabled = true;
+  saveBtn.innerHTML = 'جارٍ الحفظ...<span class="loader"></span>';
+
+  try {
+    const updates = {
+      fullName,
+      birthdate,
+      gender: currentGender,
+      updatedAt: serverTimestamp()
+    };
+
+    // للمستخدم اليدوي فقط
+    if (!isGoogle) {
+      updates.phone = phone;
+    }
+
+    await updateDoc(doc(db, USERS_COLLECTION, userId), updates);
+
+    // حدّث sessionStorage
+    sessionStorage.setItem('borsa_admin_role', fullName);
+
+    showSaveMsg('✅ تم الحفظ بنجاح', 'ok');
+    saveBtn.disabled = false;
+    saveBtn.textContent = '💾 حفظ التعديلات';
+
+    // أعد تحميل البيانات
+    await loadProfile();
+
+  } catch (e) {
+    console.error(e);
+    showSaveMsg('❌ فشل الحفظ — حاول مرة أخرى');
+    saveBtn.disabled = false;
+    saveBtn.textContent = '💾 حفظ التعديلات';
+  }
+};
+
+/* ========== تسجيل خروج ========== */
+logoutBtn.onclick = () => {
+  const ok = confirm(
+    'هل تريد تسجيل الخروج؟'
+  );
+  if (!ok) return;
+  try {
+    sessionStorage.clear();
+    localStorage.removeItem('borsa_admin');
+    localStorage.removeItem('borsa_user');
+  } catch (e) {}
+  window.location.replace('login.html');
+};
+
+/* ========== بدء ========== */
+(async () => {
+  await loadSiteSettings();
+  await loadProfile();
+  setTimeout(hideLoadingScreen, 400);
+})();
+
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('sw.js').catch(() => {});
+  });
+}
+</script>
+
+</body>
+</html>

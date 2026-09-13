@@ -25,62 +25,25 @@
     background:radial-gradient(circle at 50% 0%, #0f2f4a 0%, #0a1929 40%, #000 100%);
   }
 
-  /* =====================================================
-     ★★★ شاشة التحميل الفخمة ★★★
-  ===================================================== */
+  /* Loading Screen */
   .loading-screen {
-    position:fixed; inset:0;
-    z-index:9999;
-    background:
-      radial-gradient(circle at 50% 30%, #0f2f4a 0%, #0a1929 40%, #000 100%);
+    position:fixed; inset:0; z-index:9999;
+    background:radial-gradient(circle at 50% 30%, #0f2f4a 0%, #0a1929 40%, #000 100%);
     display:flex; flex-direction:column;
     align-items:center; justify-content:center;
     transition:opacity .6s ease, visibility .6s ease;
     overflow:hidden;
   }
-  .loading-screen.hide {
-    opacity:0;
-    visibility:hidden;
-    pointer-events:none;
-  }
-
-  /* نجوم متحركة في الخلفية */
+  .loading-screen.hide { opacity:0; visibility:hidden; pointer-events:none; }
   .loading-screen::before {
-    content:'';
-    position:absolute; inset:0;
+    content:''; position:absolute; inset:0;
     background-image:
       radial-gradient(2px 2px at 20% 30%, rgba(30,144,255,.6), transparent),
       radial-gradient(2px 2px at 60% 70%, rgba(30,144,255,.4), transparent),
-      radial-gradient(1px 1px at 50% 50%, rgba(255,255,255,.5), transparent),
-      radial-gradient(1px 1px at 80% 10%, rgba(255,255,255,.3), transparent),
-      radial-gradient(2px 2px at 90% 60%, rgba(30,144,255,.5), transparent),
-      radial-gradient(1px 1px at 33% 80%, rgba(255,255,255,.4), transparent),
-      radial-gradient(1px 1px at 10% 70%, rgba(30,144,255,.3), transparent),
-      radial-gradient(2px 2px at 70% 40%, rgba(255,255,255,.4), transparent);
+      radial-gradient(1px 1px at 50% 50%, rgba(255,255,255,.5), transparent);
     animation:starsMove 20s linear infinite;
   }
-  @keyframes starsMove {
-    from { transform:translateY(0); }
-    to   { transform:translateY(-100vh); }
-  }
-
-  /* هالات ضوئية */
-  .loading-screen::after {
-    content:'';
-    position:absolute;
-    width:400px; height:400px;
-    background:radial-gradient(circle, rgba(30,144,255,.15) 0%, transparent 70%);
-    border-radius:50%;
-    top:30%; left:50%;
-    transform:translate(-50%,-50%);
-    animation:haloGlow 3s ease-in-out infinite;
-  }
-  @keyframes haloGlow {
-    0%, 100% { transform:translate(-50%,-50%) scale(1); opacity:.6; }
-    50%      { transform:translate(-50%,-50%) scale(1.2); opacity:1; }
-  }
-
-  /* المحتوى */
+  @keyframes starsMove { to { transform:translateY(-100vh); } }
   .loading-content {
     position:relative; z-index:2;
     display:flex; flex-direction:column;
@@ -88,147 +51,57 @@
     animation:fadeInScale .8s ease;
   }
   @keyframes fadeInScale {
-    from { opacity:0; transform:scale(.9); }
-    to   { opacity:1; transform:scale(1); }
+    from { opacity:0; transform:scale(.9); } to { opacity:1; transform:scale(1); }
   }
-
-  /* الشعار داخل حلقة متحركة */
   .logo-loader {
-    position:relative;
-    width:160px; height:160px;
+    position:relative; width:160px; height:160px;
     display:flex; align-items:center; justify-content:center;
   }
-  .logo-loader::before,
-  .logo-loader::after {
-    content:'';
-    position:absolute; inset:0;
-    border-radius:50%;
-    border:3px solid transparent;
-  }
   .logo-loader::before {
-    border-top-color:#1e90ff;
-    border-right-color:#1e90ff;
+    content:''; position:absolute; inset:0;
+    border-radius:50%; border:3px solid transparent;
+    border-top-color:#1e90ff; border-right-color:#1e90ff;
     animation:spinRing 1.5s linear infinite;
     box-shadow:0 0 20px rgba(30,144,255,.5);
   }
-  .logo-loader::after {
-    inset:12px;
-    border-bottom-color:#0066cc;
-    border-left-color:#0066cc;
-    animation:spinRing 2s linear infinite reverse;
-    opacity:.7;
-  }
-  @keyframes spinRing {
-    to { transform:rotate(360deg); }
-  }
-
+  @keyframes spinRing { to { transform:rotate(360deg); } }
   .loading-logo {
-    width:110px; height:110px;
-    border-radius:50%;
-    object-fit:cover;
+    width:110px; height:110px; border-radius:50%; object-fit:cover;
     border:3px solid rgba(30,144,255,.4);
-    box-shadow:
-      0 0 30px rgba(30,144,255,.6),
-      0 0 60px rgba(30,144,255,.3),
-      inset 0 0 20px rgba(30,144,255,.2);
+    box-shadow:0 0 30px rgba(30,144,255,.6);
     animation:pulseLogo 2s ease-in-out infinite;
   }
-  @keyframes pulseLogo {
-    0%, 100% { transform:scale(1); }
-    50%      { transform:scale(1.05); }
-  }
-
-  /* النص */
+  @keyframes pulseLogo { 0%,100%{transform:scale(1);} 50%{transform:scale(1.05);} }
   .loading-brand {
-    font-size:28px;
-    font-weight:900;
-    letter-spacing:2px;
-    color:#fff;
-    text-shadow:
-      0 0 20px rgba(30,144,255,.8),
-      0 0 40px rgba(30,144,255,.4);
-    animation:brandShine 3s ease-in-out infinite;
+    font-size:28px; font-weight:900; letter-spacing:2px; color:#fff;
+    text-shadow:0 0 20px rgba(30,144,255,.8);
   }
   .loading-brand span { color:#1e90ff; }
-  @keyframes brandShine {
-    0%, 100% { text-shadow: 0 0 20px rgba(30,144,255,.8), 0 0 40px rgba(30,144,255,.4); }
-    50%      { text-shadow: 0 0 30px rgba(30,144,255,1), 0 0 60px rgba(30,144,255,.6), 0 0 80px rgba(30,144,255,.4); }
-  }
-
-  .loading-sub {
-    color:#8fb3d9;
-    font-size:13px;
-    font-weight:600;
-    letter-spacing:1px;
-    opacity:.85;
-  }
-
-  /* شريط التحميل */
+  .loading-sub { color:#8fb3d9; font-size:13px; font-weight:600; }
   .loading-bar {
-    width:220px;
-    height:4px;
-    background:rgba(255,255,255,.08);
-    border-radius:2px;
-    overflow:hidden;
-    position:relative;
-    margin-top:6px;
+    width:220px; height:4px; background:rgba(255,255,255,.08);
+    border-radius:2px; overflow:hidden;
   }
   .loading-bar-fill {
     height:100%;
-    background:linear-gradient(90deg, #0066cc, #1e90ff, #6bb7ff, #1e90ff);
-    background-size:200% 100%;
-    border-radius:2px;
-    width:0%;
-    transition:width .4s ease;
-    animation:barShine 2s linear infinite;
+    background:linear-gradient(90deg, #0066cc, #1e90ff, #6bb7ff);
+    background-size:200% 100%; width:0%; transition:width .4s ease;
+    animation:barShine 2s linear infinite; border-radius:2px;
     box-shadow:0 0 12px rgba(30,144,255,.8);
   }
-  @keyframes barShine {
-    0%   { background-position:0% 0%; }
-    100% { background-position:200% 0%; }
-  }
-
-  /* نقاط متحركة */
-  .loading-dots {
-    display:flex; gap:6px;
-    margin-top:6px;
-  }
-  .loading-dots span {
-    width:8px; height:8px;
-    border-radius:50%;
-    background:#1e90ff;
-    box-shadow:0 0 10px rgba(30,144,255,.8);
-    animation:dotBounce 1.4s ease-in-out infinite;
-  }
-  .loading-dots span:nth-child(2) { animation-delay:.2s; }
-  .loading-dots span:nth-child(3) { animation-delay:.4s; }
-  @keyframes dotBounce {
-    0%, 80%, 100% { transform:scale(.6); opacity:.4; }
-    40%           { transform:scale(1); opacity:1; }
-  }
-
-  /* Footer */
+  @keyframes barShine { 0%{background-position:0% 0%;} 100%{background-position:200% 0%;} }
   .loading-footer {
-    position:absolute;
-    bottom:30px;
-    color:#4d6d8f;
-    font-size:11px;
-    letter-spacing:1px;
-    font-weight:600;
-    z-index:2;
+    position:absolute; bottom:30px; color:#4d6d8f;
+    font-size:11px; letter-spacing:1px; font-weight:600; z-index:2;
   }
 
-  /* =====================================================
-     التصميم الرئيسي
-  ===================================================== */
+  /* Main */
   .phone {
-    position:relative;
-    width:100%; max-width:430px; min-height:100vh;
+    position:relative; width:100%; max-width:430px; min-height:100vh;
     background:linear-gradient(180deg,#0a1929 0%,#06121e 100%);
     display:flex; flex-direction:column; overflow:hidden;
     box-shadow:0 0 60px rgba(30,144,255,.25);
-    opacity:0;
-    transition:opacity .6s ease;
+    opacity:0; transition:opacity .6s ease;
   }
   .phone.show { opacity:1; }
 
@@ -236,7 +109,6 @@
   .logo-wrap img {
     width:86px; height:86px; border-radius:50%; object-fit:cover;
     border:3px solid #1e90ff; box-shadow:0 0 25px rgba(30,144,255,.6);
-    transition:.4s;
   }
   .brand { margin-top:10px; font-size:22px; font-weight:900; color:#fff; letter-spacing:1px; }
   .brand span { color:#1e90ff; }
@@ -266,6 +138,7 @@
   .content { flex:1; padding:16px; overflow-y:auto; }
   .form-view { display:none; }
   .form-view.active { display:block; animation:fadeUp .3s ease; }
+
   .card {
     padding:22px 20px;
     background:rgba(255,255,255,.04);
@@ -278,6 +151,7 @@
     text-align:center; font-weight:900;
   }
   .card h2 span { color:#1e90ff; }
+
   .field { position:relative; margin-bottom:12px; }
   .field label {
     display:block; color:#9fc1e3;
@@ -291,7 +165,6 @@
     font-family:'Cairo',sans-serif;
     outline:none; transition:.2s;
   }
-  .field select { padding-right:14px; }
   .field input:focus, .field select:focus {
     border-color:#1e90ff;
     box-shadow:0 0 0 3px rgba(30,144,255,.15);
@@ -393,6 +266,29 @@
   }
   .btn.google:hover { transform:translateY(-2px); }
   .btn.google img { width:20px; height:20px; }
+
+  /* ★ زر نسيت كلمة المرور */
+  .forgot-btn {
+    width:100%; padding:11px;
+    background:transparent;
+    color:#6bb7ff;
+    border:1.5px dashed rgba(30,144,255,.4);
+    border-radius:11px;
+    font-family:'Cairo',sans-serif;
+    font-size:13px; font-weight:700;
+    cursor:pointer; transition:.25s;
+    display:flex; align-items:center; justify-content:center; gap:6px;
+    margin-top:12px;
+    text-decoration:none;
+  }
+  .forgot-btn:hover {
+    background:rgba(30,144,255,.1);
+    border-style:solid;
+    border-color:#1e90ff;
+    color:#fff;
+    transform:translateY(-1px);
+  }
+
   .divider {
     display:flex; align-items:center;
     gap:10px; margin:14px 0 10px;
@@ -402,6 +298,7 @@
     background:rgba(255,255,255,.08);
   }
   .divider span { color:#6b8fb0; font-size:11px; font-weight:700; }
+
   .msg {
     margin-top:14px; padding:11px;
     border-radius:11px;
@@ -410,6 +307,7 @@
   }
   .msg.err { display:block; background:rgba(255,60,60,.12); color:#ff6b6b; border:1px solid rgba(255,60,60,.3); }
   .msg.ok  { display:block; background:rgba(40,200,120,.12); color:#3ddc84; border:1px solid rgba(40,200,120,.3); }
+
   .loader {
     display:inline-block; width:14px; height:14px;
     border:2px solid rgba(255,255,255,.4);
@@ -420,11 +318,14 @@
   @keyframes spin { to { transform:rotate(360deg); } }
   @keyframes fadeDown { from{opacity:0;transform:translateY(-20px);} to{opacity:1;transform:none;} }
   @keyframes fadeUp { from{opacity:0;transform:translateY(20px);} to{opacity:1;transform:none;} }
+
   .footer { text-align:center; padding:14px; font-size:11px; color:#4d6d8f; }
+
+  /* Modal */
   .modal-overlay {
     position:fixed; inset:0;
     background:rgba(0,0,0,.8);
-    backdrop-filter:blur(8px);
+    backdrop-filter:blur(8px); -webkit-backdrop-filter:blur(8px);
     display:none; align-items:center; justify-content:center;
     padding:16px; z-index:100; overflow-y:auto;
     animation:fadeIn .2s ease;
@@ -434,12 +335,10 @@
     width:100%; max-width:480px;
     background:linear-gradient(180deg,#0d1f33,#0a1929);
     border:1px solid rgba(30,144,255,.35);
-    border-radius:22px;
-    padding:22px 20px;
+    border-radius:22px; padding:22px 20px;
     box-shadow:0 30px 80px rgba(0,0,0,.7);
     animation:popIn .3s ease;
-    max-height:92vh; overflow-y:auto;
-    margin:auto;
+    max-height:92vh; overflow-y:auto; margin:auto;
   }
   .modal h3 {
     color:#fff; font-size:18px; font-weight:900;
@@ -447,8 +346,7 @@
   }
   .modal-sub {
     color:#8fb3d9; font-size:12.5px;
-    text-align:center; margin-bottom:16px;
-    font-weight:600;
+    text-align:center; margin-bottom:16px; font-weight:600;
   }
   .modal .field { margin-bottom:12px; }
   .modal-actions { display:flex; gap:10px; margin-top:16px; }
@@ -471,6 +369,7 @@
   }
   @keyframes fadeIn { from{opacity:0;} to{opacity:1;} }
   @keyframes popIn { from{opacity:0; transform:scale(.95);} to{opacity:1; transform:scale(1);} }
+
   @media (min-width:768px) {
     body { padding:30px; }
     .phone {
@@ -490,9 +389,7 @@
 </head>
 <body>
 
-<!-- =====================================================
-     ★★★ شاشة التحميل ★★★
-===================================================== -->
+<!-- Loading -->
 <div class="loading-screen" id="loadingScreen">
   <div class="loading-content">
     <div class="logo-loader">
@@ -503,16 +400,10 @@
     <div class="loading-bar">
       <div class="loading-bar-fill" id="loadingBarFill"></div>
     </div>
-    <div class="loading-dots">
-      <span></span><span></span><span></span>
-    </div>
   </div>
   <div class="loading-footer">© BORSA CLUP</div>
 </div>
 
-<!-- =====================================================
-     التصميم الرئيسي
-===================================================== -->
 <div class="phone" id="mainApp">
 
   <div class="logo-wrap">
@@ -554,6 +445,11 @@
         </div>
 
         <button class="btn primary" id="loginBtn">تسجيل الدخول</button>
+
+        <!-- ★ زر نسيت كلمة المرور -->
+        <a href="daam.html" class="forgot-btn">
+          🔑 نسيت كلمة المرور؟
+        </a>
 
         <div class="divider"><span>أو</span></div>
 
@@ -740,9 +636,10 @@
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword,
-         signInWithPopup, GoogleAuthProvider, signOut, updateProfile }
+         signInWithPopup, GoogleAuthProvider, signOut, updateProfile,
+         signInWithRedirect, getRedirectResult }
   from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-import { getFirestore, collection, doc, getDoc, getDocs, setDoc,
+import { getFirestore, collection, doc, getDoc, getDocs, setDoc, updateDoc,
          query, where, serverTimestamp }
   from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
@@ -753,7 +650,7 @@ const firebaseConfig = {
   storageBucket: "borsa-b77a3.firebasestorage.app",
   messagingSenderId: "1029468057087",
   appId: "1:1029468057087:web:1bafa9ffad7f14d7a2cbca",
-  measurementKind: "G-NKBES9QEBK"
+  measurementId: "G-NKBES9QEBK"
 };
 
 const app  = initializeApp(firebaseConfig);
@@ -762,19 +659,14 @@ const db   = getFirestore(app);
 
 const USERS_COLLECTION = 'users';
 
-/* =====================================================
-   شاشة التحميل — ضبط التقدم
-===================================================== */
+/* ========== Loading ========== */
 const loadingScreen = document.getElementById('loadingScreen');
 const loadingBarFill = document.getElementById('loadingBarFill');
 const mainApp = document.getElementById('mainApp');
 
-let loadProgress = 0;
 function setProgress(p) {
-  loadProgress = Math.min(100, Math.max(0, p));
-  loadingBarFill.style.width = loadProgress + '%';
+  loadingBarFill.style.width = Math.min(100, Math.max(0, p)) + '%';
 }
-
 function hideLoadingScreen() {
   setProgress(100);
   setTimeout(() => {
@@ -782,114 +674,19 @@ function hideLoadingScreen() {
     mainApp.classList.add('show');
   }, 400);
 }
+setProgress(20);
 
-/* تشغيل تدريجي للشريط */
-setProgress(15);
-
-/* لو فيه جلسة موجودة → حوّل فورًا لـ index */
-if (sessionStorage.getItem('borsa_admin')) {
-  setProgress(50);
-  setTimeout(() => {
-    setProgress(100);
-    setTimeout(() => window.location.replace('index.html'), 300);
-  }, 500);
-}
-
-/* =====================================================
-   تحميل إعدادات الموقع
-===================================================== */
-async function loadSiteSettings() {
-  try {
-    setProgress(30);
-
-    const snap = await getDoc(doc(db, 'settings', 'site'));
-
-    if (snap.exists()) {
-      const s = snap.data();
-
-      // الشعار
-      if (s.logoUrl) {
-        const loadingLogo = document.getElementById('loadingLogo');
-        const mainLogo = document.getElementById('mainLogo');
-        const fav = document.getElementById('siteFavicon');
-        const apple = document.getElementById('siteAppleIcon');
-
-        // نتأكد إن الصورة تحمّلت قبل ما نكمل
-        await new Promise((resolve) => {
-          const img = new Image();
-          img.onload = () => {
-            loadingLogo.src = s.logoUrl;
-            mainLogo.src = s.logoUrl;
-            if (fav) fav.href = s.logoUrl;
-            if (apple) apple.href = s.logoUrl;
-            resolve();
-          };
-          img.onerror = () => resolve();
-          img.src = s.logoUrl;
-        });
-      }
-
-      // الاسم
-      if (s.siteName) {
-        const fullName = s.siteName;
-        const accent = s.siteNameAccent || '';
-
-        // شاشة التحميل
-        const loadingBrand = document.getElementById('loadingBrand');
-        if (accent && fullName.includes(accent)) {
-          const parts = fullName.split(accent);
-          const before = parts[0].trim();
-          const after = parts.slice(1).join(accent).trim();
-          loadingBrand.innerHTML = `${escapeHtml(before)} <span>${escapeHtml(accent)}</span>${after ? ' ' + escapeHtml(after) : ''}`;
-        } else {
-          loadingBrand.textContent = fullName;
-        }
-
-        // الصفحة الرئيسية
-        const mainBrand = document.getElementById('mainBrand');
-        if (accent && fullName.includes(accent)) {
-          const parts = fullName.split(accent);
-          const before = parts[0].trim();
-          const after = parts.slice(1).join(accent).trim();
-          mainBrand.innerHTML = `${escapeHtml(before)} <span>${escapeHtml(accent)}</span>${after ? ' ' + escapeHtml(after) : ''}`;
-        } else {
-          mainBrand.textContent = fullName;
-        }
-
-        document.title = fullName + ' - الدخول';
-      }
-    }
-
-    setProgress(70);
-  } catch (e) {
-    console.warn('settings load failed:', e);
-    setProgress(70);
-  }
-}
-
-function escapeHtml(s) {
-  return String(s ?? '').replace(/[&<>"']/g, c => ({
-    '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
-  }[c]));
-}
-
-/* =====================================================
-   تهيئة التطبيق
-===================================================== */
-(async () => {
-  await loadSiteSettings();
-  setProgress(95);
-  setTimeout(hideLoadingScreen, 400);
-})();
-
-/* ========== الحالة العامة ========== */
+/* ========== الحالة ========== */
 let usernameVerified = false;
 let verifiedUsername = '';
 let pendingGoogleUser = null;
 let currentGender = '';
 let currentGmGender = '';
+let gmUsernameVerified = false;
+let gmVerifiedUsername = '';
+let captchaText = '';
 
-/* ========== عناصر ========== */
+/* ========== DOM ========== */
 const tabs = document.querySelectorAll('.tab');
 const views = {
   login: document.getElementById('view-login'),
@@ -927,23 +724,79 @@ const gmVerifyUserBtn = document.getElementById('gmVerifyUserBtn');
 const gmUserHelp = document.getElementById('gmUserHelp');
 
 /* ========== أدوات ========== */
+function escapeHtml(s) {
+  return String(s ?? '').replace(/[&<>"']/g, c => ({
+    '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
+  }[c]));
+}
+
 function showMsg(el, text, type = 'err') {
   el.innerHTML = text;
   el.className = 'msg ' + type;
   setTimeout(() => { el.className = 'msg'; el.innerHTML = ''; }, 5000);
 }
+
 function setFieldError(id, hasError) {
   const el = document.getElementById(id);
   if (el) el.classList.toggle('error', !!hasError);
 }
 
-/* ========== حفظ الجلسة ========== */
-function saveSession(userData, uid) {
-  sessionStorage.setItem('borsa_admin', userData.username || userData.fullName || 'مستخدم');
-  sessionStorage.setItem('borsa_admin_id', uid);
-  sessionStorage.setItem('borsa_admin_type', 'user');
-  sessionStorage.setItem('borsa_admin_email', userData.email || '');
-  sessionStorage.setItem('borsa_admin_role', userData.fullName || '');
+/* ========== تحميل الإعدادات ========== */
+async function loadSiteSettings() {
+  try {
+    setProgress(30);
+    const snap = await getDoc(doc(db, 'settings', 'site'));
+    if (snap.exists()) {
+      const s = snap.data();
+
+      if (s.logoUrl) {
+        const loadingLogo = document.getElementById('loadingLogo');
+        const mainLogo = document.getElementById('mainLogo');
+        const fav = document.getElementById('siteFavicon');
+        const apple = document.getElementById('siteAppleIcon');
+
+        await new Promise((resolve) => {
+          const img = new Image();
+          img.onload = () => {
+            loadingLogo.src = s.logoUrl;
+            mainLogo.src = s.logoUrl;
+            if (fav) fav.href = s.logoUrl;
+            if (apple) apple.href = s.logoUrl;
+            resolve();
+          };
+          img.onerror = () => resolve();
+          img.src = s.logoUrl;
+        });
+      }
+
+      if (s.siteName) {
+        const fullName = s.siteName;
+        const accent = s.siteNameAccent || '';
+
+        const loadingBrand = document.getElementById('loadingBrand');
+        const mainBrand = document.getElementById('mainBrand');
+
+        const buildName = (el) => {
+          if (accent && fullName.includes(accent)) {
+            const parts = fullName.split(accent);
+            const before = parts[0].trim();
+            const after = parts.slice(1).join(accent).trim();
+            el.innerHTML = `${escapeHtml(before)} <span>${escapeHtml(accent)}</span>${after ? ' ' + escapeHtml(after) : ''}`;
+          } else {
+            el.textContent = fullName;
+          }
+        };
+
+        buildName(loadingBrand);
+        buildName(mainBrand);
+        document.title = fullName + ' - الدخول';
+      }
+    }
+    setProgress(70);
+  } catch (e) {
+    console.warn('settings load failed:', e);
+    setProgress(70);
+  }
 }
 
 /* ========== التبويبات ========== */
@@ -992,7 +845,6 @@ document.querySelectorAll('.gender-opt[data-gm-gender]').forEach(el => {
 });
 
 /* ========== CAPTCHA ========== */
-let captchaText = '';
 function generateCaptcha() {
   const chars = '23456789ABCDEFGHJKLMNPQRSTUVWXYZ';
   let text = '';
@@ -1092,8 +944,6 @@ regUser.addEventListener('input', () => {
   regUserHelp.className = 'help';
 });
 
-let gmUsernameVerified = false;
-let gmVerifiedUsername = '';
 gmVerifyUserBtn.onclick = async () => {
   const u = gmUser.value.trim().toLowerCase();
   if (!u) {
@@ -1148,7 +998,9 @@ async function saveUserDoc(uid, data) {
   });
 }
 
-/* ========== Register ========== */
+/* =====================================================
+   ★★★ Register (مع حفظ كلمة السر) ★★★
+===================================================== */
 registerBtn.onclick = async () => {
   registerMsg.className = 'msg'; registerMsg.innerHTML = '';
   const full = regFull.value.trim();
@@ -1201,14 +1053,19 @@ registerBtn.onclick = async () => {
     const uid = cred.user.uid;
     await updateProfile(cred.user, { displayName: full }).catch(() => {});
 
+    // ★ حفظ كلمة السر في Firestore
     const userData = {
       uid, fullName: full, username: user, phone, email,
-      gender: currentGender, birthdate: birth, provider: 'local'
+      gender: currentGender, birthdate: birth, provider: 'local',
+      password: pass
     };
     await saveUserDoc(uid, userData);
 
-    // ★ احفظ الجلسة قبل التحويل
-    saveSession(userData, uid);
+    sessionStorage.setItem('borsa_admin', user);
+    sessionStorage.setItem('borsa_admin_id', uid);
+    sessionStorage.setItem('borsa_admin_type', 'user');
+    sessionStorage.setItem('borsa_admin_email', email);
+    sessionStorage.setItem('borsa_admin_role', full);
 
     showMsg(registerMsg, '✅ تم إنشاء الحساب — جارٍ التحويل...', 'ok');
     setTimeout(() => window.location.replace('index.html'), 1000);
@@ -1226,7 +1083,9 @@ registerBtn.onclick = async () => {
   }
 };
 
-/* ========== Login ========== */
+/* =====================================================
+   ★★★ Login (مع تحديث كلمة السر للمستخدمين القدام) ★★★
+===================================================== */
 loginBtn.onclick = async () => {
   loginMsg.className = 'msg'; loginMsg.innerHTML = '';
   const user = loginUser.value.trim().toLowerCase();
@@ -1263,8 +1122,14 @@ loginBtn.onclick = async () => {
       loginBtn.textContent = 'تسجيل الدخول';
       return;
     }
+    if (status === 'banned') {
+      showMsg(loginMsg, '🚫 تم حظر حسابك');
+      loginBtn.disabled = false;
+      loginBtn.textContent = 'تسجيل الدخول';
+      return;
+    }
     if (status === 'deleted') {
-      showMsg(loginMsg, '🚫 تم حذف حسابك');
+      showMsg(loginMsg, '🗑️ تم حذف حسابك');
       loginBtn.disabled = false;
       loginBtn.textContent = 'تسجيل الدخول';
       return;
@@ -1278,8 +1143,18 @@ loginBtn.onclick = async () => {
 
     await signInWithEmailAndPassword(auth, userDoc.email, pass);
 
-    // ★ احفظ الجلسة قبل التحويل
-    saveSession(userDoc, uid);
+    // ★ لو كلمة السر مش محفوظة في Firestore → احفظها (للمستخدمين القدام)
+    if (!userDoc.password) {
+      await updateDoc(doc(db, USERS_COLLECTION, uid), {
+        password: pass
+      }).catch(() => {});
+    }
+
+    sessionStorage.setItem('borsa_admin', userDoc.username || 'مستخدم');
+    sessionStorage.setItem('borsa_admin_id', uid);
+    sessionStorage.setItem('borsa_admin_type', 'user');
+    sessionStorage.setItem('borsa_admin_email', userDoc.email || '');
+    sessionStorage.setItem('borsa_admin_role', userDoc.fullName || '');
 
     showMsg(loginMsg, '✅ تم تسجيل الدخول — جارٍ التحويل...', 'ok');
     setTimeout(() => window.location.replace('index.html'), 800);
@@ -1296,49 +1171,105 @@ loginBtn.onclick = async () => {
   }
 };
 
-/* ========== Google ========== */
+/* =====================================================
+   ★★★ Google Sign-In ★★★
+===================================================== */
 const provider = new GoogleAuthProvider();
 provider.setCustomParameters({ prompt: 'select_account' });
 
-async function handleGoogleAuth() {
-  try {
-    const result = await signInWithPopup(auth, provider);
-    const user = result.user;
-    const uid = user.uid;
+async function processGoogleUser(user) {
+  const uid = user.uid;
 
+  try {
     const userSnap = await getDoc(doc(db, USERS_COLLECTION, uid));
 
     if (userSnap.exists()) {
       const data = userSnap.data();
       const status = (data.status || 'active').toLowerCase();
-      if (status === 'disabled') { await signOut(auth); showMsg(loginMsg, '🔒 تم تعطيل حسابك'); return; }
-      if (status === 'deleted') { await signOut(auth); showMsg(loginMsg, '🚫 تم حذف حسابك'); return; }
 
-      // ★ احفظ الجلسة
-      saveSession(data, uid);
+      if (status === 'disabled') {
+        await signOut(auth);
+        showMsg(loginMsg, '🔒 تم تعطيل حسابك');
+        return;
+      }
+      if (status === 'banned') {
+        await signOut(auth);
+        showMsg(loginMsg, '🚫 تم حظر حسابك');
+        return;
+      }
+      if (status === 'deleted') {
+        await signOut(auth);
+        showMsg(loginMsg, '🗑️ تم حذف حسابك');
+        return;
+      }
+
+      sessionStorage.setItem('borsa_admin', data.username || data.fullName || 'مستخدم');
+      sessionStorage.setItem('borsa_admin_id', uid);
+      sessionStorage.setItem('borsa_admin_type', 'user');
+      sessionStorage.setItem('borsa_admin_email', data.email || '');
+      sessionStorage.setItem('borsa_admin_role', data.fullName || '');
 
       window.location.replace('index.html');
       return;
     }
 
-    pendingGoogleUser = { uid, email: user.email, displayName: user.displayName || '' };
+    // مستخدم جديد
+    pendingGoogleUser = {
+      uid,
+      email: user.email,
+      displayName: user.displayName || ''
+    };
+
     gmFull.value = user.displayName || '';
     let suggested = (user.email || '').split('@')[0].replace(/[^a-zA-Z0-9_]/g, '');
     if (suggested.length < 3) suggested = 'user' + Math.floor(Math.random() * 9999);
     gmUser.value = suggested.toLowerCase();
 
     googleModal.classList.add('open');
+
+  } catch (e) {
+    console.error(e);
+    showMsg(loginMsg, '❌ فشل تحميل بيانات المستخدم');
+  }
+}
+
+async function handleGoogleAuth() {
+  // ★ استخدم Redirect بدل Popup
+  showMsg(loginMsg, '⏳ جارٍ تحويلك إلى Google...', 'ok');
+  googleLoginBtn.disabled = true;
+  googleRegisterBtn.disabled = true;
+
+  try {
+    await signInWithRedirect(auth, provider);
   } catch (err) {
     console.error(err);
-    const code = err.code || '';
+    googleLoginBtn.disabled = false;
+    googleRegisterBtn.disabled = false;
     let m = 'فشل تسجيل الدخول بـ Google';
-    if (code.includes('popup-closed-by-user')) m = '⚠️ أُغلقت النافذة';
-    else if (code.includes('popup-blocked')) m = '⚠️ المتصفح منع النافذة';
+    const code = err.code || '';
+    if (code.includes('unauthorized-domain')) m = '❌ الدومين غير مصرح في Firebase';
+    else if (code.includes('operation-not-allowed')) m = '❌ Google Sign-In غير مفعّل';
     showMsg(loginMsg, m);
   }
 }
+
 googleLoginBtn.onclick = handleGoogleAuth;
 googleRegisterBtn.onclick = handleGoogleAuth;
+
+/* معالجة العودة من Google */
+(async () => {
+  try {
+    const result = await getRedirectResult(auth);
+    if (result && result.user) {
+      await processGoogleUser(result.user);
+    }
+  } catch (err) {
+    console.warn('redirect result error:', err);
+    if (err.code === 'auth/unauthorized-domain') {
+      showMsg(loginMsg, '❌ الدومين غير مصرح — تواصل مع الإدارة');
+    }
+  }
+})();
 
 gmCancelBtn.onclick = async () => {
   googleModal.classList.remove('open');
@@ -1367,12 +1298,16 @@ gmSaveBtn.onclick = async () => {
       uid: pendingGoogleUser.uid,
       fullName: full, username: user, phone,
       email: pendingGoogleUser.email,
-      gender: currentGmGender, birthdate: birth, provider: 'google'
+      gender: currentGmGender, birthdate: birth, provider: 'google',
+      password: '(Google)'
     };
     await saveUserDoc(pendingGoogleUser.uid, userData);
 
-    // ★ احفظ الجلسة
-    saveSession(userData, pendingGoogleUser.uid);
+    sessionStorage.setItem('borsa_admin', user);
+    sessionStorage.setItem('borsa_admin_id', pendingGoogleUser.uid);
+    sessionStorage.setItem('borsa_admin_type', 'user');
+    sessionStorage.setItem('borsa_admin_email', pendingGoogleUser.email);
+    sessionStorage.setItem('borsa_admin_role', full);
 
     googleModal.classList.remove('open');
     window.location.replace('index.html');
@@ -1384,7 +1319,13 @@ gmSaveBtn.onclick = async () => {
   }
 };
 
-/* ========== PWA ========== */
+/* ========== بدء ========== */
+(async () => {
+  await loadSiteSettings();
+  setTimeout(hideLoadingScreen, 400);
+})();
+
+/* PWA */
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
     navigator.serviceWorker.register('sw.js').catch(() => {});
