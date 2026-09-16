@@ -25,9 +25,7 @@
     align-items:flex-start;
   }
 
-  /* =====================================================
-     Loading Screen
-  ===================================================== */
+  /* Loading */
   .loading-screen {
     position:fixed; inset:0; z-index:9999;
     background:radial-gradient(circle at 50% 30%, #0f2f4a 0%, #0a1929 40%, #000 100%);
@@ -93,9 +91,7 @@
     font-size:11px; letter-spacing:1px; font-weight:600; z-index:2;
   }
 
-  /* =====================================================
-     Gate (اسم + هاتف للمستخدم غير المسجل)
-  ===================================================== */
+  /* Gate */
   .gate {
     position:fixed; inset:0;
     background:radial-gradient(circle at 50% 30%, #0f2f4a 0%, #0a1929 40%, #000 100%);
@@ -138,17 +134,12 @@
     line-height:1.7; font-weight:600;
     margin-bottom:22px;
   }
-  .gate-box .field {
-    text-align:right;
-    margin-bottom:14px;
-  }
+  .gate-box .field { text-align:right; margin-bottom:14px; }
   .gate-box label {
     display:block; color:#9fc1e3;
     font-size:12.5px; margin-bottom:6px; font-weight:600;
   }
-  .gate-box .input-wrap {
-    position:relative;
-  }
+  .gate-box .input-wrap { position:relative; }
   .gate-box input {
     width:100%; padding:13px 42px 13px 14px;
     background:#0d2033; border:1.5px solid #1b3a5c;
@@ -202,9 +193,7 @@
   }
   .gate-err.show { display:block; }
 
-  /* =====================================================
-     App (Chat)
-  ===================================================== */
+  /* App */
   .app {
     width:100%; max-width:480px;
     height:100vh; max-height:900px;
@@ -215,7 +204,6 @@
   }
   .app.open { display:flex; }
 
-  /* Chat Header */
   .chat-header {
     display:flex; align-items:center; gap:10px;
     padding:14px 16px;
@@ -281,7 +269,6 @@
     color:#fff;
   }
 
-  /* Messages */
   .messages {
     flex:1; padding:16px 14px;
     overflow-y:auto;
@@ -323,10 +310,7 @@
     flex-shrink:0;
     margin-top:2px;
   }
-  .msg.bot .bot-content {
-    flex:1;
-    min-width:0;
-  }
+  .msg.bot .bot-content { flex:1; min-width:0; }
   .msg.user {
     align-self:flex-start;
     background:linear-gradient(135deg,#1e90ff,#0066cc);
@@ -359,7 +343,6 @@
     font-size:9.5px;
   }
 
-  /* Typing indicator */
   .typing {
     align-self:flex-end;
     background:rgba(255,200,0,.08);
@@ -382,7 +365,6 @@
     30% { transform:translateY(-6px); opacity:1; }
   }
 
-  /* Send Bar */
   .send-bar {
     display:flex; gap:8px;
     padding:12px 14px;
@@ -428,7 +410,6 @@
   .send-bar .s-btn:disabled { opacity:.4; cursor:not-allowed; }
   .send-bar .s-btn:active { transform:scale(.95); }
 
-  /* Support bar (لما يتحوّل للدعم) */
   .support-bar {
     padding:12px 14px;
     background:rgba(200,100,255,.08);
@@ -438,10 +419,7 @@
     gap:10px;
   }
   .support-bar.show { display:flex; }
-  .support-bar .ico {
-    font-size:24px;
-    flex-shrink:0;
-  }
+  .support-bar .ico { font-size:24px; flex-shrink:0; }
   .support-bar .txt {
     flex:1;
     font-size:12.5px;
@@ -450,7 +428,6 @@
     line-height:1.5;
   }
 
-  /* Admin online badge */
   .admin-status {
     padding:10px 14px;
     background:rgba(40,200,120,.1);
@@ -463,7 +440,6 @@
   }
   .admin-status.show { display:block; }
 
-  /* Toast */
   .toast-wrap {
     position:fixed; top:20px; left:50%;
     transform:translateX(-50%);
@@ -488,9 +464,6 @@
     to{opacity:1;transform:translateY(0);}
   }
 
-  /* =====================================================
-     Responsive
-  ===================================================== */
   @media (min-width:768px) {
     body { padding:30px; align-items:center; }
     .app {
@@ -524,15 +497,11 @@
     .chat-header { padding:10px 12px; }
     .chat-header .bot-avatar { width:38px; height:38px; font-size:18px; }
     .chat-header .info .n { font-size:13px; }
-    .chat-header .support-btn {
-      padding:6px 8px;
-      font-size:10px;
-    }
+    .chat-header .support-btn { padding:6px 8px; font-size:10px; }
     .msg { font-size:13px; padding:10px 12px; }
     .send-bar { padding:8px 10px; }
   }
 
-  /* Landscape phones */
   @media (max-height:500px) and (orientation:landscape) {
     .app { height:100vh; max-height:none; }
     .messages { padding:10px; }
@@ -556,7 +525,7 @@
   <div class="loading-footer">© BORSA CLUP</div>
 </div>
 
-<!-- Gate (الاسم + الهاتف) -->
+<!-- Gate -->
 <div class="gate" id="gate">
   <div class="gate-box">
     <div class="g-ico">🛟</div>
@@ -589,7 +558,7 @@
   </div>
 </div>
 
-<!-- App (Chat) -->
+<!-- App -->
 <div class="app" id="app">
 
   <div class="chat-header">
@@ -597,7 +566,7 @@
     <div class="bot-avatar">🤖</div>
     <div class="info">
       <div class="n">
-        المساعد الذكي
+        <span id="botNameHeader">المساعد الذكي</span>
         <span class="online"></span>
       </div>
       <div class="s" id="headerSub">متصل الآن · يرد فورًا</div>
@@ -626,13 +595,15 @@
 
 <div class="toast-wrap" id="toastWrap"></div>
 
-<!-- ⚠️ الجزء 2 (JavaScript) في الرد التالي -->
- <script type="module">
+<script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import { getFirestore, collection, doc, getDoc, getDocs, addDoc, updateDoc,
          query, orderBy, onSnapshot, serverTimestamp, where, limit }
   from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
+/* =====================================================
+   Firebase
+===================================================== */
 const firebaseConfig = {
   apiKey: "AIzaSyB36BkwxS0RHWWHSNGA1rZ5EHjtaeynTEA",
   authDomain: "borsa-b77a3.firebaseapp.com",
@@ -651,8 +622,27 @@ const BOT_SETTINGS_REF = doc(db, 'bot_settings', 'main');
 const BOT_LEARN_COLLECTION = 'bot_learning_queue';
 const GUEST_STORAGE_KEY = 'borsa_support_guest_v1';
 
-/* ========== النصوص الافتراضية ========== */
+/* =====================================================
+   إعدادات API
+===================================================== */
+const DEFAULT_API = {
+  key: 'bshr_2ae1863b164f2c1e2fe1559f87c8b8a8ef34226c200c7a5a',
+  url: 'https://bashar-ai-buddy.lovable.app/api/public/v1/chat'
+};
+
+let apiConfig = { ...DEFAULT_API };
+try {
+  const saved = JSON.parse(localStorage.getItem('borsa_api_cfg') || '{}');
+  Object.assign(apiConfig, saved);
+} catch(e) {}
+
+/* =====================================================
+   الإعدادات الافتراضية للبوت
+===================================================== */
 const DEFAULT_BOT = {
+  botName: 'بورصة',
+  persona: 'مساعد ذكي ودود بيساعد في كل حاجة تخص البورصة والأسهم المصرية، بترد بالعربي بأسلوب بسيط ومفيد.',
+
   welcome: `أهلاً بيك في BORSA CLUP 👋
 
 أنا المساعد الذكي 🤖
@@ -683,15 +673,18 @@ const DEFAULT_BOT = {
     { q: 'اسمي ايه',          a: '__MY_NAME__' },
     { q: 'اسمي إيه',          a: '__MY_NAME__' },
     { q: 'رقمي ايه',          a: '__MY_PHONE__' },
-    { q: 'ما هو الموقع',      a: 'BORSA CLUP هي منصة البورصة المصرية 🇪🇬\n\nبتقدملك:\n📈 أسهم البورصة المصرية\n💡 توصيات احترافية\n💬 مجتمع للمشرفين\n🛟 دعم فني 24/7' },
-    { q: 'ايه هو الموقع',     a: 'BORSA CLUP — منصة البورصة المصرية\nكل حاجة تحتاجها عن الأسهم والتوصيات في مكان واحد 🚀' },
     { q: 'السلام عليكم',      a: 'وعليكم السلام ورحمة الله 🌸\nأهلاً بيك! إزاي أقدر أساعدك؟' },
     { q: 'مرحبا',             a: 'أهلاً وسهلاً 👋\nتحب أساعدك في إيه؟' },
     { q: 'مرحبتين',           a: 'أهلاً بيك 🌟\nاسألني أي حاجة!' },
     { q: 'شكرا',              a: 'العفو 🌸\nأي حاجة تانية؟' },
     { q: 'شكراً',             a: 'العفو 🌸\nأي حاجة تانية؟' },
     { q: 'تمام',              a: 'الحمد لله 🌟\nأي حاجة تانية؟' }
-  ]
+  ],
+
+  autoReply: true,
+  generalQA: false,
+  readSite: true,
+  commands: false
 };
 
 const DEFAULT_REPLY = `🤔 ما قدرتش أفهم سؤالك للأسف.
@@ -703,7 +696,9 @@ const TRANSFER_TEXT = `📩 تمام، جارٍ تحويلك للدعم الفن
 
 هيتم الرد عليك في أقرب وقت إن شاء الله 🛟`;
 
-/* ========== الحالة ========== */
+/* =====================================================
+   الحالة
+===================================================== */
 let botSettings = { ...DEFAULT_BOT };
 let userSession = null;
 let currentChatId = null;
@@ -713,7 +708,38 @@ let chatUnsub = null;
 let lastMessagesCount = 0;
 let isProcessing = false;
 
-/* ========== DOM ========== */
+/* =====================================================
+   Cache للـ AI (لتسريع الردود المتكررة)
+===================================================== */
+const aiCache = new Map();
+const AI_CACHE_TTL = 10 * 60 * 1000; // 10 دقايق
+
+function getCachedReply(msg) {
+  const key = normalizeText(msg);
+  const hit = aiCache.get(key);
+  if (hit && (Date.now() - hit.time < AI_CACHE_TTL)) return hit.reply;
+  return null;
+}
+
+function setCachedReply(msg, reply) {
+  const key = normalizeText(msg);
+  aiCache.set(key, { reply, time: Date.now() });
+  // حد أقصى 100 عنصر
+  if (aiCache.size > 100) {
+    const firstKey = aiCache.keys().next().value;
+    aiCache.delete(firstKey);
+  }
+}
+
+/* =====================================================
+   Cache لسياق الموقع
+===================================================== */
+let siteContextCache = { data: '', time: 0 };
+const SITE_CACHE_TTL = 5 * 60 * 1000; // 5 دقايق
+
+/* =====================================================
+   DOM
+===================================================== */
 const loadingScreen = document.getElementById('loadingScreen');
 const loadingBarFill = document.getElementById('loadingBarFill');
 const loadingLogo = document.getElementById('loadingLogo');
@@ -734,6 +760,7 @@ const supportBar = document.getElementById('supportBar');
 const supportBarText = document.getElementById('supportBarText');
 const adminStatus = document.getElementById('adminStatus');
 const headerSub = document.getElementById('headerSub');
+const botNameHeader = document.getElementById('botNameHeader');
 const toastWrap = document.getElementById('toastWrap');
 
 /* =====================================================
@@ -751,7 +778,7 @@ function setProgress(p) {
 
 function hideLoading() {
   setProgress(100);
-  setTimeout(() => loadingScreen.classList.add('hide'), 300);
+  setTimeout(() => loadingScreen.classList.add('hide'), 200);
 }
 
 function showToast(text, type = 'info') {
@@ -791,7 +818,7 @@ function loadGuest() {
 }
 
 /* =====================================================
-   تحميل إعدادات الموقع
+   إعدادات الموقع
 ===================================================== */
 async function loadSiteSettings() {
   try {
@@ -801,9 +828,6 @@ async function loadSiteSettings() {
     const s = snap.data();
 
     if (s.logoUrl) {
-      const img = new Image();
-      img.src = s.logoUrl;
-      await new Promise(res => { img.onload = res; img.onerror = res; });
       loadingLogo.src = s.logoUrl;
       const fav = document.getElementById('siteFavicon');
       const apple = document.getElementById('siteAppleIcon');
@@ -830,7 +854,7 @@ async function loadSiteSettings() {
 }
 
 /* =====================================================
-   تحميل إعدادات البوت
+   إعدادات البوت
 ===================================================== */
 async function loadBotSettings() {
   try {
@@ -839,11 +863,18 @@ async function loadBotSettings() {
     if (snap.exists()) {
       const s = snap.data();
       botSettings = {
-        welcome: s.welcome || DEFAULT_BOT.welcome,
+        botName:  s.botName  || DEFAULT_BOT.botName,
+        persona:  s.persona  || DEFAULT_BOT.persona,
+        welcome:  s.welcome  || DEFAULT_BOT.welcome,
         keywords: Array.isArray(s.keywords) && s.keywords.length ? s.keywords : DEFAULT_BOT.keywords,
-        qas: Array.isArray(s.qas) && s.qas.length ? s.qas : DEFAULT_BOT.qas
+        qas:      Array.isArray(s.qas) && s.qas.length ? s.qas : DEFAULT_BOT.qas,
+        autoReply: s.autoReply !== false,
+        generalQA: !!s.generalQA,
+        readSite: s.readSite !== false,
+        commands: !!s.commands
       };
     }
+    if (botNameHeader) botNameHeader.textContent = botSettings.botName || 'المساعد الذكي';
     setProgress(55);
   } catch (e) {
     console.warn('bot settings:', e);
@@ -852,39 +883,151 @@ async function loadBotSettings() {
 }
 
 /* =====================================================
-   عدّادات Firestore
+   عدّادات Firestore (مع Cache)
 ===================================================== */
+let stocksCountCache = { val: 0, time: 0 };
+let recommendCountCache = { val: 0, time: 0 };
+const COUNT_CACHE_TTL = 3 * 60 * 1000;
+
 async function getStocksCount() {
+  if (Date.now() - stocksCountCache.time < COUNT_CACHE_TTL) return stocksCountCache.val;
   try {
     const snap = await getDocs(collection(db, 'stocks'));
     let c = 0;
     snap.forEach(d => { if (d.data().isActive !== false) c++; });
+    stocksCountCache = { val: c, time: Date.now() };
     return c;
-  } catch (e) { return 0; }
+  } catch (e) { return stocksCountCache.val; }
 }
 
 async function getRecommendCount() {
+  if (Date.now() - recommendCountCache.time < COUNT_CACHE_TTL) return recommendCountCache.val;
   try {
     const snap = await getDocs(collection(db, 'recommendations'));
     let c = 0;
     snap.forEach(d => { if (d.data().isActive !== false) c++; });
+    recommendCountCache = { val: c, time: Date.now() };
     return c;
-  } catch (e) { return 0; }
+  } catch (e) { return recommendCountCache.val; }
 }
 
 /* =====================================================
-   ★★★ إنشاء/استرجاع محادثة (بدون Composite Index) ★★★
+   جمع سياق الموقع (متوازي + Cache)
+===================================================== */
+const SITE_COLLECTIONS = [
+  'stocks', 'recommendations', 'tips', 'news', 'lessons'
+];
+
+async function collectSiteContext() {
+  if (!botSettings.readSite) return '';
+
+  if (siteContextCache.data && (Date.now() - siteContextCache.time < SITE_CACHE_TTL)) {
+    return siteContextCache.data;
+  }
+
+  const chunks = [];
+  const promises = SITE_COLLECTIONS.map(async (name) => {
+    try {
+      const snap = await getDocs(query(collection(db, name), limit(12)));
+      if (snap.empty) return null;
+      const rows = [];
+      snap.forEach(d => {
+        const data = d.data();
+        const slim = {};
+        Object.keys(data).slice(0, 4).forEach(k => {
+          const v = data[k];
+          if (typeof v === 'string' || typeof v === 'number' || typeof v === 'boolean') {
+            slim[k] = v;
+          }
+        });
+        rows.push(slim);
+      });
+      return `[${name}] ${JSON.stringify(rows).slice(0, 700)}`;
+    } catch (e) { return null; }
+  });
+
+  const results = await Promise.all(promises);
+  results.forEach(r => { if (r) chunks.push(r); });
+
+  let finalData = chunks.join('\n');
+  if (finalData.length > 2500) finalData = finalData.slice(0, 2500) + '...';
+
+  siteContextCache = { data: finalData, time: Date.now() };
+  return finalData;
+}
+
+/* =====================================================
+   بناء System Prompt (مختصر للسرعة)
+===================================================== */
+async function buildSystemPrompt() {
+  const name = botSettings.botName || 'بورصة';
+  const persona = botSettings.persona || 'مساعد ذكي ودود بيساعد في كل حاجة تخص البورصة.';
+  const qas = (botSettings.qas || []).slice(0, 10).map(x => `س: ${x.q}\nج: ${x.a}`).join('\n');
+
+  let siteData = '';
+  if (botSettings.readSite) {
+    siteData = await collectSiteContext();
+  }
+
+  const generalRule = botSettings.generalQA
+    ? 'لك الحرية في الإجابة على أي سؤال عام بأسلوب مفيد ومهذب.'
+    : 'ممنوع الإجابة على أسئلة خارج نطاق البورصة. لو حد سأل سؤال خارج النطاق، رد: "أنا أعرف الإجابة، لكن عذراً أنا مصمم للرد على استفسارات البورصة فقط."';
+
+  return `أنت "${name}"، بوت الدعم الرسمي لـ BORSA CLUP.
+شخصيتك: ${persona}
+${qas ? '\nأسئلة سريعة:\n' + qas : ''}
+${siteData ? '\nبيانات الموقع:\n' + siteData : ''}
+
+قواعد:
+1. ${generalRule}
+2. ردودك بالعربي، مختصرة، ومفيدة.
+3. اسمك "${name}".
+4. للتحويل للدعم: رد بـ "[TRANSFER]" فقط.`;
+}
+
+/* =====================================================
+   نداء بشار AI (مع Cache + Timeout)
+===================================================== */
+async function askBashar(userMessage) {
+  if (!apiConfig.url || !apiConfig.key) throw new Error('إعدادات API ناقصة');
+
+  const system = await buildSystemPrompt();
+
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), 20000); // 20 ثانية حد أقصى
+
+  try {
+    const res = await fetch(apiConfig.url, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': apiConfig.key
+      },
+      body: JSON.stringify({
+        message: userMessage,
+        system
+      }),
+      signal: controller.signal
+    });
+
+    clearTimeout(timeoutId);
+
+    const data = await res.json().catch(() => ({}));
+    if (res.status === 401) throw new Error('المفتاح غلط أو ملغي');
+    if (res.status === 429) throw new Error('طلبات كتير');
+    if (!res.ok) throw new Error(data.error || `خطأ ${res.status}`);
+    return data.reply || data.message || JSON.stringify(data);
+  } catch (e) {
+    clearTimeout(timeoutId);
+    throw e;
+  }
+}
+
+/* =====================================================
+   إنشاء/استرجاع محادثة
 ===================================================== */
 async function findOrCreateChat() {
   try {
-    console.log('🔍 findOrCreateChat:', {
-      name: userSession.name,
-      phone: userSession.phone,
-      userId: userSession.userId,
-      isGuest: userSession.isGuest
-    });
-
-    // ★ 1) ابحث عن محادثة موجودة (بدون orderBy)
     let existingChat = null;
     let existingId = null;
 
@@ -893,25 +1036,20 @@ async function findOrCreateChat() {
         collection(db, SUPPORT_COLLECTION),
         where('phone', '==', userSession.phone)
       );
-
       const snap = await getDocs(q);
       if (!snap.empty) {
-        // اختر الأحدث يدويًا
         let latest = null;
         let latestTime = 0;
-
         snap.forEach(d => {
           const data = d.data();
-          const t = data.lastMessageAt?.toDate 
+          const t = data.lastMessageAt?.toDate
             ? data.lastMessageAt.toDate().getTime()
             : (data.createdAt?.toDate ? data.createdAt.toDate().getTime() : 0);
-
           if (!latest || t > latestTime) {
             latest = { id: d.id, ...data };
             latestTime = t;
           }
         });
-
         if (latest && latest.status !== 'resolved') {
           existingChat = latest;
           existingId = latest.id;
@@ -921,21 +1059,17 @@ async function findOrCreateChat() {
       console.warn('search chat failed:', e);
     }
 
-    // ★ 2) لو لقينا محادثة قديمة → استخدمها
     if (existingChat) {
       currentChatId = existingId;
       currentChatData = existingChat;
-      console.log('✅ استخدمنا محادثة موجودة:', currentChatId);
-
-      if (existingChat.status === 'transferred' || 
-          existingChat.status === 'waiting' || 
+      if (existingChat.status === 'transferred' ||
+          existingChat.status === 'waiting' ||
           existingChat.status === 'active') {
         updateChatHeaderBasedOnStatus(existingChat);
       }
       return;
     }
 
-    // ★ 3) أنشئ محادثة جديدة
     const newRef = await addDoc(collection(db, SUPPORT_COLLECTION), {
       name: userSession.name,
       phone: userSession.phone,
@@ -959,10 +1093,8 @@ async function findOrCreateChat() {
       status: 'bot',
       assignedTo: null
     };
-    console.log('🆕 أنشأنا محادثة جديدة:', currentChatId);
 
-    // رسالة ترحيب من البوت
-    await addBotMessage(botSettings.welcome, true);
+    await addBotMessage(botSettings.welcome);
 
   } catch (e) {
     console.error('findOrCreateChat:', e);
@@ -973,14 +1105,13 @@ async function findOrCreateChat() {
 /* =====================================================
    إضافة رسائل
 ===================================================== */
-async function addBotMessage(text, forceAdd = false) {
+async function addBotMessage(text) {
   if (!currentChatId) return;
-
   const ref = collection(db, SUPPORT_COLLECTION, currentChatId, 'messages');
   await addDoc(ref, {
     text,
     sender: 'bot',
-    senderName: 'بوت',
+    senderName: botSettings.botName || 'بوت',
     createdAt: serverTimestamp(),
     deleted: false
   });
@@ -994,7 +1125,6 @@ async function addBotMessage(text, forceAdd = false) {
 
 async function addUserMessage(text) {
   if (!currentChatId) return;
-
   const ref = collection(db, SUPPORT_COLLECTION, currentChatId, 'messages');
   await addDoc(ref, {
     text,
@@ -1012,7 +1142,7 @@ async function addUserMessage(text) {
 }
 
 /* =====================================================
-   عرض الرسائل (Realtime)
+   عرض الرسائل
 ===================================================== */
 function listenMessages() {
   if (msgUnsub) msgUnsub();
@@ -1026,7 +1156,6 @@ function listenMessages() {
   msgUnsub = onSnapshot(q, (snap) => {
     const msgs = [];
     snap.forEach(d => msgs.push({ id: d.id, ...d.data() }));
-
     if (msgs.length !== lastMessagesCount) {
       renderMessages(msgs);
       lastMessagesCount = msgs.length;
@@ -1052,7 +1181,7 @@ function renderMessages(msgs) {
         <div class="bot-ico">🤖</div>
         <div class="bot-content">
           <div class="msg-head">
-            <span>المساعد الذكي</span>
+            <span>${esc(botSettings.botName || 'المساعد الذكي')}</span>
             <span class="t">${formatTime(m.createdAt)}</span>
           </div>
           <div>${esc(m.text || '').replace(/\n/g, '<br>')}</div>
@@ -1083,11 +1212,11 @@ function renderMessages(msgs) {
 
   setTimeout(() => {
     messagesEl.scrollTop = messagesEl.scrollHeight;
-  }, 100);
+  }, 50);
 }
 
 /* =====================================================
-   مؤشر "يكتب"
+   مؤشر الكتابة
 ===================================================== */
 function showTyping() {
   const old = document.getElementById('typingIndicator');
@@ -1106,7 +1235,7 @@ function hideTyping() {
 }
 
 /* =====================================================
-   ★★★ منطق البوت ★★★
+   منطق البوت
 ===================================================== */
 function normalizeText(text) {
   return String(text || '')
@@ -1135,14 +1264,13 @@ async function processUserMessage(text) {
       return;
     }
 
-    // 2) أسئلة وأجوبة
+    // 2) QA المحلي الأول (سريع جداً)
     const qas = botSettings.qas || [];
     let matched = null;
-
     for (const qa of qas) {
       const qNorm = normalizeText(qa.q);
       if (!qNorm) continue;
-      if (normalizedText.includes(qNorm) || qNorm.includes(normalizedText)) {
+      if (normalizedText === qNorm || normalizedText.includes(qNorm)) {
         matched = qa;
         break;
       }
@@ -1150,42 +1278,64 @@ async function processUserMessage(text) {
 
     if (matched) {
       let answer = matched.a;
-
       if (answer.includes('__STOCKS_COUNT__')) {
-        showTyping();
-        const c = await getStocksCount();
-        hideTyping();
-        answer = `📈 عدد الأسهم في الموقع حاليًا: *${c}* سهم`;
+        answer = `📈 عدد الأسهم في الموقع حاليًا: *${await getStocksCount()}* سهم`;
       } else if (answer.includes('__RECOMMEND_COUNT__')) {
-        showTyping();
-        const c = await getRecommendCount();
-        hideTyping();
-        answer = `💡 عدد التوصيات حاليًا: *${c}*`;
+        answer = `💡 عدد التوصيات حاليًا: *${await getRecommendCount()}*`;
       } else if (answer.includes('__MY_NAME__')) {
         answer = `أنت ${userSession.name || 'زائر'} 👋`;
       } else if (answer.includes('__MY_PHONE__')) {
         answer = `رقمك المسجّل: ${userSession.phone || '—'}`;
       }
-
       await addBotMessage(answer);
       return;
     }
 
-    // 3) ما لقاش → رد افتراضي
-    await addBotMessage(DEFAULT_REPLY);
+    // 3) Cache الـ AI
+    const cached = getCachedReply(text);
+    if (cached) {
+      await addBotMessage(cached);
+      return;
+    }
 
+    // 4) نداء AI
+    let reply = '';
     try {
-      await addDoc(collection(db, BOT_LEARN_COLLECTION), {
-        question: text,
-        from: userSession.name || 'زائر',
-        phone: userSession.phone || '',
-        chatId: currentChatId,
-        createdAt: serverTimestamp()
-      });
-    } catch (e) {}
+      reply = await askBashar(text);
+      if (reply && reply.trim() !== '[TRANSFER]') {
+        setCachedReply(text, reply);
+      }
+    } catch (err) {
+      console.warn('AI failed:', err);
+      reply = '';
+    }
+
+    // 5) Fallback
+    if (!reply) {
+      reply = DEFAULT_REPLY;
+      try {
+        await addDoc(collection(db, BOT_LEARN_COLLECTION), {
+          question: text,
+          from: userSession.name || 'زائر',
+          phone: userSession.phone || '',
+          chatId: currentChatId,
+          createdAt: serverTimestamp()
+        });
+      } catch (e) {}
+    }
+
+    // 6) تحويل
+    if (reply.trim() === '[TRANSFER]') {
+      await handleTransferToSupport();
+      return;
+    }
+
+    // 7) أرسل
+    await addBotMessage(reply);
 
   } catch (e) {
     console.error('processUserMessage:', e);
+    await addBotMessage(DEFAULT_REPLY);
   } finally {
     isProcessing = false;
   }
@@ -1197,7 +1347,6 @@ async function processUserMessage(text) {
 async function handleTransferToSupport() {
   try {
     await addBotMessage(TRANSFER_TEXT);
-
     await updateDoc(doc(db, SUPPORT_COLLECTION, currentChatId), {
       status: 'transferred',
       transferredAt: serverTimestamp(),
@@ -1205,7 +1354,6 @@ async function handleTransferToSupport() {
       lastMessageAt: serverTimestamp(),
       lastSender: 'bot'
     });
-
     supportBar.classList.add('show');
     supportBarText.textContent = '🛟 تم تحويلك للدعم — هيتم الرد عليك في أقرب وقت';
     showToast('تم التحويل للدعم الفني', 'ok');
@@ -1216,7 +1364,7 @@ async function handleTransferToSupport() {
 }
 
 /* =====================================================
-   إرسال رسالة
+   إرسال رسالة (سريع)
 ===================================================== */
 async function sendMessage() {
   const text = (msgInput.value || '').trim();
@@ -1227,21 +1375,22 @@ async function sendMessage() {
   msgInput.value = '';
   msgInput.style.height = 'auto';
 
+  // ⚡ يظهر المؤشر فوراً قبل أي انتظار
+  showTyping();
+
   try {
     await addUserMessage(text);
 
     const status = (currentChatData?.status || 'bot').toLowerCase();
 
     if (status === 'bot' || status === 'transferred') {
-      showTyping();
-      await new Promise(r => setTimeout(r, 700 + Math.random() * 500));
-      hideTyping();
       await processUserMessage(text);
     }
   } catch (e) {
     console.error(e);
     showToast('فشل الإرسال', 'err');
   } finally {
+    hideTyping();
     msgInput.disabled = false;
     sendBtn.disabled = false;
     msgInput.focus();
@@ -1269,7 +1418,7 @@ supportBtn.onclick = async () => {
 };
 
 /* =====================================================
-   مراقبة الحالة
+   حالة المحادثة
 ===================================================== */
 function updateChatHeaderBasedOnStatus(data) {
   const status = (data.status || 'bot').toLowerCase();
@@ -1335,9 +1484,7 @@ gateSubmit.onclick = async () => {
 
     await findOrCreateChat();
 
-    if (!currentChatId) {
-      throw new Error('فشل إنشاء المحادثة');
-    }
+    if (!currentChatId) throw new Error('فشل إنشاء المحادثة');
 
     saveGuest();
 
@@ -1368,13 +1515,11 @@ async function initSession() {
   try {
     setProgress(70);
 
-    // 1) المستخدم مسجّل؟
     const userId = sessionStorage.getItem('borsa_admin_id');
     const userName = sessionStorage.getItem('borsa_admin') || sessionStorage.getItem('borsa_admin_role');
 
     if (userId && userName) {
       setProgress(80);
-
       let userData = null;
       try {
         const userSnap = await getDoc(doc(db, 'users', userId));
@@ -1389,8 +1534,6 @@ async function initSession() {
         isGuest: false
       };
 
-      console.log('👤 مستخدم مسجّل:', userSession);
-
       gate.classList.remove('open');
       appEl.classList.add('open');
 
@@ -1402,7 +1545,6 @@ async function initSession() {
       return;
     }
 
-    // 2) زائر محفوظ؟
     const guest = loadGuest();
     if (guest && guest.name && guest.phone && guest.chatId) {
       userSession = { name: guest.name, phone: guest.phone, isGuest: true };
@@ -1426,7 +1568,6 @@ async function initSession() {
       } catch (e) {}
     }
 
-    // 3) ما فيش جلسة → Gate
     setProgress(95);
     gate.classList.add('open');
 
@@ -1441,7 +1582,7 @@ async function initSession() {
 }
 
 /* =====================================================
-   بدء
+   بدء التشغيل
 ===================================================== */
 (async () => {
   await loadSiteSettings();
@@ -1454,7 +1595,6 @@ async function initSession() {
   }, 500);
 })();
 
-/* SW */
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
     navigator.serviceWorker.register('sw.js').catch(() => {});
