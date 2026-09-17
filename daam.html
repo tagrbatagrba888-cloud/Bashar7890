@@ -597,7 +597,7 @@
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getFirestore, collection, doc, getDoc, getDocs, addDoc, updateDoc,
+import { getFirestore, collection, doc, getDoc, getDocs, addDoc, updateDoc, deleteDoc,
          query, orderBy, onSnapshot, serverTimestamp, where, limit }
   from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
@@ -620,7 +620,8 @@ const db  = getFirestore(app);
 const SUPPORT_COLLECTION = 'support_chats';
 const BOT_SETTINGS_REF = doc(db, 'bot_settings', 'main');
 const BOT_LEARN_COLLECTION = 'bot_learning_queue';
-const GUEST_STORAGE_KEY = 'borsa_support_guest_v1';
+const GUEST_STORAGE_KEY = 'borsa_support_guest_v2';
+const CONTEXT_STORAGE_KEY = 'borsa_support_context_v2';
 
 /* =====================================================
    إعدادات API
@@ -696,6 +697,27 @@ const TRANSFER_TEXT = `📩 تمام، جارٍ تحويلك للدعم الفن
 
 هيتم الرد عليك في أقرب وقت إن شاء الله 🛟`;
 
+/* ★ كلمات مفتاحية لإلغاء التحويل ★ */
+const CANCEL_TRANSFER_KEYWORDS = [
+  'الغاء التحويل', 'الغاء تحويل', 'إلغاء التحويل', 'إلغاء تحويل',
+  'الغى التحويل', 'الغي التحويل', 'الغ تحويل', 'الغي تحويل',
+  'ارجع للبوت', 'أرجع للبوت', 'رجعني للبوت', 'رجعنى للبوت',
+  'كمل مع البوت', 'كمل معايا', 'كمل معي',
+  'مش عايز دعم', 'مش عاوز دعم', 'بلاش دعم', 'قفل التحويل',
+  'الغاء الدعم', 'إلغاء الدعم', 'الغي الدعم', 'الغى الدعم',
+  'مش محتاج دعم', 'مش محتاج التحويل', 'ارجعني للبوت'
+];
+
+/* ★ كلمات مفتاحية لإنهاء المحادثة ★ */
+const END_CHAT_KEYWORDS = [
+  'انهاء المحادثة', 'إنهاء المحادثة', 'اقفل المحادثة', 'أقفل المحادثة',
+  'اقفل الشات', 'أقفل الشات', 'انهي المحادثة', 'إنهي المحادثة',
+  'اغلق المحادثة', 'إغلاق المحادثة', 'قفل الشات', 'قفل المحادثة',
+  'مع السلامة', 'بايباي', 'bye', 'انصراف', 'خلصت', 'خلصت المحادثة',
+  'خلاص شكرا', 'خلاص شكراً', 'شكرا خلاص', 'شكراً خلاص',
+  'عايز اخرج', 'عايز أخرج', 'عاوز اخرج', 'عاوز أخرج'
+];
+
 /* =====================================================
    الحالة
 ===================================================== */
@@ -708,11 +730,39 @@ let chatUnsub = null;
 let lastMessagesCount = 0;
 let isProcessing = false;
 
+/* ★ سياق الحوار — ذاكرة محلية للحوار ★ */
+let chatContext = {
+  lastTopic: null,
+  lastStockSymbol: null,
+  lastStockName: null,
+  lastQuestionType: null,
+  history: []
+};
+
+function loadContextFromStorage() {
+  try {
+    const raw = localStorage.getItem(CONTEXT_STORAGE_KEY);
+    if (raw) chatContext = { ...chatContext, ...JSON.parse(raw) };
+  } catch(e) {}
+}
+
+function saveContextToStorage() {
+  try {
+    localStorage.setItem(CONTEXT_STORAGE_KEY, JSON.stringify({
+      lastTopic: chatContext.lastTopic,
+      lastStockSymbol: chatContext.lastStockSymbol,
+      lastStockName: chatContext.lastStockName,
+      lastQuestionType: chatContext.lastQuestionType,
+      history: chatContext.history.slice(-6)
+    }));
+  } catch(e) {}
+}
+
 /* =====================================================
-   Cache للـ AI (لتسريع الردود المتكررة)
+   Cache للـ AI
 ===================================================== */
 const aiCache = new Map();
-const AI_CACHE_TTL = 10 * 60 * 1000; // 10 دقايق
+const AI_CACHE_TTL = 10 * 60 * 1000;
 
 function getCachedReply(msg) {
   const key = normalizeText(msg);
@@ -724,7 +774,6 @@ function getCachedReply(msg) {
 function setCachedReply(msg, reply) {
   const key = normalizeText(msg);
   aiCache.set(key, { reply, time: Date.now() });
-  // حد أقصى 100 عنصر
   if (aiCache.size > 100) {
     const firstKey = aiCache.keys().next().value;
     aiCache.delete(firstKey);
@@ -735,7 +784,7 @@ function setCachedReply(msg, reply) {
    Cache لسياق الموقع
 ===================================================== */
 let siteContextCache = { data: '', time: 0 };
-const SITE_CACHE_TTL = 5 * 60 * 1000; // 5 دقايق
+const SITE_CACHE_TTL = 5 * 60 * 1000;
 
 /* =====================================================
    DOM
@@ -781,12 +830,12 @@ function hideLoading() {
   setTimeout(() => loadingScreen.classList.add('hide'), 200);
 }
 
-function showToast(text, type = 'info') {
+function showToast(text, type = 'info', duration = 3000) {
   const t = document.createElement('div');
   t.className = 'toast ' + type;
   t.textContent = text;
   toastWrap.appendChild(t);
-  setTimeout(() => t.remove(), 3000);
+  setTimeout(() => t.remove(), duration);
 }
 
 function formatTime(ts) {
@@ -795,6 +844,26 @@ function formatTime(ts) {
   const hh = String(d.getHours()).padStart(2,'0');
   const mm = String(d.getMinutes()).padStart(2,'0');
   return `${hh}:${mm}`;
+}
+
+function normalizeText(text) {
+  return String(text || '')
+    .trim()
+    .toLowerCase()
+    .replace(/[أإآ]/g, 'ا')
+    .replace(/ة/g, 'ه')
+    .replace(/ى/g, 'ي')
+    .replace(/[^\w\s\u0600-\u06FF]/g, '')
+    .replace(/\s+/g, ' ');
+}
+
+/* ★ فحص لو النص فيه أي كلمة من قائمة ★ */
+function matchesAnyKeyword(text, keywordList) {
+  const norm = normalizeText(text);
+  return keywordList.some(kw => {
+    const kNorm = normalizeText(kw);
+    return kNorm && norm.includes(kNorm);
+  });
 }
 
 function saveGuest() {
@@ -883,7 +952,7 @@ async function loadBotSettings() {
 }
 
 /* =====================================================
-   عدّادات Firestore (مع Cache)
+   عدّادات Firestore
 ===================================================== */
 let stocksCountCache = { val: 0, time: 0 };
 let recommendCountCache = { val: 0, time: 0 };
@@ -912,7 +981,74 @@ async function getRecommendCount() {
 }
 
 /* =====================================================
-   جمع سياق الموقع (متوازي + Cache)
+   ★ جلب بيانات الأسهم للسياق ★
+===================================================== */
+let stocksCache = { data: [], time: 0 };
+const STOCKS_CACHE_TTL = 3 * 60 * 1000;
+
+async function getAllStocks() {
+  if (stocksCache.data.length && (Date.now() - stocksCache.time < STOCKS_CACHE_TTL)) {
+    return stocksCache.data;
+  }
+  try {
+    const snap = await getDocs(collection(db, 'stocks'));
+    const arr = [];
+    snap.forEach(d => {
+      const data = { id: d.id, ...d.data() };
+      if (data.isActive !== false) arr.push(data);
+    });
+    stocksCache = { data: arr, time: Date.now() };
+    return arr;
+  } catch (e) {
+    return stocksCache.data;
+  }
+}
+
+async function findStock(queryStr) {
+  if (!queryStr) return null;
+  const stocks = await getAllStocks();
+  const q = String(queryStr).trim().toLowerCase();
+
+  let hit = stocks.find(s => (s.symbol || '').toLowerCase() === q);
+  if (hit) return hit;
+
+  hit = stocks.find(s => (s.name || '').toLowerCase() === q);
+  if (hit) return hit;
+
+  hit = stocks.find(s =>
+    (s.name || '').toLowerCase().includes(q) ||
+    (s.symbol || '').toLowerCase().includes(q)
+  );
+  if (hit) return hit;
+
+  const words = q.split(/\s+/).filter(w => w.length > 2);
+  if (words.length) {
+    hit = stocks.find(s => {
+      const name = (s.name || '').toLowerCase();
+      return words.every(w => name.includes(w));
+    });
+    if (hit) return hit;
+  }
+
+  return null;
+}
+
+async function findAdvicesForStock(stockSymbol) {
+  try {
+    const snap = await getDocs(collection(db, 'recommendations'));
+    const arr = [];
+    snap.forEach(d => {
+      const data = d.data();
+      if ((data.stockSymbol || '').toLowerCase() === String(stockSymbol).toLowerCase()) {
+        arr.push({ id: d.id, ...data });
+      }
+    });
+    return arr;
+  } catch (e) { return []; }
+}
+
+/* =====================================================
+   جمع سياق الموقع
 ===================================================== */
 const SITE_COLLECTIONS = [
   'stocks', 'recommendations', 'tips', 'news', 'lessons'
@@ -957,7 +1093,7 @@ async function collectSiteContext() {
 }
 
 /* =====================================================
-   بناء System Prompt (مختصر للسرعة)
+   ★ بناء System Prompt ★
 ===================================================== */
 async function buildSystemPrompt() {
   const name = botSettings.botName || 'بورصة';
@@ -969,6 +1105,31 @@ async function buildSystemPrompt() {
     siteData = await collectSiteContext();
   }
 
+  let stocksList = '';
+  try {
+    const stocks = await getAllStocks();
+    if (stocks.length) {
+      stocksList = stocks.slice(0, 80).map(s =>
+        `${s.symbol}=${s.name}${s.sector && s.sector !== 'غير محدد' ? '(' + s.sector + ')' : ''}`
+      ).join(' | ');
+    }
+  } catch (e) {}
+
+  let contextStr = '';
+  if (chatContext.lastStockName || chatContext.lastTopic || chatContext.history.length) {
+    contextStr = '\n📌 سياق الحوار الحالي:\n';
+    if (chatContext.lastStockName) {
+      contextStr += `• آخر سهم اتكلمنا عنه: ${chatContext.lastStockName}${chatContext.lastStockSymbol ? ' (' + chatContext.lastStockSymbol + ')' : ''}\n`;
+    }
+    if (chatContext.lastQuestionType) {
+      contextStr += `• نوع السؤال الأخير: ${chatContext.lastQuestionType}\n`;
+    }
+    if (chatContext.history.length) {
+      const last = chatContext.history.slice(-6);
+      contextStr += '• آخر 6 رسايل:\n' + last.map(h => `  - ${h.role === 'user' ? 'المستخدم' : 'البوت'}: ${h.text.slice(0, 100)}`).join('\n');
+    }
+  }
+
   const generalRule = botSettings.generalQA
     ? 'لك الحرية في الإجابة على أي سؤال عام بأسلوب مفيد ومهذب.'
     : 'ممنوع الإجابة على أسئلة خارج نطاق البورصة. لو حد سأل سؤال خارج النطاق، رد: "أنا أعرف الإجابة، لكن عذراً أنا مصمم للرد على استفسارات البورصة فقط."';
@@ -977,16 +1138,23 @@ async function buildSystemPrompt() {
 شخصيتك: ${persona}
 ${qas ? '\nأسئلة سريعة:\n' + qas : ''}
 ${siteData ? '\nبيانات الموقع:\n' + siteData : ''}
+${stocksList ? '\nقائمة الأسهم المتاحة:\n' + stocksList : ''}
+${contextStr}
 
-قواعد:
+⚡ قواعد مهمة جداً:
 1. ${generalRule}
 2. ردودك بالعربي، مختصرة، ومفيدة.
 3. اسمك "${name}".
-4. للتحويل للدعم: رد بـ "[TRANSFER]" فقط.`;
+4. للتحويل للدعم: رد بـ "[TRANSFER]" فقط.
+5. **السياق مهم جداً**: لو المستخدم بيكمل حوار سابق، اعتبر سؤاله امتداد للسياق.
+6. **ماتقولش "مش فاهم" أو "مين قصدك"** — حاول دايماً تفهم من السياق.
+7. لو حد ذكر اسم سهم، ابحث عنه في قائمة الأسهم المتاحة، واديله معلومات منه.
+8. لو حد سأل عن سعر/توصية سهم، ابحث عنه في التوصيات واديله البيانات.
+9. لو مفيش معلومة، قول "للأسف مش عندي البيانات دي حالياً، تحب أحوّلك للدعم الفني؟"`;
 }
 
 /* =====================================================
-   نداء بشار AI (مع Cache + Timeout)
+   ★ نداء بشار AI ★
 ===================================================== */
 async function askBashar(userMessage) {
   if (!apiConfig.url || !apiConfig.key) throw new Error('إعدادات API ناقصة');
@@ -994,7 +1162,7 @@ async function askBashar(userMessage) {
   const system = await buildSystemPrompt();
 
   const controller = new AbortController();
-  const timeoutId = setTimeout(() => controller.abort(), 20000); // 20 ثانية حد أقصى
+  const timeoutId = setTimeout(() => controller.abort(), 25000);
 
   try {
     const res = await fetch(apiConfig.url, {
@@ -1021,6 +1189,40 @@ async function askBashar(userMessage) {
     clearTimeout(timeoutId);
     throw e;
   }
+}
+
+/* =====================================================
+   ★ تحديث السياق من رسالة المستخدم ★
+===================================================== */
+async function updateContextFromMessage(text) {
+  const norm = normalizeText(text);
+
+  chatContext.history.push({ role: 'user', text: text.slice(0, 200) });
+  if (chatContext.history.length > 10) chatContext.history.shift();
+
+  const stocks = await getAllStocks();
+  for (const s of stocks) {
+    const sym = (s.symbol || '').toLowerCase();
+    const name = (s.name || '').toLowerCase();
+    if ((sym && norm.includes(sym)) || (name && norm.includes(name))) {
+      chatContext.lastStockSymbol = s.symbol;
+      chatContext.lastStockName = s.name;
+      chatContext.lastTopic = 'stock';
+      break;
+    }
+  }
+
+  if (/(?:سعر|كام|بكام|price)/.test(norm)) {
+    chatContext.lastQuestionType = 'سعر';
+  } else if (/(?:حكم|حلال|حرام|شرعي)/.test(norm)) {
+    chatContext.lastQuestionType = 'حكم شرعي';
+  } else if (/(?:توصية|توصيات|نصيحة)/.test(norm)) {
+    chatContext.lastQuestionType = 'توصية';
+  } else if (/(?:معلومات|نبذة|عن الشركة|ايه شركة)/.test(norm)) {
+    chatContext.lastQuestionType = 'معلومات';
+  }
+
+  saveContextToStorage();
 }
 
 /* =====================================================
@@ -1121,6 +1323,10 @@ async function addBotMessage(text) {
     lastMessageAt: serverTimestamp(),
     lastSender: 'bot'
   });
+
+  chatContext.history.push({ role: 'bot', text: text.slice(0, 200) });
+  if (chatContext.history.length > 10) chatContext.history.shift();
+  saveContextToStorage();
 }
 
 async function addUserMessage(text) {
@@ -1165,11 +1371,11 @@ function listenMessages() {
   });
 }
 
+/* ★ عرض الرسائل مع الحفاظ على مؤشر الكتابة ★ */
 function renderMessages(msgs) {
   messagesEl.innerHTML = '';
 
   const visible = msgs.filter(m => !m.deleted);
-  if (!visible.length) return;
 
   visible.forEach(m => {
     const el = document.createElement('div');
@@ -1210,6 +1416,15 @@ function renderMessages(msgs) {
     messagesEl.appendChild(el);
   });
 
+  /* ✅ مهم: نعيد إضافة مؤشر الكتابة لو لسه بيحصل معالجة */
+  if (isProcessing) {
+    const typing = document.createElement('div');
+    typing.className = 'typing';
+    typing.id = 'typingIndicator';
+    typing.innerHTML = '<span></span><span></span><span></span>';
+    messagesEl.appendChild(typing);
+  }
+
   setTimeout(() => {
     messagesEl.scrollTop = messagesEl.scrollHeight;
   }, 50);
@@ -1235,19 +1450,8 @@ function hideTyping() {
 }
 
 /* =====================================================
-   منطق البوت
+   ★ منطق البوت مع السياق ★
 ===================================================== */
-function normalizeText(text) {
-  return String(text || '')
-    .trim()
-    .toLowerCase()
-    .replace(/[أإآ]/g, 'ا')
-    .replace(/ة/g, 'ه')
-    .replace(/ى/g, 'ي')
-    .replace(/[^\w\s\u0600-\u06FF]/g, '')
-    .replace(/\s+/g, ' ');
-}
-
 async function processUserMessage(text) {
   if (isProcessing) return;
   isProcessing = true;
@@ -1255,7 +1459,22 @@ async function processUserMessage(text) {
   try {
     const normalizedText = normalizeText(text);
 
-    // 1) كلمات التحويل
+    /* ⚡ تحديث السياق أولاً */
+    await updateContextFromMessage(text);
+
+    /* ⚡ 0) فحص أمر إنهاء المحادثة (أولوية قصوى) */
+    if (matchesAnyKeyword(text, END_CHAT_KEYWORDS)) {
+      await handleEndChat();
+      return;
+    }
+
+    /* ⚡ 1) فحص أمر إلغاء التحويل (قبل أي حاجة) */
+    if (matchesAnyKeyword(text, CANCEL_TRANSFER_KEYWORDS)) {
+      await handleCancelTransfer();
+      return;
+    }
+
+    /* 2) كلمات التحويل */
     const keywords = (botSettings.keywords || []).map(k => normalizeText(k));
     const isTransfer = keywords.some(kw => kw && normalizedText.includes(kw));
 
@@ -1264,7 +1483,7 @@ async function processUserMessage(text) {
       return;
     }
 
-    // 2) QA المحلي الأول (سريع جداً)
+    /* 3) QA المحلي */
     const qas = botSettings.qas || [];
     let matched = null;
     for (const qa of qas) {
@@ -1291,17 +1510,41 @@ async function processUserMessage(text) {
       return;
     }
 
-    // 3) Cache الـ AI
+    /* ⚡ 4) بحث محلي ذكي عن سهم في الرسالة */
+    let enrichedContext = text;
+
+    const foundStock = await findStockFromText(text);
+    if (foundStock) {
+      const advices = await findAdvicesForStock(foundStock.symbol);
+      let stockInfo = `\n[بيانات ${foundStock.name} (${foundStock.symbol})]:\n`;
+      stockInfo += `• القطاع: ${foundStock.sector || 'غير محدد'}\n`;
+      if (foundStock.fairValue) stockInfo += `• القيمة العادلة: ${foundStock.fairValue}\n`;
+      if (foundStock.halal) stockInfo += `• الحكم الشرعي: ${foundStock.halal}\n`;
+      if (advices.length) {
+        stockInfo += `• التوصيات (${advices.length}):\n`;
+        advices.slice(0, 3).forEach(a => {
+          stockInfo += `  - شراء: ${a.buyPrice}, بيع: ${a.sellPrice}`;
+          if (a.stopLoss) stockInfo += `, وقف: ${a.stopLoss}`;
+          stockInfo += '\n';
+        });
+      } else {
+        stockInfo += `• مفيش توصيات حالياً على السهم\n`;
+      }
+
+      enrichedContext = text + '\n\n' + stockInfo;
+    }
+
+    /* 5) Cache */
     const cached = getCachedReply(text);
     if (cached) {
       await addBotMessage(cached);
       return;
     }
 
-    // 4) نداء AI
+    /* 6) نداء AI */
     let reply = '';
     try {
-      reply = await askBashar(text);
+      reply = await askBashar(enrichedContext);
       if (reply && reply.trim() !== '[TRANSFER]') {
         setCachedReply(text, reply);
       }
@@ -1310,7 +1553,7 @@ async function processUserMessage(text) {
       reply = '';
     }
 
-    // 5) Fallback
+    /* 7) Fallback */
     if (!reply) {
       reply = DEFAULT_REPLY;
       try {
@@ -1324,13 +1567,13 @@ async function processUserMessage(text) {
       } catch (e) {}
     }
 
-    // 6) تحويل
+    /* 8) تحويل */
     if (reply.trim() === '[TRANSFER]') {
       await handleTransferToSupport();
       return;
     }
 
-    // 7) أرسل
+    /* 9) أرسل */
     await addBotMessage(reply);
 
   } catch (e) {
@@ -1339,6 +1582,31 @@ async function processUserMessage(text) {
   } finally {
     isProcessing = false;
   }
+}
+
+/* ★ البحث عن سهم داخل نص ★ */
+async function findStockFromText(text) {
+  const norm = normalizeText(text);
+  const stocks = await getAllStocks();
+
+  for (const s of stocks) {
+    const sym = (s.symbol || '').toLowerCase();
+    const name = (s.name || '').toLowerCase();
+    if ((sym && sym.length > 2 && norm.includes(sym)) ||
+        (name && name.length > 3 && norm.includes(name))) {
+      return s;
+    }
+  }
+
+  const words = norm.split(/\s+/).filter(w => w.length > 3);
+  for (const w of words) {
+    for (const s of stocks) {
+      const name = (s.name || '').toLowerCase();
+      if (name.includes(w)) return s;
+    }
+  }
+
+  return null;
 }
 
 /* =====================================================
@@ -1356,6 +1624,7 @@ async function handleTransferToSupport() {
     });
     supportBar.classList.add('show');
     supportBarText.textContent = '🛟 تم تحويلك للدعم — هيتم الرد عليك في أقرب وقت';
+    headerSub.textContent = 'في انتظار أحد المشرفين...';
     showToast('تم التحويل للدعم الفني', 'ok');
   } catch (e) {
     console.error(e);
@@ -1364,7 +1633,152 @@ async function handleTransferToSupport() {
 }
 
 /* =====================================================
-   إرسال رسالة (سريع)
+   ⚡ إلغاء التحويل للدعم
+===================================================== */
+async function handleCancelTransfer() {
+  try {
+    // 1) حدّث Firestore
+    await updateDoc(doc(db, SUPPORT_COLLECTION, currentChatId), {
+      status: 'bot',
+      assignedTo: null,
+      assignedAt: null,
+      transferredAt: null,
+      lastMessage: 'تم إلغاء التحويل للدعم',
+      lastMessageAt: serverTimestamp(),
+      lastSender: 'bot'
+    });
+
+    // 2) حدّث الواجهة فوراً
+    supportBar.classList.remove('show');
+    adminStatus.classList.remove('show');
+    headerSub.textContent = 'متصل الآن · يرد فورًا';
+    sendBtn.disabled = false;
+    msgInput.disabled = false;
+    msgInput.placeholder = 'اكتب رسالتك...';
+
+    // 3) حدّث الكاش المحلي
+    if (currentChatData) {
+      currentChatData.status = 'bot';
+      currentChatData.assignedTo = null;
+    }
+
+    // 4) رسالة تأكيد من البوت
+    await addBotMessage('✅ تم إلغاء التحويل للدعم.\nرجعنا للمساعد الذكي 🤖\nتحب أساعدك في إيه؟');
+
+    showToast('تم إلغاء التحويل', 'ok');
+
+  } catch (e) {
+    console.error('handleCancelTransfer:', e);
+    showToast('فشل إلغاء التحويل', 'err');
+  }
+}
+
+/* =====================================================
+   ⚡ إنهاء المحادثة بالكامل
+===================================================== */
+async function handleEndChat() {
+  try {
+    // 1) أظهر رسالة وداع مؤقتة
+    showToast('👋 شكراً لاستخدامك BORSA CLUP', 'info', 2000);
+
+    // 2) احفظ chatId قبل الحذف
+    const chatIdToDelete = currentChatId;
+
+    // 3) أرسل رسالة وداع أخيرة قبل الحذف (لو ممكن)
+    if (chatIdToDelete) {
+      try {
+        await addDoc(
+          collection(db, SUPPORT_COLLECTION, chatIdToDelete, 'messages'),
+          {
+            text: '👋 شكراً لتواصلك مع BORSA CLUP. نتمنى لك التوفيق!',
+            sender: 'bot',
+            senderName: botSettings.botName || 'بوت',
+            createdAt: serverTimestamp(),
+            deleted: false
+          }
+        );
+      } catch (e) {}
+    }
+
+    // 4) أوقف الـ listeners
+    if (msgUnsub) { msgUnsub(); msgUnsub = null; }
+    if (chatUnsub) { chatUnsub(); chatUnsub = null; }
+
+    // 5) انتظر شوية عشان المستخدم يشوف الوداع
+    await new Promise(r => setTimeout(r, 1500));
+
+    // 6) احذف كل الرسائل
+    if (chatIdToDelete) {
+      try {
+        const msgsSnap = await getDocs(
+          collection(db, SUPPORT_COLLECTION, chatIdToDelete, 'messages')
+        );
+        const deletePromises = [];
+        msgsSnap.forEach(d => {
+          deletePromises.push(deleteDoc(d.ref));
+        });
+        await Promise.all(deletePromises);
+      } catch (e) {
+        console.warn('delete messages:', e);
+      }
+
+      // 7) احذف المحادثة نفسها
+      try {
+        await deleteDoc(doc(db, SUPPORT_COLLECTION, chatIdToDelete));
+      } catch (e) {
+        console.warn('delete chat:', e);
+      }
+    }
+
+    // 8) امسح localStorage
+    try {
+      localStorage.removeItem(GUEST_STORAGE_KEY);
+      localStorage.removeItem(CONTEXT_STORAGE_KEY);
+    } catch (e) {}
+
+    // 9) امسح sessionStorage
+    try {
+      sessionStorage.removeItem('borsa_admin_id');
+      sessionStorage.removeItem('borsa_admin');
+      sessionStorage.removeItem('borsa_admin_role');
+    } catch (e) {}
+
+    // 10) صفّر المتغيرات
+    currentChatId = null;
+    currentChatData = null;
+    userSession = null;
+    lastMessagesCount = 0;
+    chatContext = {
+      lastTopic: null,
+      lastStockSymbol: null,
+      lastStockName: null,
+      lastQuestionType: null,
+      history: []
+    };
+
+    // 11) اقفل الواجهة وارجع للـ Gate
+    appEl.classList.remove('open');
+    messagesEl.innerHTML = '';
+    supportBar.classList.remove('show');
+    adminStatus.classList.remove('show');
+
+    setTimeout(() => {
+      gate.classList.add('open');
+      gateName.value = '';
+      gatePhone.value = '';
+      gateSubmit.disabled = false;
+      gateSubmit.innerHTML = '🚀 بدء المحادثة';
+      showToast('تم إنهاء المحادثة بنجاح ✅', 'ok');
+    }, 300);
+
+  } catch (e) {
+    console.error('handleEndChat:', e);
+    showToast('فشل إنهاء المحادثة', 'err');
+  }
+}
+
+/* =====================================================
+   إرسال رسالة
 ===================================================== */
 async function sendMessage() {
   const text = (msgInput.value || '').trim();
@@ -1375,7 +1789,7 @@ async function sendMessage() {
   msgInput.value = '';
   msgInput.style.height = 'auto';
 
-  // ⚡ يظهر المؤشر فوراً قبل أي انتظار
+  isProcessing = true;
   showTyping();
 
   try {
@@ -1384,16 +1798,24 @@ async function sendMessage() {
     const status = (currentChatData?.status || 'bot').toLowerCase();
 
     if (status === 'bot' || status === 'transferred') {
+      isProcessing = false; // نرجعها قبل النداء عشان processUserMessage يشتغل
       await processUserMessage(text);
+    } else {
+      // لو الحالة active → الرسالة تروح للمشرف فقط
+      isProcessing = false;
     }
   } catch (e) {
     console.error(e);
     showToast('فشل الإرسال', 'err');
+    isProcessing = false;
   } finally {
-    hideTyping();
-    msgInput.disabled = false;
-    sendBtn.disabled = false;
-    msgInput.focus();
+    setTimeout(() => {
+      hideTyping();
+      isProcessing = false;
+      msgInput.disabled = false;
+      sendBtn.disabled = false;
+      msgInput.focus();
+    }, 100);
   }
 }
 
@@ -1444,6 +1866,9 @@ function updateChatHeaderBasedOnStatus(data) {
     headerSub.textContent = 'متصل الآن · يرد فورًا';
     supportBar.classList.remove('show');
     adminStatus.classList.remove('show');
+    sendBtn.disabled = false;
+    msgInput.disabled = false;
+    msgInput.placeholder = 'اكتب رسالتك...';
   }
 }
 
@@ -1514,6 +1939,7 @@ function showGateErr(text) {
 async function initSession() {
   try {
     setProgress(70);
+    loadContextFromStorage();
 
     const userId = sessionStorage.getItem('borsa_admin_id');
     const userName = sessionStorage.getItem('borsa_admin') || sessionStorage.getItem('borsa_admin_role');
